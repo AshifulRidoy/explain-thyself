@@ -4,7 +4,8 @@ Instrumentation rules (docs/interpretability.md):
   - BASIC mode caches NOTHING (logits only)
   - STANDARD caches exactly blocks.{i}.hook_resid_post, i = 0..L-1
   - extraction reads ONLY the final position; the cache never leaves step()
-  - cache.clear() after every step — a retained ActivationCache is an OOM
+  - the cache reference is dropped every step — a retained ActivationCache
+    is an OOM waiting to happen
   - everything is float32: bf16/f64 are unsupported or unsafe on MPS
 
 Device caveat: TransformerLens has reported silently-wrong GPT-2 outputs on
@@ -50,15 +51,21 @@ class TransformerLensBackend:
 
     def load(self, device: str) -> None:
         import torch
-        from transformer_lens import HookedTransformer
 
         self.device = resolve_device(device)
-        self.model = HookedTransformer.from_pretrained(
+        # v3 path: the bridge boots raw HF weights; compatibility mode gives
+        # HookedTransformer-equivalent processing + legacy hook names
+        # (blocks.{i}.hook_resid_post). Verified to match HF reference logits
+        # exactly (see tests/test_real_model.py).
+        from transformer_lens.model_bridge import TransformerBridge
+
+        bridge = TransformerBridge.boot_transformers(
             self.spec.tl_name,
             dtype=torch.float32,
             device=self.device,
         )
-        self.model.eval()
+        bridge.enable_compatibility_mode(disable_warnings=True)
+        self.model = bridge
 
     def numerics_self_check(self) -> bool:
         """Run a fixed prompt on the loaded device and on CPU; compare
@@ -71,16 +78,16 @@ class TransformerLensBackend:
 
         if self.model is None or self.device == "cpu":
             return True
-        from transformer_lens import HookedTransformer
+        from transformer_lens.model_bridge import TransformerBridge
 
         with torch.no_grad():
             ids = self.model.to_tokens(_CALIBRATION_PROMPT, prepend_bos=True)
             device_logits = self.model(ids)[0, -1].float().cpu()
 
-            cpu_model = HookedTransformer.from_pretrained(
+            cpu_model = TransformerBridge.boot_transformers(
                 self.spec.tl_name, dtype=torch.float32, device="cpu"
             )
-            cpu_model.eval()
+            cpu_model.enable_compatibility_mode(disable_warnings=True)
             try:
                 cpu_logits = cpu_model(ids.to("cpu"))[0, -1].float()
             finally:
@@ -154,7 +161,10 @@ class TransformerLensBackend:
                 for i in range(self.spec.layer_count):
                     resid = cache[f"blocks.{i}.hook_resid_post"][0, -1].float()
                     layer_stats.append((i + 1, float(resid.norm())))
-            cache.clear()
+            # drop the cache before the next step — a retained ActivationCache
+            # is an OOM waiting to happen (3.7.2 caches are plain objects,
+            # no .clear(); going out of scope frees the tensors)
+            del cache
 
         return StepResult(
             top_k=top_k,

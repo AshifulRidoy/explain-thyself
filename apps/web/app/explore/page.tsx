@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { loadFixture, type FixtureKey } from "@ets/trace-schema/fixtures";
 import { ExploreClient } from "@/components/trace/ExploreClient";
+import { LiveExploreClient } from "@/components/trace/LiveExploreClient";
 
 export const metadata: Metadata = {
   title: "Explore",
@@ -27,10 +28,11 @@ export default async function ExplorePage({
   searchParams: Promise<{ fixture?: string; prompt?: string }>;
 }) {
   const params = await searchParams;
+  const prompt = params.prompt?.trim();
+  if (prompt) {
+    return <LiveExploreClient prompt={prompt} />;
+  }
   const key = parseFixtureKey(params.fixture) ?? DEFAULT_FIXTURE;
   const trace = await loadFixture(key);
-
-  // ?prompt= is handled by live mode (M4); until then it falls through to
-  // the default fixture with the prompt noted in the header
   return <ExploreClient fixture={trace} />;
 }

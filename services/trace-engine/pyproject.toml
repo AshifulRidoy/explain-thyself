@@ -26,5 +26,7 @@ dev = [
 asyncio_mode = "strict"
 testpaths = ["tests"]
 markers = [
-    "db: requires postgres running (docker compose up -d && pnpm db:migrate)",
+    "db: requires postgres running (docker-compose up -d && pnpm db:migrate)",
+    "model: real TransformerLens weights (downloads on first run)",
 ]
+addopts = "-m 'not model'"
