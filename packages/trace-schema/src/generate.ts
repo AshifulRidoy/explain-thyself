@@ -23,7 +23,7 @@ import type {
   TopToken,
   Trace,
   TraceEvent,
-} from "./events.js";
+} from "./events";
 
 export interface FixtureConceptSpec {
   id: string;

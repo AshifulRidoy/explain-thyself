@@ -1,26 +1,56 @@
 @import "tailwindcss";
+@import "@ets/design-tokens/tokens.css";
 
+/*
+ * Font stacks resolve to next/font variables when set on <html> (see
+ * layout.tsx); the tokens.css names are the fallback chain.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-editorial: var(--font-instrument-serif), "Instrument Serif", Georgia, serif;
+  --font-interface: var(--font-inter), Inter, system-ui, sans-serif;
+  --font-machine: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
 }
 
+/* Tailwind v4 theme — every utility maps back to a design token. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-panel: var(--panel);
+  --color-signal: var(--signal);
+
+  --font-serif: var(--font-editorial);
+  --font-sans: var(--font-interface);
+  --font-mono: var(--font-machine);
+
+  --text-machine: 0.6875rem; /* 11px — machine labels */
+  --text-interface: 0.8125rem; /* 13px — controls, body */
+  --text-hero: clamp(3.5rem, 12vw, 8rem);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--paper);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-interface);
+  font-size: var(--text-interface);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Machine labels: uppercase, tracked mono — the instrument's voice. */
+.machine-label {
+  font-family: var(--font-machine);
+  font-size: var(--text-machine);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+::selection {
+  background: var(--signal);
+  color: var(--paper);
 }

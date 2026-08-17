@@ -1,69 +1,133 @@
-import Image from "next/image";
+import Link from "next/link";
+import { loadFixture } from "@ets/trace-schema/fixtures";
+import { FixtureTeaser } from "@/components/trace/FixtureTeaser";
+import { ExamineInput } from "@/components/shell/ExamineInput";
 
-export default function Home() {
+const LEVELS = [
+  {
+    n: "01",
+    key: "MEASURED",
+    line: "Taken directly from the model.",
+    body: "Tokens, logits, hidden states — numbers the model actually produced, not summaries of them.",
+  },
+  {
+    n: "02",
+    key: "DERIVED",
+    line: "Computed from measurements.",
+    body: "Entropy, activation norms, ranks — arithmetic on top of what was measured, nothing more.",
+  },
+  {
+    n: "03",
+    key: "INTERPRETED",
+    line: "A human reading of signals.",
+    body: "Concept labels and hypotheses. Always marked as interpretation — never presented as what the model “thinks”.",
+  },
+] as const;
+
+export default async function HomePage() {
+  const fixture = await loadFixture("trace-sky-blue");
+  const tokens = fixture.events
+    .filter((e): e is Extract<typeof e, { type: "TOKEN" }> => e.type === "TOKEN")
+    .slice(0, 48)
+    .map((e) => ({
+      text: e.leadingSpace ? ` ${e.text}` : e.text,
+      entropyBits: e.entropyBits,
+      probability: e.probability,
+    }));
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div>
+      {/* ——— hero ——————————————————————————————————— */}
+      <section className="mx-auto max-w-6xl px-6 pt-20 pb-16">
+        <p className="machine-label">An instrument for examining language models</p>
+        <h1 className="mt-6 font-serif text-hero leading-[0.95] tracking-tight">
+          A microscope
+          <br />
+          for <span className="italic">artificial</span>
+          <br />
+          intelligence.
+        </h1>
+        <p className="mt-8 max-w-md text-base leading-relaxed text-muted">
+          Watch a model generate, token by token — and see the measurable
+          signals underneath the behavior: what it predicted, how uncertain
+          it was, where inside the network things moved.
+        </p>
+        <div className="mt-10">
+          <ExamineInput />
+        </div>
+      </section>
+
+      {/* ——— instrument status ———————————————————— */}
+      <section className="border-t border-line">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px px-6 sm:grid-cols-4">
+          {[
+            ["Model", "GPT-2 Small"],
+            ["Layers", "12"],
+            ["Parameters", "124M"],
+            ["Trace Mode", "Standard"],
+          ].map(([label, value]) => (
+            <div key={label} className="py-6 sm:pr-6">
+              <div className="machine-label">{label}</div>
+              <div className="mt-2 font-mono text-sm uppercase tracking-wide">
+                {value}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ——— a recorded trace ———————————————————— */}
+      <section className="border-t border-line">
+        <div className="mx-auto max-w-6xl px-6 py-16">
+          <div className="flex items-baseline justify-between">
+            <h2 className="font-serif text-2xl">
+              A trace, <span className="italic">recorded</span>
+            </h2>
+            <span className="machine-label">
+              FIXTURE / TRACE-SKY-BLUE / DETERMINISTIC
+            </span>
+          </div>
+          <div className="mt-8">
+            <FixtureTeaser tokens={tokens} />
+          </div>
+          <p className="mt-6 max-w-md text-muted">
+            Each bar is the entropy of the model&apos;s next-token distribution
+            — its uncertainty, in bits. Spikes mark choice points; the accent
+            follows the token being written.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/explore?fixture=trace-sky-blue"
+            className="machine-label mt-4 inline-block text-ink underline decoration-line underline-offset-4 transition-colors hover:text-signal"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            Open this trace in the explorer →
+          </Link>
         </div>
-      </main>
+      </section>
+
+      {/* ——— the epistemic ladder ——————————————————— */}
+      <section className="border-t border-line">
+        <div className="mx-auto max-w-6xl px-6 py-16">
+          <p className="machine-label">Every number is labeled by what it is</p>
+          <div className="mt-8 grid gap-12 md:grid-cols-3">
+            {LEVELS.map((lvl) => (
+              <article key={lvl.key}>
+                <div className="machine-label">{lvl.n}</div>
+                <h3 className="mt-2 font-mono text-sm uppercase tracking-widest">
+                  {lvl.key}
+                </h3>
+                <p className="mt-3 font-serif text-lg italic">{lvl.line}</p>
+                <p className="mt-2 text-muted">{lvl.body}</p>
+              </article>
+            ))}
+          </div>
+          <Link
+            href="/methodology"
+            className="machine-label mt-10 inline-block text-ink underline decoration-line underline-offset-4 transition-colors hover:text-signal"
+          >
+            Read the methodology →
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

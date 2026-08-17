@@ -4,7 +4,7 @@
  * between the TypeScript and Python sides of the contract.
  */
 import { z } from "zod";
-import type { Trace } from "./events.js";
+import type { Trace } from "./events";
 
 export const epistemicLevelSchema = z.enum([
   "MEASURED",

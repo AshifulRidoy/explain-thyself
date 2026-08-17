@@ -5,8 +5,8 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { FIXTURES, generateTraceFixture } from "./generate.js";
-import { traceSchema } from "./schema.js";
+import { FIXTURES, generateTraceFixture } from "./generate";
+import { traceSchema } from "./schema";
 
 const FIXTURES_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "fixtures");
 

@@ -1,4 +1,4 @@
-export * from "./events.js";
+export * from "./events";
 export {
   traceSchema,
   traceEventSchema,
@@ -8,9 +8,9 @@ export {
   epistemicLevelSchema,
   topTokenSchema,
   validateTrace,
-} from "./schema.js";
+} from "./schema";
 export {
   SIGNAL_TAXONOMY,
   taxonomyFor,
   type SignalDefinition,
-} from "./taxonomy.js";
+} from "./taxonomy";

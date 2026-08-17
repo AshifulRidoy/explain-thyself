@@ -5,8 +5,8 @@
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { validateTrace } from "./schema.js";
-import type { Trace } from "./events.js";
+import { validateTrace } from "./schema";
+import type { Trace } from "./events";
 
 const FIXTURES_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "fixtures");
 
@@ -18,6 +18,6 @@ export async function loadFixture(key: FixtureKey): Promise<Trace> {
 }
 
 export async function listFixtures(): Promise<Trace[]> {
-  const { FIXTURES } = await import("./generate.js");
+  const { FIXTURES } = await import("./generate");
   return Promise.all(FIXTURES.map((f) => loadFixture(f.key as FixtureKey)));
 }

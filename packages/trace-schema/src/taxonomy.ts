@@ -5,7 +5,7 @@
  * Every signal shown in the UI must have an entry here — the vitest suite
  * enforces that Inspector-rendered field keys are covered.
  */
-import type { EpistemicLevel } from "./events.js";
+import type { EpistemicLevel } from "./events";
 
 export interface SignalDefinition {
   level: EpistemicLevel;
