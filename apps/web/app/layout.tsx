@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Instrument_Serif, Inter, IBM_Plex_Mono } from "next/font/google";
 import { SiteHeader } from "@/components/shell/SiteHeader";
+import { CommandPalette } from "@/components/shell/CommandPalette";
 import "./globals.css";
 
 const instrumentSerif = Instrument_Serif({
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="min-h-full flex flex-col">
         <SiteHeader />
         <main className="flex-1">{children}</main>
+        <CommandPalette />
       </body>
     </html>
   );
