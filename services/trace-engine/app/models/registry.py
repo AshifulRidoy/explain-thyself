@@ -27,7 +27,9 @@ class ModelSpec:
 MODEL_REGISTRY: dict[str, ModelSpec] = {
     "gpt2-small": ModelSpec(
         key="gpt2-small",
-        tl_name="gpt2-small",
+        # official transformers name since TL v3 ("gpt2-small" is a
+        # deprecated alias that warns on every load)
+        tl_name="gpt2",
         hf_id="gpt2",
         layer_count=12,
         head_count=12,

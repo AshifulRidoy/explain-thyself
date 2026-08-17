@@ -16,6 +16,9 @@ const TraceCanvas = dynamic(
 );
 
 const MAX_TOKENS = 30;
+// STANDARD = Phase 3: per-token LAYER_ACTIVITY alongside tokens/probs.
+// The Inspector's layer panel only fills in live mode with this on.
+const TRACE_MODE = "STANDARD";
 
 /**
  * Live mode: the same instrument, fed by the trace engine over SSE.
@@ -32,7 +35,7 @@ export function LiveExploreClient({ prompt }: { prompt: string }) {
   const select = useTraceStore((s) => s.select);
 
   useEffect(() => {
-    void start({ prompt, maxTokens: MAX_TOKENS, traceMode: "BASIC" });
+    void start({ prompt, maxTokens: MAX_TOKENS, traceMode: TRACE_MODE });
     return stop;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prompt]);
@@ -73,7 +76,9 @@ export function LiveExploreClient({ prompt }: { prompt: string }) {
           </button>
         ) : (
           <button
-            onClick={() => void start({ prompt, maxTokens: MAX_TOKENS, traceMode: "BASIC" })}
+            onClick={() =>
+              void start({ prompt, maxTokens: MAX_TOKENS, traceMode: TRACE_MODE })
+            }
             className="machine-label ml-auto shrink-0 text-ink transition-colors hover:text-signal"
           >
             ↻ Re-run

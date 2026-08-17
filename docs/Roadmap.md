@@ -13,8 +13,8 @@ a commit. **Status is updated as milestones complete.**
 | **M2 Design system + landing** | tokens package, fonts, editorial hero `/`, hairline sections, looping fixture teaser, `/methodology` skeleton | Page reads as "AI investigation instrument"; Signal accent used only for attention-worthy change | ✅ done |
 | **M3 Explorer on fixtures** | `/explore` fixture mode: TraceCanvas + node registry, Inspector with taxonomy badges, TokenStream, EntropyMeter, ProbabilityDistribution, LayerActivityPanel, ⌘K palette | python-rust fixture plays end-to-end; every number matches the fixture JSON; mobile stacks | ✅ done (interactive E2E in M6) |
 | **M4 Live inference** | TransformerLensBackend (BASIC mode), SSE `POST /trace`, device self-check, asyncpg persistence, `mode:'live'` | "Why is the sky blue?" streams with per-token p/entropy/latency; events persisted; replayable | ✅ done — tr_ao1pg9wr: 10 tokens/2.9 s on MPS, self-check pass, 13 events persisted + replayed |
-| **M5 Layer activity** | STANDARD mode: resid capture, RunningNormalizer, `LAYER_ACTIVITY` events, live panel, `docs/Interpretability.md` | Layer panel animates from real measurements; entropy matches independent NumPy recompute | 🔜 next |
-| **M6 Replay + polish** | `/trace/[id]` playback, `/traces`, error/loading states, Playwright E2E | Full §45 checklist green on desktop + 390px | ⬜ |
+| **M5 Layer activity** | STANDARD mode: resid capture, RunningNormalizer, `LAYER_ACTIVITY` events, live panel, `docs/Interpretability.md` | Layer panel animates from real measurements; entropy matches independent NumPy recompute | ✅ done — entropy agrees to 1e-14 at equal precision (fp32 pipeline: 2e-4 bits); l2Norms match the `resid_post = resid_mid + mlp_out` identity to 1e-5 |
+| **M6 Replay + polish** | `/trace/[id]` playback, `/traces`, error/loading states, Playwright E2E | Full §45 checklist green on desktop + 390px | 🔜 next |
 
 ## V2 — interpretation & investigation (spec Phases 4–6)
 
