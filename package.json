@@ -1,0 +1,25 @@
+{
+  "name": "explain-the-self",
+  "private": true,
+  "packageManager": "pnpm@11.17.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm db:up && pnpm db:wait && pnpm db:migrate && concurrently -n web,engine -c blue,magenta \"pnpm --filter web dev\" \"pnpm --filter @ets/trace-engine dev\"",
+    "dev:web": "pnpm --filter web dev",
+    "dev:engine": "pnpm --filter @ets/trace-engine dev",
+    "db:up": "docker-compose up -d",
+    "db:down": "docker-compose down",
+    "db:wait": "wait-on tcp:5432 -t 30000",
+    "db:migrate": "pnpm --filter web db:migrate",
+    "db:generate": "pnpm --filter web db:generate",
+    "fixture": "pnpm --filter @ets/trace-schema fixture",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "wait-on": "^8.0.3"
+  }
+}

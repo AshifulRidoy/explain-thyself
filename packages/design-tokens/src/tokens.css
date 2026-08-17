@@ -1,0 +1,42 @@
+/**
+ * Explain The Self — design tokens.
+ *
+ * Near-monochrome system (spec §7). The single accent (--signal) means
+ * "something changed / deserves attention" — never decoration.
+ */
+:root {
+  /* palette */
+  --paper: #f2f1ec;
+  --ink: #161616;
+  --muted: #747474;
+  --line: #c7c6c0;
+  --panel: #ebeae5;
+  --signal: #e85a3f;
+
+  /* type scale (editorial serif / interface sans / machine mono) */
+  --font-editorial: "Instrument Serif", Georgia, serif;
+  --font-interface: "Inter", system-ui, sans-serif;
+  --font-machine: "IBM Plex Mono", ui-monospace, monospace;
+
+  --text-xs: 0.6875rem; /* 11px — machine labels */
+  --text-sm: 0.8125rem; /* 13px — interface */
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.5rem;
+  --text-hero: clamp(3.5rem, 12vw, 8rem);
+
+  /* spacing — hairline rhythm */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* structure */
+  --hairline: 1px solid var(--line);
+  --radius: 2px;
+}

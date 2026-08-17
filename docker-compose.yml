@@ -1,0 +1,21 @@
+services:
+  postgres:
+    # pgvector-ready image at the same cost as plain postgres (vector columns are V2)
+    image: pgvector/pgvector:pg17
+    container_name: ets-postgres
+    environment:
+      POSTGRES_USER: ets
+      POSTGRES_PASSWORD: ets
+      POSTGRES_DB: explain_the_self
+    ports:
+      - "5432:5432"
+    volumes:
+      - ets-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ets -d explain_the_self"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+volumes:
+  ets-pgdata:
