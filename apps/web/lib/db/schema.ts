@@ -36,6 +36,12 @@ export const traces = pgTable("traces", {
   temperature: real("temperature").notNull().default(0),
   tokenCount: integer("token_count"),
   durationMs: integer("duration_ms"),
+  /**
+   * The stream-start envelope JSON (events removed) exactly as it was sent.
+   * Replay reads this so model dims / sampling / revision survive the round
+   * trip byte-faithfully. Nullable: pre-envelope rows derive what they can.
+   */
+  envelope: jsonb("envelope"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

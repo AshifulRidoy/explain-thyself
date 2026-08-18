@@ -81,6 +81,16 @@ class TraceWriter:
                 input_text, max_tokens, temperature,
             )
 
+    async def save_envelope(self, trace_id: str, envelope: dict) -> None:
+        """Persist the stream-start envelope (events removed). Replay reads
+        it back so model dims / sampling survive the round trip exactly —
+        they are not derivable from the flat columns."""
+        async with self.pool.acquire() as conn:
+            await conn.execute(
+                "UPDATE traces SET envelope = $2 WHERE id = $1",
+                trace_id, json.dumps({**envelope, "events": []}),
+            )
+
     async def enqueue_event(self, trace_id: str, event: dict) -> None:
         if event["seq"] > self._last_seq:
             self._last_seq = event["seq"]

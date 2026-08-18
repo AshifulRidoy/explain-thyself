@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { ReactFlowProvider } from "@xyflow/react";
 import { useEffect, useMemo } from "react";
 import { useTraceStore, tokenEvents, layerActivityByPosition } from "@/lib/trace/store";
@@ -61,6 +62,24 @@ export function LiveExploreClient({ prompt }: { prompt: string }) {
       {status === "error" && (
         <p className="machine-label px-6 py-3 text-signal">
           Stream failed — {error}. Is the engine running on :8000?
+        </p>
+      )}
+
+      {status !== "error" && !envelope && (
+        <p className="machine-label px-6 py-3 text-muted">
+          Connecting to the trace engine…
+        </p>
+      )}
+
+      {status === "complete" && envelope && (
+        <p className="machine-label border-b border-line px-6 py-3">
+          <span className="text-muted">Trace saved —</span>{" "}
+          <Link
+            href={`/trace/${envelope.id}`}
+            className="text-ink underline decoration-line underline-offset-4 hover:text-signal"
+          >
+            open replay ↗
+          </Link>
         </p>
       )}
 

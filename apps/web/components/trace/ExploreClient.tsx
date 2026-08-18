@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { ReactFlowProvider } from "@xyflow/react";
 import { useMemo } from "react";
 import type { Trace } from "@ets/trace-schema";
-import { useTraceStore, tokenEvents, layerActivityByPosition } from "@/lib/trace/store";
+import { useTraceStore, tokenEvents, layerActivityByPosition, type DataSourceMode } from "@/lib/trace/store";
 import { useFixtureReplay } from "@/lib/trace/useTraceDataSource";
 import { TraceHeader } from "./TraceHeader";
 import { PlaybackControls } from "./PlaybackControls";
@@ -20,9 +20,17 @@ const TraceCanvas = dynamic(
 /**
  * The instrument: canvas | inspector over a full-width token stream.
  * Desktop grid; mobile stacks (spec §34) — never squeezed columns.
+ * Plays any complete Trace — a committed fixture or a saved trace
+ * loaded back from Postgres (mode="replay").
  */
-export function ExploreClient({ fixture }: { fixture: Trace }) {
-  const controls = useFixtureReplay(fixture);
+export function ExploreClient({
+  trace,
+  mode = "fixture",
+}: {
+  trace: Trace;
+  mode?: DataSourceMode;
+}) {
+  const controls = useFixtureReplay(trace, mode);
   const events = useTraceStore((s) => s.events);
   const envelope = useTraceStore((s) => s.envelope);
   const status = useTraceStore((s) => s.status);
@@ -42,10 +50,10 @@ export function ExploreClient({ fixture }: { fixture: Trace }) {
   return (
     <div>
       <TraceHeader
-        envelope={envelope ?? fixture}
+        envelope={envelope ?? trace}
         tokenCount={tokens.length}
         status={status}
-        mode="fixture"
+        mode={mode}
       />
 
       {status === "error" && (

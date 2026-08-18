@@ -60,7 +60,7 @@ export function Inspector({
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" data-testid="inspector">
       <header>
         <div className="flex items-baseline justify-between">
           <h3 className="font-mono text-sm uppercase tracking-widest">

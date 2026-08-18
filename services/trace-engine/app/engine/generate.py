@@ -124,6 +124,9 @@ async def trace_stream(
         events=[],
     )
     yield format_sse("trace", envelope.model_dump_json())
+    if writer is not None:
+        # persist what streamed so replay needs no re-derivation
+        await writer.save_envelope(trace_id, json.loads(envelope.model_dump_json()))
 
     seq = 0
     t = 3

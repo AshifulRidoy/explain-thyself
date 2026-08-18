@@ -13,7 +13,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { traceEventSchema, type Trace, type TraceEvent } from "@ets/trace-schema";
-import { useTraceStore } from "./store";
+import { useTraceStore, type DataSourceMode } from "./store";
 import { SseParser } from "./sse";
 
 export type PlaybackSpeed = 1 | 4 | 20;
@@ -30,9 +30,14 @@ export interface DataSourceControls {
 const ENGINE_URL =
   process.env.NEXT_PUBLIC_ENGINE_URL ?? "http://localhost:8000";
 
-// ——— fixture: timed replay ——————————————————————————
+// ——— fixture / replay: timed replay ———————————————————
+// Any complete Trace — committed fixture or one loaded back from Postgres
+// — plays on its recorded `t` cadence through the same reducer.
 
-export function useFixtureReplay(trace: Trace): DataSourceControls {
+export function useFixtureReplay(
+  trace: Trace,
+  mode: DataSourceMode = "fixture",
+): DataSourceControls {
   const [playing, setPlaying] = useState(true);
   const [speed, setSpeed] = useState<PlaybackSpeed>(4);
   const begin = useTraceStore((s) => s.begin);
@@ -54,7 +59,7 @@ export function useFixtureReplay(trace: Trace): DataSourceControls {
       const events = trace.events;
       if (index === 0) {
         resetStore();
-        begin("fixture", { ...trace, events: [] });
+        begin(mode, { ...trace, events: [] });
       }
       if (index >= events.length) {
         complete();
@@ -73,8 +78,19 @@ export function useFixtureReplay(trace: Trace): DataSourceControls {
     [trace, accept, begin, complete, resetStore],
   );
 
+  // play/pause/speed changes — but never the very first render: the
+  // trace-id effect below owns the initial start. Without this guard,
+  // mounting with leftover store state (e.g. client-side navigation from
+  // a finished live trace) resumes from the OLD event count and can
+  // decide the new trace is already over — killing playback at zero.
+  const firstRun = useRef(true);
   useEffect(() => {
     stateRef.current = { playing, speed };
+    if (firstRun.current) {
+      firstRun.current = false;
+      if (!playing) stopTimer();
+      return;
+    }
     if (playing) {
       // resume from wherever the store is
       const applied = useTraceStore.getState().events.length;
@@ -85,8 +101,10 @@ export function useFixtureReplay(trace: Trace): DataSourceControls {
     return stopTimer;
   }, [playing, speed, runFrom]);
 
-  // initial mount: start playback
+  // new trace (mount or id change): always (re)start from the top, even
+  // if a previous view left playing=false
   useEffect(() => {
+    setPlaying(true);
     runFrom(0);
     return stopTimer;
     // eslint-disable-next-line react-hooks/exhaustive-deps

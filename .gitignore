@@ -21,6 +21,7 @@ next-env.d.ts
 
 # build / misc
 dist/
+docs/
 *.tsbuildinfo
 .DS_Store
 coverage/
