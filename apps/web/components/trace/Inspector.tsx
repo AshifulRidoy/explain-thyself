@@ -1,4 +1,10 @@
-import type { LayerActivityEvent, TraceEvent } from "@ets/trace-schema";
+import type {
+  AttentionEvent,
+  LayerActivityEvent,
+  TraceEvent,
+  TraceMode,
+} from "@ets/trace-schema";
+import { AttentionPanel } from "@/components/data-viz/AttentionPanel";
 import { LayerActivityPanel } from "@/components/data-viz/LayerActivityPanel";
 import { ProbabilityDistribution } from "@/components/data-viz/ProbabilityDistribution";
 
@@ -48,10 +54,16 @@ function LevelBadge({ level }: { level: string }) {
 export function Inspector({
   event,
   layerActivity,
+  attention,
+  traceMode,
 }: {
   event: TraceEvent | null;
   /** LAYER_ACTIVITY paired to a selected TOKEN event, if present */
   layerActivity: LayerActivityEvent | null;
+  /** ATTENTION events (all layers) paired to a selected TOKEN, if collected */
+  attention?: AttentionEvent[] | null;
+  /** envelope mode — lets the panel say "RESEARCH only", not just "awaiting" */
+  traceMode?: TraceMode;
 }) {
   if (!event) {
     return (
@@ -83,6 +95,7 @@ export function Inspector({
           </section>
           <ProbabilityDistribution topK={event.topK} sampledTokenId={event.tokenId} />
           <LayerActivityPanel activity={layerActivity} />
+          <AttentionPanel attention={attention ?? null} traceMode={traceMode} />
         </>
       )}
 
@@ -106,6 +119,10 @@ export function Inspector({
       )}
 
       {event.type === "LAYER_ACTIVITY" && <LayerActivityPanel activity={event} />}
+
+      {event.type === "ATTENTION" && (
+        <AttentionPanel attention={[event]} traceMode="RESEARCH" />
+      )}
     </div>
   );
 }

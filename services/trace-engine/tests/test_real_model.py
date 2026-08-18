@@ -151,3 +151,60 @@ async def test_layer_norms_match_residual_stream_identity(backend: TransformerLe
                 assert n_rebuilt == pytest.approx(l2_backend, abs=1e-2)
         finally:
             del cache
+
+
+async def test_attention_reduced_hook_side_matches_full_cache(backend: TransformerLensBackend):
+    """Phase 4 exit criterion: the hook-side reduction is exactly the
+    head-mean final query row of the REAL pattern tensor, computed
+    independently by caching the full [heads, q, k] block the forbidden
+    way (fine in a test, never in the engine) and reducing in NumPy."""
+    import torch
+
+    ctx = backend.encode("The capital of France is")
+    res = backend.step(ctx, collect_layers=False, collect_attention=True)
+
+    with torch.no_grad():
+        _, cache = backend.model.run_with_cache(
+            torch.tensor([ctx]),
+            names_filter=lambda n: n.endswith("attn.hook_pattern"),
+            prepend_bos=False,
+        )
+        try:
+            for layer in range(12):
+                pattern = cache[f"blocks.{layer}.attn.hook_pattern"][0, :, -1, :].float()
+                independent = pattern.mean(dim=0).numpy().astype(np.float64)
+                shipped = res.attention[layer].astype(np.float64)
+                assert np.abs(shipped - independent).max() < 1e-6
+                # softmax over keys: the row is a distribution
+                assert shipped.sum() == pytest.approx(1.0, abs=1e-5)
+        finally:
+            del cache
+
+
+async def test_attention_head_entropies_and_bos_sink(backend: TransformerLensBackend):
+    """Per-head entropy is bounded by log2(context); GPT-2's attention
+    sink means BOS mass grows with depth (a real, known property — if it
+    inverts, the layer indexing is wrong)."""
+    import math
+
+    ctx = backend.encode("Why is the sky blue?")
+    res = backend.step(ctx, collect_layers=False, collect_attention=True)
+
+    for layer in range(12):
+        row = res.attention[layer]
+        assert len(row) == len(ctx)  # attends exactly over the context
+        for h in res.head_entropies[layer]:
+            assert 0.0 <= h <= math.log2(len(ctx)) + 1e-6
+
+    bos = [float(res.attention[i][0]) for i in range(12)]
+    assert bos[-1] > bos[0]
+    assert bos[-1] > 0.3  # the sink is substantial in late layers
+
+
+async def test_research_path_logits_match_anchor(backend: TransformerLensBackend):
+    """The hooks path (RESEARCH) must produce identical logits to the
+    plain path — anchored to the HF reference."""
+    ctx = backend.encode("The capital of France is")
+    hooked = backend.step(ctx, collect_layers=True, collect_attention=True)
+    assert hooked.top_k[0].raw_text == "Ġnow"
+    assert hooked.top_k[0].probability == pytest.approx(0.0475, abs=1e-3)

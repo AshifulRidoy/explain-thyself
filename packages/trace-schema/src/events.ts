@@ -103,7 +103,10 @@ export interface AttentionEvent extends TraceEventBase {
   level: "DERIVED";
   position: number;
   layer: number;
-  /** Head-mean attention FROM the final position TO each prior position. */
+  /** Head-mean attention FROM the final position TO each prior position.
+   *  Entry positions are stream positions; -1 marks the prepended BOS
+   *  token — GPT-2 sinks substantial attention there and hiding that
+   *  mass would misrepresent the measurement. */
   aggregated?: { position: number; text: string; weight: number }[];
   headEntropyBits?: number[];
 }

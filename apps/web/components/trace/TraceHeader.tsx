@@ -46,6 +46,12 @@ export function TraceHeader({
           <dd className="font-mono text-sm uppercase">{MODE_LABEL[mode]}</dd>
         </div>
         <div className="flex items-baseline gap-2">
+          <dt className="machine-label">Dial</dt>
+          <dd className="font-mono text-sm uppercase">
+            {envelope?.traceMode ?? "—"}
+          </dd>
+        </div>
+        <div className="flex items-baseline gap-2">
           <dt className="machine-label">Tokens</dt>
           <dd className="font-mono text-sm tabular-nums">
             {String(tokenCount).padStart(3, "0")}

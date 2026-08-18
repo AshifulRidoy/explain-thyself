@@ -6,16 +6,19 @@ import { describe, expect, it } from "vitest";
 import { loadFixture } from "@ets/trace-schema/fixtures";
 import {
   applyEvent,
+  attentionByPosition,
   completeStream,
   conceptsByToken,
   failStream,
   initialTraceState,
+  layerActivityByPosition,
   tokenEvents,
 } from "./store";
 import { toGraph } from "./graph";
 import { SseParser } from "./sse";
 
 const pyRust = await loadFixture("trace-python-rust");
+const skyBlue = await loadFixture("trace-sky-blue");
 
 describe("applyEvent", () => {
   it("appends events in order and auto-selects the first", () => {
@@ -56,6 +59,43 @@ describe("selectors", () => {
     // every attached concept's token id must exist in the token list
     const tokenIds = new Set(tokenEvents(pyRust.events).map((t) => t.id));
     for (const id of map.keys()) expect(tokenIds.has(id)).toBe(true);
+  });
+
+  it("layerActivityByPosition maps every STANDARD token position", () => {
+    const map = layerActivityByPosition(pyRust.events);
+    for (const tok of tokenEvents(pyRust.events)) {
+      expect(map.get(tok.position)?.position).toBe(tok.position);
+    }
+  });
+});
+
+describe("attentionByPosition (RESEARCH traces)", () => {
+  it("groups per-layer events by position, layer-ascending", () => {
+    const map = attentionByPosition(skyBlue.events);
+    const tokens = tokenEvents(skyBlue.events);
+    expect(map.size).toBe(tokens.length);
+    for (const tok of tokens) {
+      const layers = map.get(tok.position)!;
+      expect(layers).toHaveLength(12);
+      expect(layers.map((a) => a.layer)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+      for (const a of layers) expect(a.position).toBe(tok.position);
+    }
+  });
+
+  it("keeps partial streams usable — events apply incrementally", () => {
+    // mid-stream: INPUT + first TOKEN + its LAYER_ACTIVITY + 5 of 12 layers
+    const firstAttn = skyBlue.events.findIndex((e) => e.type === "ATTENTION");
+    let state = initialTraceState;
+    for (const e of skyBlue.events.slice(0, firstAttn + 5)) {
+      state = applyEvent(state, e);
+    }
+    const map = attentionByPosition(state.events);
+    expect(map.size).toBe(1);
+    expect(map.get(tokenEvents(state.events)[0].position)).toHaveLength(5);
+  });
+
+  it("returns an empty map for STANDARD traces", () => {
+    expect(attentionByPosition(pyRust.events).size).toBe(0);
   });
 });
 

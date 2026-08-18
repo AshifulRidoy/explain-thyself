@@ -139,3 +139,49 @@ async def test_basic_mode_emits_no_layer_activity() -> None:
     types = [json.loads(d)["type"] for e, d in parse_frames(raw) if e == "trace_event"]
     assert "LAYER_ACTIVITY" not in types
     assert "TOKEN" in types
+
+
+@pytest.mark.asyncio
+async def test_research_mode_emits_attention_per_layer() -> None:
+    """RESEARCH: every step emits TOKEN → LAYER_ACTIVITY → 12× ATTENTION
+    (layers ascending), rows carry BOS at position -1 and sum to ~1."""
+    backend = FakeBackend(MODEL_REGISTRY["fake"], seed=99)
+    raw = ""
+    async for frame in trace_stream(
+        prompt="Why is the sky blue?",
+        trace_mode="RESEARCH",
+        max_tokens=3,
+        temperature=0.0,
+        top_k=None,
+        seed=None,
+        backend=backend,
+        writer=None,
+    ):
+        raw += frame
+    events = [json.loads(d) for e, d in parse_frames(raw) if e == "trace_event"]
+    types = [e["type"] for e in events]
+
+    assert types.count("ATTENTION") == 3 * 12
+    # per-step block shape: TOKEN, LAYER_ACTIVITY, then L01..L12
+    first_block = types[1 : 1 + 14]
+    assert first_block[0] == "TOKEN" and first_block[1] == "LAYER_ACTIVITY"
+    assert [t for t in first_block[2:]] == ["ATTENTION"] * 12
+
+    attn = [e for e in events if e["type"] == "ATTENTION"]
+    assert [a["layer"] for a in attn[:12]] == list(range(1, 13))
+    first = attn[0]
+    assert first["level"] == "DERIVED"
+    assert first["position"] == 6  # prompt_len (5) + step 0... BOS-less count
+    # BOS entry: position -1, first in the row, real mass
+    assert first["aggregated"][0] == {
+        "position": -1,
+        "text": "<bos>",
+        "weight": pytest.approx(first["aggregated"][0]["weight"]),
+    }
+    assert first["aggregated"][0]["weight"] > 0.05
+    total = sum(entry["weight"] for entry in first["aggregated"])
+    assert total == pytest.approx(1.0, abs=5e-3)  # 4dp rounding tolerance
+    assert len(first["headEntropyBits"]) == 12
+    # seq stays gapless through the 14-event blocks
+    seqs = [e["seq"] for e in events]
+    assert seqs == list(range(len(seqs)))

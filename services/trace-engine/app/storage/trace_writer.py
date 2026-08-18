@@ -15,12 +15,31 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+from contextlib import asynccontextmanager
 
 import asyncpg
 
 log = logging.getLogger("ets.storage")
 
 _ABORT_DETAIL = "client disconnected before completion"
+
+
+@asynccontextmanager
+async def pooled_conn(pool: asyncpg.Pool):
+    """Acquire from the pool, but never return a cancelled connection to it.
+
+    A query cancelled mid-flight leaves the connection mid-protocol-reset;
+    handing it back poisons the next acquirer (hangs or corruption).
+    Terminating it makes the pool open a fresh one instead.
+    """
+    conn = await pool.acquire()
+    try:
+        yield conn
+    except asyncio.CancelledError:
+        conn.terminate()
+        raise
+    finally:
+        await pool.release(conn)
 
 
 class TraceWriter:
@@ -65,11 +84,8 @@ class TraceWriter:
         max_tokens: int,
         temperature: float,
     ) -> int:
-        self._trace_id = trace_id
-        self._last_seq = -1
-        self._terminal = False
-        async with self.pool.acquire() as conn:
-            return await conn.fetchval(
+        async with pooled_conn(self.pool) as conn:
+            display_id = await conn.fetchval(
                 """
                 INSERT INTO traces
                     (id, model_name, model_revision, device, trace_mode,
@@ -80,12 +96,19 @@ class TraceWriter:
                 trace_id, model_name, model_revision, device, trace_mode,
                 input_text, max_tokens, temperature,
             )
+        # writer state flips only once the row exists: a client abort can
+        # cancel this insert (a trace-dial flip does exactly that), and
+        # _abort must never persist events for a trace that never landed
+        self._trace_id = trace_id
+        self._last_seq = -1
+        self._terminal = False
+        return display_id
 
     async def save_envelope(self, trace_id: str, envelope: dict) -> None:
         """Persist the stream-start envelope (events removed). Replay reads
         it back so model dims / sampling survive the round trip exactly —
         they are not derivable from the flat columns."""
-        async with self.pool.acquire() as conn:
+        async with pooled_conn(self.pool) as conn:
             await conn.execute(
                 "UPDATE traces SET envelope = $2 WHERE id = $1",
                 trace_id, json.dumps({**envelope, "events": []}),
@@ -118,7 +141,7 @@ class TraceWriter:
     ) -> None:
         await self.drain()
         self._terminal = True
-        async with self.pool.acquire() as conn:
+        async with pooled_conn(self.pool) as conn:
             await conn.execute(
                 """
                 UPDATE traces
@@ -133,7 +156,7 @@ class TraceWriter:
         try:
             await self.drain()
             self._terminal = True
-            async with self.pool.acquire() as conn:
+            async with pooled_conn(self.pool) as conn:
                 await conn.execute(
                     "UPDATE traces SET status = 'error', output_text = $2 WHERE id = $1",
                     trace_id, message[:2000],
@@ -146,6 +169,15 @@ class TraceWriter:
         trace_id = self._trace_id
         assert trace_id is not None
         try:
+            async with pooled_conn(self.pool) as conn:
+                landed = await conn.fetchval(
+                    "SELECT 1 FROM traces WHERE id = $1", trace_id
+                )
+            if landed is None:
+                # the open insert was cancelled before committing — the
+                # trace was never observable, so there is nothing to explain
+                log.info("abort: trace %s never landed (open cancelled)", trace_id)
+                return
             await self._queue.put(
                 (
                     trace_id,
@@ -169,7 +201,7 @@ class TraceWriter:
                 )
             )
             await self.drain()
-            async with self.pool.acquire() as conn:
+            async with pooled_conn(self.pool) as conn:
                 await conn.execute(
                     "UPDATE traces SET status = 'error', output_text = $2 WHERE id = $1",
                     trace_id, _ABORT_DETAIL,
@@ -196,7 +228,17 @@ class TraceWriter:
                 # in close_trace/stop, so no timer is needed for tail latency)
                 while not self._queue.empty() and len(batch) < 10:
                     batch.append(self._queue.get_nowait())
-                await self._insert_batch(batch)
+                try:
+                    await self._insert_batch(batch)
+                except asyncio.CancelledError:
+                    raise
+                except Exception:  # noqa: BLE001 — one bad batch must not
+                    # kill the loop: later events (incl. the terminal ones)
+                    # still deserve their chance to land
+                    log.exception(
+                        "event batch insert failed (%d events dropped)",
+                        len(batch),
+                    )
                 batch = []
         except asyncio.CancelledError:
             # events already dequeued are ours to land even on shutdown
@@ -210,8 +252,7 @@ class TraceWriter:
             raise
 
     async def _insert_batch(self, batch: list[tuple]) -> None:
-        conn = await self.pool.acquire()
-        try:
+        async with pooled_conn(self.pool) as conn:
             await conn.executemany(
                 """
                 INSERT INTO trace_events
@@ -220,11 +261,3 @@ class TraceWriter:
                 """,
                 batch,
             )
-        except asyncio.CancelledError:
-            # a query cancelled mid-flight leaves the connection mid-reset;
-            # terminate it so the pool replaces it instead of handing a
-            # poisoned connection to the next query
-            conn.terminate()
-            raise
-        finally:
-            await self.pool.release(conn)

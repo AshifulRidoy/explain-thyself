@@ -101,7 +101,9 @@ class LayerActivityEvent(TraceEventBase):
 
 
 class AttentionAggregate(StrictModel):
-    position: int = Field(ge=0)
+    # -1 = the prepended BOS token (GPT-2's attention sink) — a real
+    # measured position, not a visible stream token
+    position: int = Field(ge=-1)
     text: str
     weight: Probability
 

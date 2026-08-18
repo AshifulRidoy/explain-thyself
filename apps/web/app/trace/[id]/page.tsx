@@ -58,7 +58,7 @@ export default async function TraceReplayPage({ params }: PageProps) {
           </Link>
         </div>
       </div>
-      <ExploreClient trace={trace} mode="replay" />
+      <ExploreClient key={trace.id} trace={trace} mode="replay" />
     </div>
   );
 }

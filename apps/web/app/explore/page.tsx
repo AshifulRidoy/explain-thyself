@@ -34,5 +34,5 @@ export default async function ExplorePage({
   }
   const key = parseFixtureKey(params.fixture) ?? DEFAULT_FIXTURE;
   const trace = await loadFixture(key);
-  return <ExploreClient trace={trace} />;
+  return <ExploreClient key={trace.id} trace={trace} />;
 }

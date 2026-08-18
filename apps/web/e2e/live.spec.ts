@@ -53,4 +53,31 @@ test.describe("live inference", () => {
       timeout: 10_000,
     });
   });
+
+  test("RESEARCH dial streams per-layer attention from the live model", async ({
+    page,
+  }) => {
+    await page.goto("/explore?prompt=The%20capital%20of%20France%20is");
+
+    // flip the dial — restarting the trace in RESEARCH mode
+    await page.getByTestId("trace-mode").getByText("RESEARCH").click();
+    await expect(page.locator('button[title^="p "]').first()).toBeVisible({
+      timeout: 120_000,
+    });
+
+    // header reflects what was collected
+    await expect(page.getByText("RESEARCH", { exact: true }).first()).toBeVisible();
+
+    await page.locator('button[title^="p "]').first().click();
+    const panel = page.getByTestId("attention-panel");
+    await expect(panel).toBeVisible();
+    // the BOS attention sink is measured, not hidden
+    await expect(panel.getByText("<bos>", { exact: true })).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(page.getByTestId("attention-layers").locator("button")).toHaveCount(
+      12,
+      { timeout: 10_000 },
+    );
+  });
 });

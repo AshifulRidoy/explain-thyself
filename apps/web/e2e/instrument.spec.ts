@@ -43,6 +43,31 @@ test.describe("fixture explorer", () => {
     );
     expect(overflowed).toBeLessThanOrEqual(1);
   });
+
+  test("sky-blue fixture (RESEARCH) shows per-layer attention with the BOS sink", async ({
+    page,
+  }) => {
+    await page.goto("/explore?fixture=sky-blue");
+
+    // the fixture carries attention — the header dials RESEARCH
+    await expect(page.getByText("RESEARCH", { exact: true }).first()).toBeVisible({
+      timeout: 20_000,
+    });
+    await expect(page.getByText("Complete")).toBeVisible({ timeout: 60_000 });
+
+    // selecting a token pairs its 12 ATTENTION events into the inspector
+    await page.locator('button[title^="p "]').first().click();
+    const panel = page.getByTestId("attention-panel");
+    await expect(panel).toBeVisible();
+    // position −1 — the prepended BOS token GPT-2 sinks attention into
+    await expect(panel.getByText("<bos>", { exact: true })).toBeVisible();
+    // one selector button per layer
+    await expect(page.getByTestId("attention-layers").locator("button")).toHaveCount(12);
+
+    // switching layers re-renders the row set for that layer's measurement
+    await page.getByTestId("attention-layers").locator("button", { hasText: "05" }).click();
+    await expect(panel.getByText(/L05/)).toBeVisible();
+  });
 });
 
 test("home page presents the instrument and links to explore", async ({ page }) => {

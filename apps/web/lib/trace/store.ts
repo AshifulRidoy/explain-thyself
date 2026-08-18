@@ -7,6 +7,7 @@
  */
 import { create } from "zustand";
 import type {
+  AttentionEvent,
   ConceptEvent,
   Trace,
   TraceEvent,
@@ -82,6 +83,23 @@ export function layerActivityByPosition(
   const map = new Map<number, LayerActivityEvent>();
   for (const e of events) {
     if (e.type === "LAYER_ACTIVITY") map.set(e.position, e);
+  }
+  return map;
+}
+
+/**
+ * ATTENTION events for each position, in layer order (the engine emits
+ * L01…L12 back to back after the TOKEN event). RESEARCH traces only.
+ */
+export function attentionByPosition(
+  events: TraceEvent[],
+): Map<number, AttentionEvent[]> {
+  const map = new Map<number, AttentionEvent[]>();
+  for (const e of events) {
+    if (e.type !== "ATTENTION") continue;
+    const list = map.get(e.position);
+    if (list) list.push(e);
+    else map.set(e.position, [e]);
   }
   return map;
 }

@@ -3,6 +3,9 @@
 Instrumentation rules (docs/interpretability.md):
   - BASIC mode caches NOTHING (logits only)
   - STANDARD caches exactly blocks.{i}.hook_resid_post, i = 0..L-1
+  - RESEARCH adds attention, reduced HOOK-SIDE inside run_with_hooks
+    (head-mean of the final query row); the [heads, q, k] pattern tensor
+    never leaves the hook and no cache is built at all
   - extraction reads ONLY the final position; the cache never leaves step()
   - the cache reference is dropped every step — a retained ActivationCache
     is an OOM waiting to happen
@@ -129,10 +132,17 @@ class TransformerLensBackend:
             rank=0,
         )
 
-    def step(self, ctx: list[int], collect_layers: bool) -> StepResult:
+    def step(
+        self, ctx: list[int], collect_layers: bool, collect_attention: bool = False
+    ) -> StepResult:
         import torch
 
         t0 = time.perf_counter()
+        ids = torch.tensor([ctx], dtype=torch.long, device=self.device)
+
+        if collect_attention:
+            return self._step_with_hooks(ids, collect_layers, t0)
+
         filt: Callable[[str], bool] = (
             (lambda name: RESID_POST.match(name) is not None)
             if collect_layers
@@ -140,20 +150,13 @@ class TransformerLensBackend:
         )
         with torch.no_grad():
             logits, cache = self.model.run_with_cache(
-                torch.tensor([ctx], dtype=torch.long, device=self.device),
+                ids,
                 names_filter=filt,
                 prepend_bos=False,  # BOS already prepended by encode()
             )
             final = logits[0, -1].float()
             log_probs = torch.log_softmax(final, dim=-1)
-
-            top = torch.topk(log_probs, k=8)
-            top_k: list[TopToken] = []
-            for rank, (tid, lp) in enumerate(zip(top.indices.tolist(), top.values.tolist())):
-                tok = self._decode(tid)
-                tok.probability = float(torch.exp(torch.tensor(lp)))
-                tok.rank = rank
-                top_k.append(tok)
+            top_k = self._top_k(log_probs)
 
             layer_stats: list[tuple[int, float]] | None = None
             if collect_layers:
@@ -170,6 +173,86 @@ class TransformerLensBackend:
             top_k=top_k,
             full_log_probs=log_probs.detach().cpu().numpy().astype(np.float32),
             layer_stats=layer_stats,
+            latency_ms=(time.perf_counter() - t0) * 1000.0,
+        )
+
+    def _top_k(self, log_probs) -> list[TopToken]:
+        """Top-8 tokens + probabilities from final-position log-probs."""
+        import torch
+
+        top = torch.topk(log_probs, k=8)
+        top_k: list[TopToken] = []
+        for rank, (tid, lp) in enumerate(zip(top.indices.tolist(), top.values.tolist())):
+            tok = self._decode(tid)
+            tok.probability = float(torch.exp(torch.tensor(lp)))
+            tok.rank = rank
+            top_k.append(tok)
+        return top_k
+
+    def _step_with_hooks(self, ids, collect_layers: bool, t0: float) -> StepResult:
+        """RESEARCH path — attention is reduced INSIDE the hook.
+
+        `blocks.{i}.attn.hook_pattern` fires with the full
+        [batch, heads, q, k] tensor; we take the final query row, mean over
+        heads, and move that one [k] vector to CPU immediately. The full
+        pattern tensor never survives the hook (spec §19: never cache
+        attention). Residual norms are folded into the same pass, so this
+        path caches nothing at all — no ActivationCache is ever built.
+        """
+        import torch
+
+        attention: dict[int, np.ndarray] = {}
+        head_entropies: dict[int, list[float]] = {}
+        resid_norms: dict[int, float] = {}
+
+        def attn_hook(i: int):
+            def hook(tensor, hook=None, *, layer=i):
+                final = tensor[0, :, -1, :].float()  # [heads, k]
+                attention[layer] = (
+                    final.mean(dim=0).detach().cpu().numpy().astype(np.float32)
+                )
+                p = torch.clamp(final, min=1e-12)
+                head_entropies[layer] = (
+                    (-(p * torch.log2(p)).sum(dim=-1)).detach().cpu().tolist()
+                )
+
+            return hook
+
+        def resid_hook(i: int):
+            def hook(tensor, hook=None, *, layer=i):
+                resid_norms[layer] = float(tensor[0, -1].float().norm())
+
+            return hook
+
+        fwd_hooks: list[tuple[str, object]] = [
+            (f"blocks.{i}.attn.hook_pattern", attn_hook(i))
+            for i in range(self.spec.layer_count)
+        ]
+        if collect_layers:
+            fwd_hooks += [
+                (f"blocks.{i}.hook_resid_post", resid_hook(i))
+                for i in range(self.spec.layer_count)
+            ]
+
+        with torch.no_grad():
+            logits = self.model.run_with_hooks(
+                ids, fwd_hooks=fwd_hooks, prepend_bos=False
+            )
+            final = logits[0, -1].float()
+            log_probs = torch.log_softmax(final, dim=-1)
+            top_k = self._top_k(log_probs)
+
+        layer_stats = (
+            [(i + 1, resid_norms[i]) for i in range(self.spec.layer_count)]
+            if collect_layers
+            else None
+        )
+        return StepResult(
+            top_k=top_k,
+            full_log_probs=log_probs.detach().cpu().numpy().astype(np.float32),
+            layer_stats=layer_stats,
+            attention=attention,
+            head_entropies=head_entropies,
             latency_ms=(time.perf_counter() - t0) * 1000.0,
         )
 

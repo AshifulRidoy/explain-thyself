@@ -28,6 +28,7 @@ from ..aggregation.stats import (
 from ..config import settings
 from ..models.backend import ModelBackend, TopToken
 from ..schemas.trace import (
+    AttentionEvent,
     DecisionEvent,
     InputEvent,
     InputToken,
@@ -164,8 +165,12 @@ async def trace_stream(
 
         ctx = backend.encode(prompt)
         collect_layers = trace_mode != "BASIC" and spec.emits_resid_activity
+        collect_attention = trace_mode == "RESEARCH"
         normalizer = RunningNormalizer(spec.layer_count) if collect_layers else None
         emitted: list[TopToken] = []
+        # position-indexed texts for attention rows; index 0 of ctx is the
+        # BOS encode() prepends — surfaced as position -1, never dropped
+        ctx_texts: list[str] = ["<bos>"] + [text for _, text in prompt_toks]
         finish_reason = "max_tokens"
 
         for step in range(max_tokens):
@@ -173,7 +178,9 @@ async def trace_stream(
                 finish_reason = "context_limit"
                 break
 
-            res = await asyncio.to_thread(backend.step, ctx, collect_layers)
+            res = await asyncio.to_thread(
+                backend.step, ctx, collect_layers, collect_attention
+            )
             entropy = entropy_from_log_probs(res.full_log_probs)
 
             if (temperature or 0) > 0:
@@ -242,7 +249,38 @@ async def trace_stream(
                 )
                 yield await emit(layer_event)
 
+            if res.attention is not None:
+                for layer_idx in sorted(res.attention):
+                    row = res.attention[layer_idx]
+                    attention_event = AttentionEvent(
+                        id=next_id(),
+                        seq=seq - 1,
+                        type="ATTENTION",
+                        t=t,
+                        level="DERIVED",
+                        position=prompt_len + step,
+                        layer=layer_idx + 1,
+                        aggregated=[
+                            {
+                                "position": j - 1,
+                                "text": ctx_texts[j],
+                                "weight": round(float(w), 4),
+                            }
+                            for j, w in enumerate(row)
+                        ],
+                        headEntropyBits=(
+                            [
+                                round(float(h), 3)
+                                for h in res.head_entropies[layer_idx]
+                            ]
+                            if res.head_entropies is not None
+                            else None
+                        ),
+                    )
+                    yield await emit(attention_event)
+
             ctx.append(token_id)
+            ctx_texts.append(tok.text)
             if backend.is_eos(token_id):
                 finish_reason = "stop"
                 break

@@ -111,7 +111,9 @@ const attentionEventSchema = traceEventBase.extend({
     .array(
       z
         .object({
-          position: z.number().int().nonnegative(),
+          // -1 = the prepended BOS token (GPT-2's attention sink) — it is a
+          // real measured position, not a visible stream token
+          position: z.number().int().min(-1),
           text: z.string(),
           weight: probability,
         })

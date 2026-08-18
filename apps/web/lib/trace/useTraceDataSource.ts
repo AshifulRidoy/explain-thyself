@@ -47,6 +47,9 @@ export function useFixtureReplay(
 
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stateRef = useRef({ playing: true, speed: 4 as PlaybackSpeed });
+  // recursive step through the ref: the scheduled closure must call the
+  // CURRENT runFrom, not capture a stale one
+  const runFromRef = useRef<(index: number) => void>(() => {});
 
   const stopTimer = () => {
     if (timer.current) clearTimeout(timer.current);
@@ -72,43 +75,29 @@ export function useFixtureReplay(
       if (!isPlaying) return;
       timer.current = setTimeout(() => {
         accept(events[index]);
-        runFrom(index + 1);
+        runFromRef.current(index + 1);
       }, delay / spd);
     },
-    [trace, accept, begin, complete, resetStore],
+    [trace, mode, accept, begin, complete, resetStore],
   );
 
-  // play/pause/speed changes — but never the very first render: the
-  // trace-id effect below owns the initial start. Without this guard,
-  // mounting with leftover store state (e.g. client-side navigation from
-  // a finished live trace) resumes from the OLD event count and can
-  // decide the new trace is already over — killing playback at zero.
-  const firstRun = useRef(true);
+  useEffect(() => {
+    runFromRef.current = runFrom;
+  }, [runFrom]);
+
+  // the single scheduler. Callers mount this hook with key={trace.id}, so
+  // a mount IS a fresh trace: start from 0 (runFrom(0) resets the global
+  // store — leftover events from a previous view can never leak in, and
+  // playback starts even if that view ended paused). Later runs resume
+  // from whatever the store has applied; pausing stops the pending timer.
+  const mounted = useRef(false);
   useEffect(() => {
     stateRef.current = { playing, speed };
-    if (firstRun.current) {
-      firstRun.current = false;
-      if (!playing) stopTimer();
-      return;
-    }
-    if (playing) {
-      // resume from wherever the store is
-      const applied = useTraceStore.getState().events.length;
-      runFrom(applied);
-    } else {
-      stopTimer();
-    }
+    const from = mounted.current ? useTraceStore.getState().events.length : 0;
+    mounted.current = true;
+    if (playing) runFrom(from);
     return stopTimer;
   }, [playing, speed, runFrom]);
-
-  // new trace (mount or id change): always (re)start from the top, even
-  // if a previous view left playing=false
-  useEffect(() => {
-    setPlaying(true);
-    runFrom(0);
-    return stopTimer;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trace.id]);
 
   return {
     playing,
@@ -127,7 +116,7 @@ export function useFixtureReplay(
 export interface LiveTraceOptions {
   prompt: string;
   maxTokens?: number;
-  traceMode?: "BASIC" | "STANDARD";
+  traceMode?: "BASIC" | "STANDARD" | "RESEARCH";
   model?: string;
   onTraceId?: (id: string) => void;
 }

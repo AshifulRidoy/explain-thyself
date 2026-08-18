@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { ReactFlowProvider } from "@xyflow/react";
 import { useMemo } from "react";
 import type { Trace } from "@ets/trace-schema";
-import { useTraceStore, tokenEvents, layerActivityByPosition, type DataSourceMode } from "@/lib/trace/store";
+import { useTraceStore, tokenEvents, layerActivityByPosition, attentionByPosition, type DataSourceMode } from "@/lib/trace/store";
 import { useFixtureReplay } from "@/lib/trace/useTraceDataSource";
 import { TraceHeader } from "./TraceHeader";
 import { PlaybackControls } from "./PlaybackControls";
@@ -40,12 +40,15 @@ export function ExploreClient({
 
   const tokens = useMemo(() => tokenEvents(events), [events]);
   const layersByPos = useMemo(() => layerActivityByPosition(events), [events]);
+  const attentionByPos = useMemo(() => attentionByPosition(events), [events]);
   const selected = useMemo(
     () => events.find((e) => e.id === selectedEventId) ?? null,
     [events, selectedEventId],
   );
   const selectedLayers =
     selected?.type === "TOKEN" ? layersByPos.get(selected.position) ?? null : null;
+  const selectedAttention =
+    selected?.type === "TOKEN" ? attentionByPos.get(selected.position) ?? null : null;
 
   return (
     <div>
@@ -71,7 +74,12 @@ export function ExploreClient({
           </ReactFlowProvider>
         </div>
         <aside className="space-y-8 px-0 py-6 lg:px-6">
-          <Inspector event={selected} layerActivity={selectedLayers} />
+          <Inspector
+            event={selected}
+            layerActivity={selectedLayers}
+            attention={selectedAttention}
+            traceMode={(envelope ?? trace).traceMode}
+          />
           <div className="border-t border-line pt-6">
             <EntropyMeter tokens={tokens} />
           </div>

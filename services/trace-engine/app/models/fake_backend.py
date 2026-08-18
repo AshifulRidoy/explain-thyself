@@ -124,6 +124,7 @@ class FakeBackend:
 
     def __init__(self, spec: ModelSpec, seed: int = 4242) -> None:
         self.spec = spec
+        self._seed = seed
         self._rng = mulberry32(seed)
         self._eos_id = _word_to_token_id("<eos>")
         self._prompt_len = 0
@@ -172,7 +173,41 @@ class FakeBackend:
             rank=99,
         )
 
-    def step(self, ctx: list[int], collect_layers: bool) -> StepResult:
+    def _fake_attention(self, ctx: list[int], step: int):
+        """Deterministic imitation of the hook-side reduction: per-layer
+        head rows (BOS sink grows with depth, recency decay), softmax
+        normalized, averaged — so the mean sums to 1 exactly like the real
+        pattern hook. Separate seeded stream: attention draws never shift
+        the main randomness, so STANDARD traces stay byte-identical to
+        before this existed."""
+        attention: dict[int, np.ndarray] = {}
+        head_entropies: dict[int, list[float]] = {}
+        n = len(ctx)
+        for i in range(self.spec.layer_count):
+            rng = mulberry32(self._seed + 777_000 + step * 131 + i * 37)
+            rows = []
+            for _head in range(self.spec.head_count):
+                w = np.zeros(n)
+                bos_bias = 0.2 + 0.6 * (i + 1) / self.spec.layer_count
+                for j in range(n):
+                    if j == 0:
+                        w[j] = bos_bias + rng() * 0.25
+                    else:
+                        recency = np.exp(-(n - 1 - j) / 6.0)
+                        w[j] = recency * (0.3 + rng() * 0.9)
+                w /= w.sum()
+                rows.append(w)
+            mean = np.mean(rows, axis=0)
+            attention[i] = mean.astype(np.float32)
+            head_entropies[i] = [
+                float(-np.sum(np.where(r > 0, r * np.log2(np.clip(r, 1e-12, 1.0)), 0.0)))
+                for r in rows
+            ]
+        return attention, head_entropies
+
+    def step(
+        self, ctx: list[int], collect_layers: bool, collect_attention: bool = False
+    ) -> StepResult:
         t0 = time.perf_counter()
         step = len(ctx) - self._prompt_len
         exhausted = step >= len(self._continuation)
@@ -244,10 +279,16 @@ class FakeBackend:
         # report the modeled latency, not the near-zero real one
         latency_ms = round(38 + r() * 45 + (step % 4 == 0 and 25 or 0), 1)
 
+        attention, head_entropies = (
+            self._fake_attention(ctx, step) if collect_attention else (None, None)
+        )
+
         return StepResult(
             top_k=top_k,
             full_log_probs=log_probs,
             layer_stats=layer_stats,
+            attention=attention,
+            head_entropies=head_entropies,
             latency_ms=latency_ms,
         )
 

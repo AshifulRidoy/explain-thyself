@@ -13,6 +13,7 @@
  * The realism math is deliberately portable: the Python FakeBackend mirrors it.
  */
 import type {
+  AttentionEvent,
   ConceptEvent,
   DecisionEvent,
   InputEvent,
@@ -40,6 +41,9 @@ export interface FixtureSpec {
   continuation: string;
   seed: number;
   layerCount: number;
+  /** Emit per-layer ATTENTION events (fixture becomes RESEARCH mode). */
+  attention?: boolean;
+  headCount?: number;
   concepts?: FixtureConceptSpec[];
 }
 
@@ -119,6 +123,47 @@ function layerNormCurve(layer: number, layerCount: number, stepGain: number): nu
   return (2.5 + 2.4 * layer + 6 * frac * frac) * stepGain;
 }
 
+/**
+ * Deterministic imitation of the hook-side attention reduction — the exact
+ * mirror of FakeBackend._fake_attention: BOS sink growing with depth,
+ * recency-weighted jitter elsewhere, rows normalized to sum 1, head mean +
+ * per-head entropy. Draws from a SEPARATE seeded stream (seed + 777_000 +
+ * step*131 + layer*37) so adding attention never shifts the main rng —
+ * STANDARD fixtures stay byte-identical to before this existed.
+ */
+export function fakeAttention(
+  seed: number,
+  step: number,
+  layer: number, // 0-based
+  layerCount: number,
+  headCount: number,
+  n: number, // context length INCLUDING the BOS entry
+): { mean: number[]; headEntropyBits: number[] } {
+  const rng = mulberry32(seed + 777_000 + step * 131 + layer * 37);
+  const rows: number[][] = [];
+  for (let h = 0; h < headCount; h++) {
+    const w: number[] = new Array(n);
+    const bosBias = 0.2 + (0.6 * (layer + 1)) / layerCount;
+    let total = 0;
+    for (let j = 0; j < n; j++) {
+      w[j] =
+        j === 0
+          ? bosBias + rng() * 0.25
+          : Math.exp(-(n - 1 - j) / 6) * (0.3 + rng() * 0.9);
+      total += w[j];
+    }
+    rows.push(w.map((x) => x / total));
+  }
+  const mean = new Array<number>(n);
+  for (let j = 0; j < n; j++) {
+    mean[j] = rows.reduce((a, r) => a + r[j], 0) / headCount;
+  }
+  const headEntropyBits = rows.map((r) =>
+    round(-r.reduce((a, p) => (p > 0 ? a + p * Math.log2(p) : a), 0), 3),
+  );
+  return { mean, headEntropyBits };
+}
+
 export function generateTraceFixture(spec: FixtureSpec): Trace {
   const rng = mulberry32(spec.seed);
   const events: TraceEvent[] = [];
@@ -163,6 +208,10 @@ export function generateTraceFixture(spec: FixtureSpec): Trace {
 
   // running per-layer mean for normRatio (includes current step; step 0 ⇒ 1.0)
   const layerMeans = new Array<number>(spec.layerCount).fill(0);
+
+  // position-indexed texts for attention rows; entry 0 is the BOS every real
+  // context starts with — surfaced as position -1, never dropped
+  const ctxTexts = ["<bos>", ...promptTokens.map((tok) => tok.text)];
 
   const conceptsByStep = new Map<number, FixtureConceptSpec[]>();
   for (const c of spec.concepts ?? []) {
@@ -267,6 +316,37 @@ export function generateTraceFixture(spec: FixtureSpec): Trace {
     };
     events.push(layerEvent);
 
+    // per-layer attention rows from the final position (RESEARCH fixtures)
+    if (spec.attention) {
+      const headCount = spec.headCount ?? 12;
+      for (let i = 0; i < spec.layerCount; i++) {
+        const { mean, headEntropyBits } = fakeAttention(
+          spec.seed,
+          step,
+          i,
+          spec.layerCount,
+          headCount,
+          ctxTexts.length,
+        );
+        const attentionEvent: AttentionEvent = {
+          id: nextId(),
+          seq: seq++,
+          type: "ATTENTION",
+          t,
+          level: "DERIVED",
+          position: promptLen + step,
+          layer: i + 1,
+          aggregated: mean.map((weight, j) => ({
+            position: j - 1,
+            text: ctxTexts[j],
+            weight: round(weight, 4),
+          })),
+          headEntropyBits,
+        };
+        events.push(attentionEvent);
+      }
+    }
+
     for (const c of conceptsByStep.get(step) ?? []) {
       const conceptEvent: ConceptEvent = {
         id: nextId(),
@@ -280,6 +360,8 @@ export function generateTraceFixture(spec: FixtureSpec): Trace {
       };
       events.push(conceptEvent);
     }
+
+    ctxTexts.push(tok.text);
   }
 
   const decisionEvent: DecisionEvent = {
@@ -319,7 +401,7 @@ export function generateTraceFixture(spec: FixtureSpec): Trace {
       paramCount: 124_000_000,
     },
     input: { text: spec.prompt },
-    traceMode: "STANDARD",
+    traceMode: spec.attention ? "RESEARCH" : "STANDARD",
     sampling: {
       maxTokens: continuationTokens.length + 2,
       temperature: 0,
@@ -372,6 +454,8 @@ export const FIXTURES: FixtureSpec[] = [
     prompt: "Why is the sky blue?",
     seed: 777,
     layerCount: 12,
+    attention: true, // the RESEARCH-mode fixture: per-layer ATTENTION events
+    headCount: 12,
     continuation:
       "The sky looks blue because of how air molecules scatter sunlight. " +
       "Sunlight contains all colors, and short blue wavelengths scatter more " +

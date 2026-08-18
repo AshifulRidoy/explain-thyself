@@ -101,6 +101,76 @@ describe("fixture realism invariants", () => {
   });
 });
 
+describe("attention fixtures (Phase 4)", () => {
+  const skyBlue = FIXTURES.find((f) => f.key === "trace-sky-blue")!;
+
+  it("only the attention fixture is RESEARCH; others emit no ATTENTION events", () => {
+    const research = generateTraceFixture(skyBlue);
+    expect(research.traceMode).toBe("RESEARCH");
+    expect(research.events.some((e) => e.type === "ATTENTION")).toBe(true);
+
+    for (const spec of FIXTURES.filter((f) => !f.attention)) {
+      const trace = generateTraceFixture(spec);
+      expect(trace.traceMode).toBe("STANDARD");
+      expect(trace.events.some((e) => e.type === "ATTENTION")).toBe(false);
+    }
+  });
+
+  it("emits one ATTENTION per layer per step, layers 1..N in order", () => {
+    const trace = generateTraceFixture(skyBlue);
+    const tokens = trace.events.filter((e) => e.type === "TOKEN");
+    const attn = trace.events.filter(
+      (e): e is Extract<typeof e, { type: "ATTENTION" }> => e.type === "ATTENTION",
+    );
+    expect(attn.length).toBe(tokens.length * skyBlue.layerCount);
+    // consecutive blocks of layerCount, ordered 1..N
+    for (let s = 0; s < tokens.length; s++) {
+      const block = attn.slice(s * skyBlue.layerCount, (s + 1) * skyBlue.layerCount);
+      expect(block.map((e) => e.layer)).toEqual(
+        Array.from({ length: skyBlue.layerCount }, (_, i) => i + 1),
+      );
+      for (const e of block) expect(e.position).toBe(tokens[s].position);
+    }
+  });
+
+  it("rows are distributions over [BOS, prompt, generated-so-far]", () => {
+    const trace = generateTraceFixture(skyBlue);
+    const promptLen = trace.events[0].type === "INPUT" ? trace.events[0].tokenCount : 0;
+    const attn = trace.events.filter(
+      (e): e is Extract<typeof e, { type: "ATTENTION" }> => e.type === "ATTENTION",
+    );
+    for (let i = 0; i < attn.length; i++) {
+      const e = attn[i];
+      const step = Math.floor(i / skyBlue.layerCount);
+      const row = e.aggregated!;
+      // BOS + prompt + tokens emitted before this step
+      expect(row.length).toBe(promptLen + step + 1);
+      // BOS is entry 0, surfaced as position -1
+      expect(row[0]).toMatchObject({ position: -1, text: "<bos>" });
+      expect(row[1].position).toBe(0);
+      // head-mean of softmax rows: a distribution (4-dp rounding slack)
+      const sum = row.reduce((a, r) => a + r.weight, 0);
+      expect(Math.abs(sum - 1)).toBeLessThan(5e-3);
+      // per-head entropies: 12 heads, each bounded by log2(row length)
+      expect(e.headEntropyBits!.length).toBe(12);
+      for (const h of e.headEntropyBits!) {
+        expect(h).toBeGreaterThan(0);
+        expect(h).toBeLessThanOrEqual(Math.log2(row.length) + 1e-3);
+      }
+    }
+  });
+
+  it("BOS sink grows with depth (mirrors real GPT-2)", () => {
+    const trace = generateTraceFixture(skyBlue);
+    const attn = trace.events.filter(
+      (e): e is Extract<typeof e, { type: "ATTENTION" }> => e.type === "ATTENTION",
+    );
+    const bos = (layerIdx: number) => attn[layerIdx].aggregated![0].weight;
+    expect(bos(skyBlue.layerCount - 1)).toBeGreaterThan(bos(0));
+    expect(bos(skyBlue.layerCount - 1)).toBeGreaterThan(0.1);
+  });
+});
+
 describe("schema strictness", () => {
   it("rejects unknown fields", () => {
     const trace = generateTraceFixture(FIXTURES[2]) as unknown as Record<string, unknown>;

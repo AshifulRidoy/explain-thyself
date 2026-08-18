@@ -30,7 +30,13 @@ class StepResult:
     full_log_probs: np.ndarray
     # (layer, l2_norm at final position); None when collect_layers=False
     layer_stats: list[tuple[int, float]] | None
-    latency_ms: float
+    # layer -> head-mean attention from the final position to every prior
+    # position, length == len(ctx); reduced HOOK-SIDE, never a cached
+    # [heads, seq, seq] tensor. None when collect_attention=False.
+    attention: dict[int, np.ndarray] | None = None
+    # layer -> per-head entropy (bits) of that head's final-position row
+    head_entropies: dict[int, list[float]] | None = None
+    latency_ms: float = 0.0
 
 
 @runtime_checkable
@@ -45,6 +51,8 @@ class ModelBackend(Protocol):
 
     def decode_token(self, token_id: int) -> TopToken: ...
 
-    def step(self, ctx: list[int], collect_layers: bool) -> StepResult: ...
+    def step(
+        self, ctx: list[int], collect_layers: bool, collect_attention: bool = False
+    ) -> StepResult: ...
 
     def is_eos(self, token_id: int) -> bool: ...
