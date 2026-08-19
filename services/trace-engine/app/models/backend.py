@@ -51,6 +51,14 @@ class ModelBackend(Protocol):
 
     def decode_token(self, token_id: int) -> TopToken: ...
 
+    # Phase 5 seam: resolve a concept-dictionary word to the token ids that
+    # can realize it (a real tokenizer returns the bare and leading-space
+    # variants when each is a single token; empty list = word unmatchable).
+    def word_token_ids(self, word: str) -> list[int]: ...
+
+    # Human-readable text for one of those ids (concept evidence rows)
+    def token_text(self, token_id: int) -> str: ...
+
     def step(
         self, ctx: list[int], collect_layers: bool, collect_attention: bool = False
     ) -> StepResult: ...

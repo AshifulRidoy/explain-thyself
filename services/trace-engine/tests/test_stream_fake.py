@@ -1,7 +1,7 @@
 """End-to-end stream test with the FakeBackend (no torch, no DB).
 
-Verifies the full pipeline shape: INPUT → (TOKEN, LAYER_ACTIVITY)* →
-DECISION → OUTPUT → done, with gapless seq and monotone t.
+Verifies the full pipeline shape: INPUT → (TOKEN, LAYER_ACTIVITY, CONCEPT×k)*
+→ DECISION → OUTPUT → done, with gapless seq and monotone t.
 """
 
 from __future__ import annotations
@@ -10,6 +10,7 @@ import json
 
 import pytest
 
+from app.aggregation.concepts import CONCEPT_ACTIVE_MASS, CONCEPT_DICTIONARY
 from app.engine.generate import trace_stream
 from app.models.fake_backend import FakeBackend
 from app.models.registry import MODEL_REGISTRY
@@ -63,11 +64,18 @@ async def test_frame_order_and_termination() -> None:
     assert types[0] == "INPUT"
     assert types[-2] == "DECISION"
     assert types[-1] == "OUTPUT"
-    for i in range(1, len(types) - 2):
-        if i % 2 == 1:
-            assert types[i] == "TOKEN"
+    # each step's block: TOKEN, then its derived/interpreted signals —
+    # LAYER_ACTIVITY once, then CONCEPT×k (k ≥ 0), nothing else
+    blocks: list[list[str]] = [[]]
+    for event_type in types[1:-2]:
+        if event_type == "TOKEN":
+            blocks.append([])
         else:
-            assert types[i] == "LAYER_ACTIVITY"
+            blocks[-1].append(event_type)
+    assert len(blocks) == 11  # leading empty + 10 steps
+    for block in blocks[1:]:
+        assert block[0] == "LAYER_ACTIVITY"
+        assert set(block[1:]) <= {"CONCEPT"}
 
 
 @pytest.mark.asyncio
@@ -138,13 +146,49 @@ async def test_basic_mode_emits_no_layer_activity() -> None:
         raw += frame
     types = [json.loads(d)["type"] for e, d in parse_frames(raw) if e == "trace_event"]
     assert "LAYER_ACTIVITY" not in types
+    assert "CONCEPT" not in types  # concepts are a non-BASIC signal
     assert "TOKEN" in types
+
+
+@pytest.mark.asyncio
+async def test_standard_mode_emits_concepts() -> None:
+    """STANDARD: steps carry INTERPRETED concept events — exact mass above
+    threshold, evidence tokens drawn from the concept's own word set, score
+    order descending within a step, fully deterministic."""
+    _, messages = await collect_fake_stream()
+    concepts = [m for m in messages[1:] if m["type"] == "CONCEPT"]
+    assert concepts, "fake STANDARD traces are concept-bearing by design"
+
+    dictionary = {c.conceptId: c for c in CONCEPT_DICTIONARY}
+    prompt_len = next(m["tokenCount"] for m in messages[1:] if m["type"] == "INPUT")
+    by_position: dict[int, list[dict]] = {}
+    for event in concepts:
+        assert event["level"] == "INTERPRETED"
+        assert event["score"] >= CONCEPT_ACTIVE_MASS
+        spec = dictionary[event["conceptId"]]
+        assert event["label"] == spec.label
+        (position,) = event["positions"]  # exactly one position per event
+        by_position.setdefault(position, []).append(event)
+        assert event["evidence"], "every concept ships its evidence"
+        for evidence in event["evidence"]:
+            assert evidence["text"] in spec.words
+            assert 0 < evidence["probability"] <= event["score"]
+
+    # within one step, events arrive sorted by mass (desc)
+    for events in by_position.values():
+        scores = [e["score"] for e in events]
+        assert scores == sorted(scores, reverse=True)
+    assert len(by_position) >= 3  # across 10 steps, several light up
+
+    _, again = await collect_fake_stream()
+    assert [m for m in again[1:] if m["type"] == "CONCEPT"] == concepts
 
 
 @pytest.mark.asyncio
 async def test_research_mode_emits_attention_per_layer() -> None:
     """RESEARCH: every step emits TOKEN → LAYER_ACTIVITY → 12× ATTENTION
-    (layers ascending), rows carry BOS at position -1 and sum to ~1."""
+    (layers ascending) → CONCEPT×k; rows carry BOS at position -1 and sum
+    to ~1."""
     backend = FakeBackend(MODEL_REGISTRY["fake"], seed=99)
     raw = ""
     async for frame in trace_stream(
@@ -162,10 +206,13 @@ async def test_research_mode_emits_attention_per_layer() -> None:
     types = [e["type"] for e in events]
 
     assert types.count("ATTENTION") == 3 * 12
-    # per-step block shape: TOKEN, LAYER_ACTIVITY, then L01..L12
+    # per-step block shape: TOKEN, LAYER_ACTIVITY, then L01..L12, then concepts
     first_block = types[1 : 1 + 14]
     assert first_block[0] == "TOKEN" and first_block[1] == "LAYER_ACTIVITY"
     assert [t for t in first_block[2:]] == ["ATTENTION"] * 12
+    if "CONCEPT" in types:  # concepts close the step, after every layer
+        rest = types[1 + 14 : types.index("TOKEN", 2)]
+        assert set(rest) <= {"CONCEPT"}
 
     attn = [e for e in events if e["type"] == "ATTENTION"]
     assert [a["layer"] for a in attn[:12]] == list(range(1, 13))

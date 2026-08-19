@@ -105,8 +105,9 @@ export function attentionByPosition(
 }
 
 /**
- * CONCEPT events carry no position of their own — they attach to the most
- * recent TOKEN event at their point in the seq order.
+ * CONCEPT events attach to the most recent TOKEN at their point in seq
+ * order (canvas grouping); `conceptsByPosition` keys by the measured
+ * position they now carry.
  */
 export function conceptsByToken(
   events: TraceEvent[],
@@ -120,6 +121,58 @@ export function conceptsByToken(
       list.push(e);
       map.set(currentToken.id, list);
     }
+  }
+  return map;
+}
+
+/** One concept's activity across a trace — the Phase 5 aggregate. */
+export interface ConceptActivity {
+  conceptId: string;
+  label: string;
+  events: ConceptEvent[];
+  /** the max-score event: what the canvas node anchors to */
+  peak: ConceptEvent;
+  /** Σ per-step scores — the "most active" ranking */
+  totalMass: number;
+}
+
+/**
+ * Aggregate CONCEPT events per conceptId, ranked by total mass. The mass
+ * is measured; the ranking is over interpreted labels — the panel says so.
+ */
+export function conceptsTimeline(events: TraceEvent[]): ConceptActivity[] {
+  const byId = new Map<string, ConceptEvent[]>();
+  for (const e of events) {
+    if (e.type !== "CONCEPT") continue;
+    const list = byId.get(e.conceptId);
+    if (list) list.push(e);
+    else byId.set(e.conceptId, [e]);
+  }
+  const out: ConceptActivity[] = [];
+  for (const [conceptId, list] of byId) {
+    const peak = list.reduce((a, b) => (b.score > a.score ? b : a));
+    out.push({
+      conceptId,
+      label: list[0].label,
+      events: list,
+      peak,
+      totalMass: list.reduce((a, e) => a + e.score, 0),
+    });
+  }
+  return out.sort((a, b) => b.totalMass - a.totalMass);
+}
+
+/** CONCEPT events keyed by the step position they measured. */
+export function conceptsByPosition(
+  events: TraceEvent[],
+): Map<number, ConceptEvent[]> {
+  const map = new Map<number, ConceptEvent[]>();
+  for (const e of events) {
+    if (e.type !== "CONCEPT" || !e.positions?.length) continue;
+    const position = e.positions[e.positions.length - 1];
+    const list = map.get(position);
+    if (list) list.push(e);
+    else map.set(position, [e]);
   }
   return map;
 }

@@ -8,7 +8,9 @@ import {
   applyEvent,
   attentionByPosition,
   completeStream,
+  conceptsByPosition,
   conceptsByToken,
+  conceptsTimeline,
   failStream,
   initialTraceState,
   layerActivityByPosition,
@@ -59,6 +61,41 @@ describe("selectors", () => {
     // every attached concept's token id must exist in the token list
     const tokenIds = new Set(tokenEvents(pyRust.events).map((t) => t.id));
     for (const id of map.keys()) expect(tokenIds.has(id)).toBe(true);
+  });
+
+  it("conceptsTimeline ranks concepts by total mass, peak = max score", () => {
+    const timeline = conceptsTimeline(pyRust.events);
+    expect(timeline.length).toBeGreaterThan(3);
+    // ranking: totalMass descending
+    const totals = timeline.map((a) => a.totalMass);
+    expect(totals).toEqual([...totals].sort((a, b) => b - a));
+    for (const activity of timeline) {
+      expect(activity.totalMass).toBe(
+        activity.events.reduce((sum, e) => sum + e.score, 0),
+      );
+      const peakScore = Math.max(...activity.events.map((e) => e.score));
+      expect(activity.peak.score).toBe(peakScore);
+      expect(activity.peak.conceptId).toBe(activity.conceptId);
+    }
+    // aggregates stay consistent with the raw events
+    const allEvents = timeline.flatMap((a) => a.events);
+    expect(allEvents.length).toBe(
+      pyRust.events.filter((e) => e.type === "CONCEPT").length,
+    );
+  });
+
+  it("conceptsByPosition keys events by their measured position", () => {
+    const byPos = conceptsByPosition(pyRust.events);
+    const input = pyRust.events[0] as { tokenCount: number };
+    for (const [position, events] of byPos) {
+      expect(position).toBeGreaterThanOrEqual(input.tokenCount);
+      for (const e of events) expect(e.positions).toContain(position);
+    }
+    // partial streams: only landed positions appear (streaming aggregation)
+    const partial = conceptsByPosition(pyRust.events.slice(0, 20));
+    for (const events of partial.values()) {
+      for (const e of events) expect(pyRust.events.slice(0, 20)).toContain(e);
+    }
   });
 
   it("layerActivityByPosition maps every STANDARD token position", () => {
@@ -130,6 +167,29 @@ describe("toGraph", () => {
     const partial = pyRust.events.slice(0, 6);
     const { nodes } = toGraph(partial, null, true);
     expect(nodes.at(-1)!.type).not.toBe("OUTPUT");
+  });
+
+  it("shows one ConceptNode per conceptId, at its peak-score step", () => {
+    const conceptEvents = pyRust.events.filter((e) => e.type === "CONCEPT");
+    expect(conceptEvents.length).toBeGreaterThan(30); // the trace is concept-rich
+    const { nodes } = toGraph(pyRust.events, null, false);
+    const conceptNodes = nodes.filter((n) => n.type === "CONCEPT");
+    const distinctIds = new Set(conceptEvents.map((e) => e.conceptId));
+    expect(conceptNodes).toHaveLength(distinctIds.size);
+
+    // each node carries the peak (max-score) event for its concept, and a
+    // concept peaks exactly once — no duplicate nodes can share an id
+    const nodeIds = conceptNodes.map((n) => n.id);
+    expect(new Set(nodeIds).size).toBe(nodeIds.length);
+    for (const node of conceptNodes) {
+      const event = (node.data as { event: { conceptId: string; score: number } }).event;
+      const peak = Math.max(
+        ...conceptEvents
+          .filter((e) => e.conceptId === event.conceptId)
+          .map((e) => e.score),
+      );
+      expect(event.score).toBe(peak);
+    }
   });
 });
 

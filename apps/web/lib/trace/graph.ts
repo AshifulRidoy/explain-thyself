@@ -63,6 +63,26 @@ export function toGraph(
     }
   }
 
+  // the canvas shows each concept ONCE per trace — at the step where it
+  // peaked. A RESEARCH trace references a concept dozens of times; one node
+  // per event would bury the token chain under hundreds of duplicates.
+  const peakByConcept = new Map<string, ConceptEvent>();
+  for (const e of events) {
+    if (e.type !== "CONCEPT") continue;
+    const best = peakByConcept.get(e.conceptId);
+    if (!best || e.score > best.score) peakByConcept.set(e.conceptId, e);
+  }
+  const peaksByToken = new Map<string, ConceptEvent[]>();
+  for (const tok of tokens) {
+    const mine = (conceptsByToken.get(tok.id) ?? []).filter(
+      (c) => peakByConcept.get(c.conceptId) === c,
+    );
+    if (mine.length) {
+      mine.sort((a, b) => b.score - a.score);
+      peaksByToken.set(tok.id, mine);
+    }
+  }
+
   let prevId: string | null = null;
 
   if (input) {
@@ -103,24 +123,25 @@ export function toGraph(
     }
     prevId = id;
 
-    // concepts hang below their token
-    const concepts = conceptsByToken.get(tok.id) ?? [];
+    // concept peaks hang below their token, highest score first
+    const concepts = peaksByToken.get(tok.id) ?? [];
     concepts.forEach((c, ci) => {
-      const cid = c.id;
+      // node id = the peak event's id (unique: one node per concept) so
+      // canvas clicks select the event the Inspector will show
       nodes.push({
-        id: cid,
+        id: c.id,
         type: "CONCEPT",
         position: {
           x: col * DX + CONCEPT_OFFSET.x,
           y: (row + 1) * DY + CONCEPT_OFFSET.y + ci * 56,
         },
-        data: { event: c, selected: cid === selectedEventId, latest: false },
+        data: { event: c, selected: c.id === selectedEventId, latest: false },
         draggable: false,
       });
       edges.push({
-        id: `${id}->${cid}`,
+        id: `${id}->${c.id}`,
         source: id,
-        target: cid,
+        target: c.id,
         style: { stroke: "var(--line)", strokeDasharray: "2 3" },
       });
     });

@@ -200,6 +200,66 @@
     {
       "id": "evt_0003",
       "seq": 3,
+      "type": "CONCEPT",
+      "t": 88,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.2008,
+      "positions": [
+        1
+      ],
+      "evidence": [
+        {
+          "tokenId": 22766,
+          "text": "could",
+          "probability": 0.0669
+        },
+        {
+          "tokenId": 15629,
+          "text": "likely",
+          "probability": 0.0669
+        },
+        {
+          "tokenId": 31948,
+          "text": "uncertain",
+          "probability": 0.0669
+        }
+      ]
+    },
+    {
+      "id": "evt_0004",
+      "seq": 4,
+      "type": "CONCEPT",
+      "t": 88,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.1341,
+      "positions": [
+        1
+      ],
+      "evidence": [
+        {
+          "tokenId": 37655,
+          "text": "best",
+          "probability": 0.0447
+        },
+        {
+          "tokenId": 2440,
+          "text": "compared",
+          "probability": 0.0447
+        },
+        {
+          "tokenId": 48711,
+          "text": "prefer",
+          "probability": 0.0447
+        }
+      ]
+    },
+    {
+      "id": "evt_0005",
+      "seq": 5,
       "type": "TOKEN",
       "t": 173,
       "level": "MEASURED",
@@ -281,8 +341,8 @@
       "latencyMs": 70
     },
     {
-      "id": "evt_0004",
-      "seq": 4,
+      "id": "evt_0006",
+      "seq": 6,
       "type": "LAYER_ACTIVITY",
       "t": 173,
       "level": "DERIVED",
@@ -352,8 +412,68 @@
       ]
     },
     {
-      "id": "evt_0005",
-      "seq": 5,
+      "id": "evt_0007",
+      "seq": 7,
+      "type": "CONCEPT",
+      "t": 173,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.4316,
+      "positions": [
+        2
+      ],
+      "evidence": [
+        {
+          "tokenId": 7029,
+          "text": "systems",
+          "probability": 0.1439
+        },
+        {
+          "tokenId": 23722,
+          "text": "model",
+          "probability": 0.1439
+        },
+        {
+          "tokenId": 35334,
+          "text": "machine",
+          "probability": 0.1439
+        }
+      ]
+    },
+    {
+      "id": "evt_0008",
+      "seq": 8,
+      "type": "CONCEPT",
+      "t": 173,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.3053,
+      "positions": [
+        2
+      ],
+      "evidence": [
+        {
+          "tokenId": 36082,
+          "text": "perhaps",
+          "probability": 0.1018
+        },
+        {
+          "tokenId": 14696,
+          "text": "might",
+          "probability": 0.1018
+        },
+        {
+          "tokenId": 15532,
+          "text": "generally",
+          "probability": 0.1018
+        }
+      ]
+    },
+    {
+      "id": "evt_0009",
+      "seq": 9,
       "type": "TOKEN",
       "t": 265,
       "level": "MEASURED",
@@ -435,8 +555,8 @@
       "latencyMs": 77
     },
     {
-      "id": "evt_0006",
-      "seq": 6,
+      "id": "evt_0010",
+      "seq": 10,
       "type": "LAYER_ACTIVITY",
       "t": 265,
       "level": "DERIVED",
@@ -506,8 +626,38 @@
       ]
     },
     {
-      "id": "evt_0007",
-      "seq": 7,
+      "id": "evt_0011",
+      "seq": 11,
+      "type": "CONCEPT",
+      "t": 265,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.2037,
+      "positions": [
+        3
+      ],
+      "evidence": [
+        {
+          "tokenId": 46063,
+          "text": "better",
+          "probability": 0.0679
+        },
+        {
+          "tokenId": 30418,
+          "text": "difference",
+          "probability": 0.0679
+        },
+        {
+          "tokenId": 48711,
+          "text": "prefer",
+          "probability": 0.0679
+        }
+      ]
+    },
+    {
+      "id": "evt_0012",
+      "seq": 12,
       "type": "DECISION",
       "t": 269,
       "level": "DERIVED",
@@ -515,8 +665,8 @@
       "detail": "end-of-sequence token reached"
     },
     {
-      "id": "evt_0008",
-      "seq": 8,
+      "id": "evt_0013",
+      "seq": 13,
       "type": "OUTPUT",
       "t": 273,
       "level": "MEASURED",

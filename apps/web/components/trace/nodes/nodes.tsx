@@ -71,7 +71,8 @@ function ConceptNodeView({ data }: NodeProps<Node<GenericNodeData>>) {
       <p className="mt-0.5 font-serif text-sm italic leading-snug text-muted">
         {event.label}
       </p>
-      <div className="machine-label mt-1">{event.score.toFixed(2)}</div>
+      {/* the canvas shows each concept once — at the step where it peaked */}
+      <div className="machine-label mt-1">peak {event.score.toFixed(2)}</div>
     </TraceNodeShell>
   );
 }

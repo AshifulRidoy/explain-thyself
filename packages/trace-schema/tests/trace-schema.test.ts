@@ -7,6 +7,7 @@ import {
   generateTraceFixture,
   mulberry32,
 } from "../src/generate.js";
+import { CONCEPT_ACTIVE_MASS, CONCEPT_DICTIONARY } from "../src/concepts.js";
 import { traceSchema, validateTrace } from "../src/schema.js";
 import { SIGNAL_TAXONOMY } from "../src/taxonomy.js";
 
@@ -14,6 +15,24 @@ const FIXTURES_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "fixtur
 
 async function readFixture(key: string): Promise<unknown> {
   return JSON.parse(await readFile(join(FIXTURES_DIR, `${key}.json`), "utf8"));
+}
+
+/** Minimal valid envelope for parse-level event tests. */
+function baseTrace() {
+  return {
+    id: "tr_abc12345",
+    displayId: 1,
+    model: {
+      name: "gpt2-small", revision: "", device: "cpu", layerCount: 12,
+      paramCount: 124000000,
+    },
+    input: { text: "x" },
+    traceMode: "STANDARD",
+    sampling: { maxTokens: 4, temperature: 0, topK: null, seed: 1 },
+    status: "complete",
+    createdAt: "2026-08-16T00:00:00.000Z",
+    events: [],
+  };
 }
 
 describe("generator determinism", () => {
@@ -171,6 +190,68 @@ describe("attention fixtures (Phase 4)", () => {
   });
 });
 
+describe("concept fixtures (Phase 5)", () => {
+  it("every fixture's CONCEPTs are dictionary-scored, positioned, evidenced", () => {
+    for (const spec of FIXTURES) {
+      const trace = generateTraceFixture(spec);
+      const input = trace.events[0] as Extract<
+        (typeof trace.events)[number],
+        { type: "INPUT" }
+      >;
+      const concepts = trace.events.filter(
+        (e): e is Extract<typeof e, { type: "CONCEPT" }> => e.type === "CONCEPT",
+      );
+      expect(concepts.length).toBeGreaterThan(0);
+
+      const byPosition = new Map<number, number[]>();
+      for (const e of concepts) {
+        // dictionary concepts only — no hand-placed labels survive
+        expect(e.conceptId).toMatch(/^concept_[a-z_]+$/);
+        expect(e.level).toBe("INTERPRETED");
+        // threshold applied pre-rounding: 4-dp rounding slack only
+        expect(e.score).toBeGreaterThanOrEqual(CONCEPT_ACTIVE_MASS - 5e-5);
+        expect(e.positions).toHaveLength(1);
+        const position = e.positions![0];
+        expect(position).toBeGreaterThanOrEqual(input.tokenCount);
+        expect(position).toBeLessThan(input.tokenCount + trace.output!.tokenCount);
+
+        expect(e.evidence!.length).toBeGreaterThan(0);
+        const concept = CONCEPT_DICTIONARY.find((c) => c.conceptId === e.conceptId)!;
+        for (const ev of e.evidence!) {
+          expect(concept.words).toContain(ev.text); // evidence stays auditable
+          expect(ev.probability).toBeGreaterThan(0);
+        }
+        const probs = e.evidence!.map((x) => x.probability);
+        expect(probs).toEqual([...probs].sort((a, b) => b - a));
+        const scores = byPosition.get(position) ?? [];
+        scores.push(e.score);
+        byPosition.set(position, scores);
+      }
+      // within a step, events arrive sorted by mass (descending)
+      for (const scores of byPosition.values()) {
+        expect(scores).toEqual([...scores].sort((a, b) => b - a));
+      }
+    }
+  });
+
+  it("RESEARCH fixtures carry concepts alongside attention", () => {
+    const skyBlue = FIXTURES.find((f) => f.key === "trace-sky-blue")!;
+    const trace = generateTraceFixture(skyBlue);
+    const types = trace.events.map((e) => e.type);
+    expect(types).toContain("ATTENTION");
+    expect(types).toContain("CONCEPT");
+    // every step: TOKEN, LAYER_ACTIVITY, 12×ATTENTION, then CONCEPT×k (k ≥ 0)
+    const tokenIdx = [...types.keys()].filter((i) => types[i] === "TOKEN");
+    for (let s = 0; s < tokenIdx.length - 1; s++) {
+      const block = types.slice(tokenIdx[s], tokenIdx[s + 1]);
+      expect(block[0]).toBe("TOKEN");
+      expect(block[1]).toBe("LAYER_ACTIVITY");
+      expect(block.slice(2, 14)).toEqual(Array.from({ length: 12 }, () => "ATTENTION"));
+      expect(block.slice(14).every((t) => t === "CONCEPT")).toBe(true);
+    }
+  });
+});
+
 describe("schema strictness", () => {
   it("rejects unknown fields", () => {
     const trace = generateTraceFixture(FIXTURES[2]) as unknown as Record<string, unknown>;
@@ -183,6 +264,64 @@ describe("schema strictness", () => {
     const bad = JSON.parse(JSON.stringify(trace));
     bad.events[1].id = "nope";
     expect(() => traceSchema.parse(bad)).toThrow();
+  });
+});
+
+describe("concept dictionary (Phase 5)", () => {
+  it("word sets are disjoint — mass attributes to exactly one label", () => {
+    const seen = new Map<string, string>();
+    for (const concept of CONCEPT_DICTIONARY) {
+      for (const word of concept.words) {
+        const owner = seen.get(word);
+        if (owner) {
+          throw new Error(`"${word}" is in both ${owner} and ${concept.conceptId}`);
+        }
+        seen.set(word, concept.conceptId);
+      }
+    }
+    expect(seen.size).toBeGreaterThan(50);
+  });
+
+  it("is a real dictionary: ≥10 concepts, ≥8 single words each, sane threshold", () => {
+    expect(CONCEPT_DICTIONARY.length).toBeGreaterThanOrEqual(10);
+    for (const concept of CONCEPT_DICTIONARY) {
+      expect(concept.words.length).toBeGreaterThanOrEqual(8);
+      for (const word of concept.words) {
+        expect(word).toMatch(/^[a-z]+$/); // single lowercase words, no phrases
+      }
+      expect(concept.conceptId).toMatch(/^concept_[a-z_]+$/);
+    }
+    expect(CONCEPT_ACTIVE_MASS).toBeGreaterThan(0);
+    expect(CONCEPT_ACTIVE_MASS).toBeLessThan(1);
+  });
+
+  it("CONCEPT events accept auditable evidence", () => {
+    const event = {
+      id: "evt_0001",
+      seq: 1,
+      type: "CONCEPT",
+      t: 10,
+      level: "INTERPRETED",
+      conceptId: "concept_uncertainty",
+      label: "uncertainty / hedging",
+      score: 0.42,
+      positions: [7],
+      evidence: [
+        { tokenId: 1, text: "maybe", probability: 0.4 },
+        { tokenId: 2, text: "perhaps", probability: 0.02 },
+      ],
+    };
+    expect(traceSchema.parse({ ...baseTrace(), events: [event] }).events[0])
+      .toMatchObject({ conceptId: "concept_uncertainty", score: 0.42 });
+    // evidence is optional (old fixtures carry none) but bounded
+    const noEvidence = { ...event } as Record<string, unknown>;
+    delete noEvidence.evidence;
+    expect(() => traceSchema.parse({ ...baseTrace(), events: [noEvidence] })).not.toThrow();
+    const tooMany = {
+      ...event,
+      evidence: Array.from({ length: 9 }, () => ({ tokenId: 1, text: "x", probability: 0.1 })),
+    };
+    expect(() => traceSchema.parse({ ...baseTrace(), events: [tooMany] })).toThrow();
   });
 });
 

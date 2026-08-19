@@ -54,6 +54,24 @@ test.describe("live inference", () => {
     });
   });
 
+  test("live trace measures concepts alongside tokens (STANDARD)", async ({
+    page,
+  }) => {
+    await page.goto("/explore?prompt=Why%20is%20the%20sky%20blue%3F");
+    await expect(page.locator('button[title^="p "]').first()).toBeVisible({
+      timeout: 120_000,
+    });
+
+    // concept events stream in with the tokens — the panel ranks them
+    const rows = page.getByTestId("concept-rows");
+    await expect(rows).toBeVisible({ timeout: 120_000 });
+    await expect(page.getByTestId("concept-row").first()).toBeVisible();
+    // on this prompt the science/nature dictionary carries real mass
+    await expect(rows.getByText(/science \/ nature/)).toBeVisible();
+
+    await expect(page.getByText("Complete")).toBeVisible({ timeout: 120_000 });
+  });
+
   test("RESEARCH dial streams per-layer attention from the live model", async ({
     page,
   }) => {

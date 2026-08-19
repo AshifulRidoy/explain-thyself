@@ -230,6 +230,36 @@
     {
       "id": "evt_0003",
       "seq": 3,
+      "type": "CONCEPT",
+      "t": 100,
+      "level": "INTERPRETED",
+      "conceptId": "concept_quantity",
+      "label": "quantity / degree",
+      "score": 0.2293,
+      "positions": [
+        7
+      ],
+      "evidence": [
+        {
+          "tokenId": 13913,
+          "text": "few",
+          "probability": 0.0764
+        },
+        {
+          "tokenId": 7409,
+          "text": "numbers",
+          "probability": 0.0764
+        },
+        {
+          "tokenId": 36554,
+          "text": "majority",
+          "probability": 0.0764
+        }
+      ]
+    },
+    {
+      "id": "evt_0004",
+      "seq": 4,
       "type": "TOKEN",
       "t": 175,
       "level": "MEASURED",
@@ -311,8 +341,8 @@
       "latencyMs": 60
     },
     {
-      "id": "evt_0004",
-      "seq": 4,
+      "id": "evt_0005",
+      "seq": 5,
       "type": "LAYER_ACTIVITY",
       "t": 175,
       "level": "DERIVED",
@@ -382,8 +412,48 @@
       ]
     },
     {
-      "id": "evt_0005",
-      "seq": 5,
+      "id": "evt_0006",
+      "seq": 6,
+      "type": "CONCEPT",
+      "t": 175,
+      "level": "INTERPRETED",
+      "conceptId": "concept_quantity",
+      "label": "quantity / degree",
+      "score": 0.8232,
+      "positions": [
+        8
+      ],
+      "evidence": [
+        {
+          "tokenId": 31202,
+          "text": "most",
+          "probability": 0.8232
+        }
+      ]
+    },
+    {
+      "id": "evt_0007",
+      "seq": 7,
+      "type": "CONCEPT",
+      "t": 175,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1455,
+      "positions": [
+        8
+      ],
+      "evidence": [
+        {
+          "tokenId": 25523,
+          "text": "language",
+          "probability": 0.1455
+        }
+      ]
+    },
+    {
+      "id": "evt_0008",
+      "seq": 8,
       "type": "TOKEN",
       "t": 254,
       "level": "MEASURED",
@@ -465,8 +535,8 @@
       "latencyMs": 64
     },
     {
-      "id": "evt_0006",
-      "seq": 6,
+      "id": "evt_0009",
+      "seq": 9,
       "type": "LAYER_ACTIVITY",
       "t": 254,
       "level": "DERIVED",
@@ -536,18 +606,58 @@
       ]
     },
     {
-      "id": "evt_0007",
-      "seq": 7,
+      "id": "evt_0010",
+      "seq": 10,
       "type": "CONCEPT",
       "t": 254,
       "level": "INTERPRETED",
-      "conceptId": "concept_career_decision",
-      "label": "career decision",
-      "score": 0.86
+      "conceptId": "concept_quantity",
+      "label": "quantity / degree",
+      "score": 0.2715,
+      "positions": [
+        9
+      ],
+      "evidence": [
+        {
+          "tokenId": 31202,
+          "text": "most",
+          "probability": 0.0905
+        },
+        {
+          "tokenId": 23497,
+          "text": "lots",
+          "probability": 0.0905
+        },
+        {
+          "tokenId": 21957,
+          "text": "plenty",
+          "probability": 0.0905
+        }
+      ]
     },
     {
-      "id": "evt_0008",
-      "seq": 8,
+      "id": "evt_0011",
+      "seq": 11,
+      "type": "CONCEPT",
+      "t": 254,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.1952,
+      "positions": [
+        9
+      ],
+      "evidence": [
+        {
+          "tokenId": 16542,
+          "text": "people",
+          "probability": 0.1952
+        }
+      ]
+    },
+    {
+      "id": "evt_0012",
+      "seq": 12,
       "type": "TOKEN",
       "t": 314,
       "level": "MEASURED",
@@ -629,8 +739,8 @@
       "latencyMs": 45
     },
     {
-      "id": "evt_0009",
-      "seq": 9,
+      "id": "evt_0013",
+      "seq": 13,
       "type": "LAYER_ACTIVITY",
       "t": 314,
       "level": "DERIVED",
@@ -700,8 +810,28 @@
       ]
     },
     {
-      "id": "evt_0010",
-      "seq": 10,
+      "id": "evt_0014",
+      "seq": 14,
+      "type": "CONCEPT",
+      "t": 314,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.2162,
+      "positions": [
+        10
+      ],
+      "evidence": [
+        {
+          "tokenId": 29422,
+          "text": "before",
+          "probability": 0.2162
+        }
+      ]
+    },
+    {
+      "id": "evt_0015",
+      "seq": 15,
       "type": "TOKEN",
       "t": 425,
       "level": "MEASURED",
@@ -783,8 +913,8 @@
       "latencyMs": 96
     },
     {
-      "id": "evt_0011",
-      "seq": 11,
+      "id": "evt_0016",
+      "seq": 16,
       "type": "LAYER_ACTIVITY",
       "t": 425,
       "level": "DERIVED",
@@ -854,8 +984,38 @@
       ]
     },
     {
-      "id": "evt_0012",
-      "seq": 12,
+      "id": "evt_0017",
+      "seq": 17,
+      "type": "CONCEPT",
+      "t": 425,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.2801,
+      "positions": [
+        11
+      ],
+      "evidence": [
+        {
+          "tokenId": 8476,
+          "text": "worst",
+          "probability": 0.0934
+        },
+        {
+          "tokenId": 11315,
+          "text": "versus",
+          "probability": 0.0934
+        },
+        {
+          "tokenId": 2440,
+          "text": "compared",
+          "probability": 0.0934
+        }
+      ]
+    },
+    {
+      "id": "evt_0018",
+      "seq": 18,
       "type": "TOKEN",
       "t": 479,
       "level": "MEASURED",
@@ -937,8 +1097,8 @@
       "latencyMs": 39
     },
     {
-      "id": "evt_0013",
-      "seq": 13,
+      "id": "evt_0019",
+      "seq": 19,
       "type": "LAYER_ACTIVITY",
       "t": 479,
       "level": "DERIVED",
@@ -1008,8 +1168,68 @@
       ]
     },
     {
-      "id": "evt_0014",
-      "seq": 14,
+      "id": "evt_0020",
+      "seq": 20,
+      "type": "CONCEPT",
+      "t": 479,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.1587,
+      "positions": [
+        12
+      ],
+      "evidence": [
+        {
+          "tokenId": 11315,
+          "text": "versus",
+          "probability": 0.0529
+        },
+        {
+          "tokenId": 30418,
+          "text": "difference",
+          "probability": 0.0529
+        },
+        {
+          "tokenId": 48711,
+          "text": "prefer",
+          "probability": 0.0529
+        }
+      ]
+    },
+    {
+      "id": "evt_0021",
+      "seq": 21,
+      "type": "CONCEPT",
+      "t": 479,
+      "level": "INTERPRETED",
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.1452,
+      "positions": [
+        12
+      ],
+      "evidence": [
+        {
+          "tokenId": 24907,
+          "text": "because",
+          "probability": 0.0484
+        },
+        {
+          "tokenId": 16828,
+          "text": "caused",
+          "probability": 0.0484
+        },
+        {
+          "tokenId": 11316,
+          "text": "leads",
+          "probability": 0.0484
+        }
+      ]
+    },
+    {
+      "id": "evt_0022",
+      "seq": 22,
       "type": "TOKEN",
       "t": 552,
       "level": "MEASURED",
@@ -1091,8 +1311,8 @@
       "latencyMs": 58
     },
     {
-      "id": "evt_0015",
-      "seq": 15,
+      "id": "evt_0023",
+      "seq": 23,
       "type": "LAYER_ACTIVITY",
       "t": 552,
       "level": "DERIVED",
@@ -1162,8 +1382,63 @@
       ]
     },
     {
-      "id": "evt_0016",
-      "seq": 16,
+      "id": "evt_0024",
+      "seq": 24,
+      "type": "CONCEPT",
+      "t": 552,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.3242,
+      "positions": [
+        13
+      ],
+      "evidence": [
+        {
+          "tokenId": 32208,
+          "text": "person",
+          "probability": 0.1081
+        },
+        {
+          "tokenId": 9483,
+          "text": "humans",
+          "probability": 0.1081
+        },
+        {
+          "tokenId": 20647,
+          "text": "readers",
+          "probability": 0.1081
+        }
+      ]
+    },
+    {
+      "id": "evt_0025",
+      "seq": 25,
+      "type": "CONCEPT",
+      "t": 552,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1094,
+      "positions": [
+        13
+      ],
+      "evidence": [
+        {
+          "tokenId": 43197,
+          "text": "learn",
+          "probability": 0.0666
+        },
+        {
+          "tokenId": 47955,
+          "text": "learning",
+          "probability": 0.0428
+        }
+      ]
+    },
+    {
+      "id": "evt_0026",
+      "seq": 26,
       "type": "TOKEN",
       "t": 614,
       "level": "MEASURED",
@@ -1245,8 +1520,8 @@
       "latencyMs": 47
     },
     {
-      "id": "evt_0017",
-      "seq": 17,
+      "id": "evt_0027",
+      "seq": 27,
       "type": "LAYER_ACTIVITY",
       "t": 614,
       "level": "DERIVED",
@@ -1316,18 +1591,38 @@
       ]
     },
     {
-      "id": "evt_0018",
-      "seq": 18,
+      "id": "evt_0028",
+      "seq": 28,
       "type": "CONCEPT",
       "t": 614,
       "level": "INTERPRETED",
-      "conceptId": "concept_language_comparison",
-      "label": "language comparison",
-      "score": 0.91
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.2436,
+      "positions": [
+        14
+      ],
+      "evidence": [
+        {
+          "tokenId": 46993,
+          "text": "computers",
+          "probability": 0.0812
+        },
+        {
+          "tokenId": 1243,
+          "text": "program",
+          "probability": 0.0812
+        },
+        {
+          "tokenId": 16991,
+          "text": "tool",
+          "probability": 0.0812
+        }
+      ]
     },
     {
-      "id": "evt_0019",
-      "seq": 19,
+      "id": "evt_0029",
+      "seq": 29,
       "type": "TOKEN",
       "t": 725,
       "level": "MEASURED",
@@ -1409,8 +1704,8 @@
       "latencyMs": 96
     },
     {
-      "id": "evt_0020",
-      "seq": 20,
+      "id": "evt_0030",
+      "seq": 30,
       "type": "LAYER_ACTIVITY",
       "t": 725,
       "level": "DERIVED",
@@ -1480,8 +1775,38 @@
       ]
     },
     {
-      "id": "evt_0021",
-      "seq": 21,
+      "id": "evt_0031",
+      "seq": 31,
+      "type": "CONCEPT",
+      "t": 725,
+      "level": "INTERPRETED",
+      "conceptId": "concept_science",
+      "label": "science / nature",
+      "score": 0.2111,
+      "positions": [
+        15
+      ],
+      "evidence": [
+        {
+          "tokenId": 13336,
+          "text": "water",
+          "probability": 0.0704
+        },
+        {
+          "tokenId": 34348,
+          "text": "biology",
+          "probability": 0.0704
+        },
+        {
+          "tokenId": 25417,
+          "text": "sun",
+          "probability": 0.0704
+        }
+      ]
+    },
+    {
+      "id": "evt_0032",
+      "seq": 32,
       "type": "TOKEN",
       "t": 789,
       "level": "MEASURED",
@@ -1563,8 +1888,8 @@
       "latencyMs": 49
     },
     {
-      "id": "evt_0022",
-      "seq": 22,
+      "id": "evt_0033",
+      "seq": 33,
       "type": "LAYER_ACTIVITY",
       "t": 789,
       "level": "DERIVED",
@@ -1634,8 +1959,58 @@
       ]
     },
     {
-      "id": "evt_0023",
-      "seq": 23,
+      "id": "evt_0034",
+      "seq": 34,
+      "type": "CONCEPT",
+      "t": 789,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.5774,
+      "positions": [
+        16
+      ],
+      "evidence": [
+        {
+          "tokenId": 8322,
+          "text": "definitely",
+          "probability": 0.1925
+        },
+        {
+          "tokenId": 48800,
+          "text": "must",
+          "probability": 0.1925
+        },
+        {
+          "tokenId": 44745,
+          "text": "clearly",
+          "probability": 0.1925
+        }
+      ]
+    },
+    {
+      "id": "evt_0035",
+      "seq": 35,
+      "type": "CONCEPT",
+      "t": 789,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.0871,
+      "positions": [
+        16
+      ],
+      "evidence": [
+        {
+          "tokenId": 46063,
+          "text": "better",
+          "probability": 0.0871
+        }
+      ]
+    },
+    {
+      "id": "evt_0036",
+      "seq": 36,
       "type": "TOKEN",
       "t": 871,
       "level": "MEASURED",
@@ -1717,8 +2092,8 @@
       "latencyMs": 67
     },
     {
-      "id": "evt_0024",
-      "seq": 24,
+      "id": "evt_0037",
+      "seq": 37,
       "type": "LAYER_ACTIVITY",
       "t": 871,
       "level": "DERIVED",
@@ -1788,8 +2163,58 @@
       ]
     },
     {
-      "id": "evt_0025",
-      "seq": 25,
+      "id": "evt_0038",
+      "seq": 38,
+      "type": "CONCEPT",
+      "t": 871,
+      "level": "INTERPRETED",
+      "conceptId": "concept_science",
+      "label": "science / nature",
+      "score": 0.3821,
+      "positions": [
+        17
+      ],
+      "evidence": [
+        {
+          "tokenId": 38695,
+          "text": "light",
+          "probability": 0.1274
+        },
+        {
+          "tokenId": 42241,
+          "text": "atoms",
+          "probability": 0.1274
+        },
+        {
+          "tokenId": 19561,
+          "text": "chemical",
+          "probability": 0.1274
+        }
+      ]
+    },
+    {
+      "id": "evt_0039",
+      "seq": 39,
+      "type": "CONCEPT",
+      "t": 871,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.1122,
+      "positions": [
+        17
+      ],
+      "evidence": [
+        {
+          "tokenId": 48800,
+          "text": "must",
+          "probability": 0.1122
+        }
+      ]
+    },
+    {
+      "id": "evt_0040",
+      "seq": 40,
       "type": "TOKEN",
       "t": 963,
       "level": "MEASURED",
@@ -1871,8 +2296,8 @@
       "latencyMs": 77
     },
     {
-      "id": "evt_0026",
-      "seq": 26,
+      "id": "evt_0041",
+      "seq": 41,
       "type": "LAYER_ACTIVITY",
       "t": 963,
       "level": "DERIVED",
@@ -1942,8 +2367,68 @@
       ]
     },
     {
-      "id": "evt_0027",
-      "seq": 27,
+      "id": "evt_0042",
+      "seq": 42,
+      "type": "CONCEPT",
+      "t": 963,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.2739,
+      "positions": [
+        18
+      ],
+      "evidence": [
+        {
+          "tokenId": 25523,
+          "text": "language",
+          "probability": 0.2739
+        }
+      ]
+    },
+    {
+      "id": "evt_0043",
+      "seq": 43,
+      "type": "CONCEPT",
+      "t": 963,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.0672,
+      "positions": [
+        18
+      ],
+      "evidence": [
+        {
+          "tokenId": 46063,
+          "text": "better",
+          "probability": 0.0672
+        }
+      ]
+    },
+    {
+      "id": "evt_0044",
+      "seq": 44,
+      "type": "CONCEPT",
+      "t": 963,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.0507,
+      "positions": [
+        18
+      ],
+      "evidence": [
+        {
+          "tokenId": 7029,
+          "text": "systems",
+          "probability": 0.0507
+        }
+      ]
+    },
+    {
+      "id": "evt_0045",
+      "seq": 45,
       "type": "TOKEN",
       "t": 1048,
       "level": "MEASURED",
@@ -2025,8 +2510,8 @@
       "latencyMs": 70
     },
     {
-      "id": "evt_0028",
-      "seq": 28,
+      "id": "evt_0046",
+      "seq": 46,
       "type": "LAYER_ACTIVITY",
       "t": 1048,
       "level": "DERIVED",
@@ -2096,8 +2581,38 @@
       ]
     },
     {
-      "id": "evt_0029",
-      "seq": 29,
+      "id": "evt_0047",
+      "seq": 47,
+      "type": "CONCEPT",
+      "t": 1048,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.1635,
+      "positions": [
+        19
+      ],
+      "evidence": [
+        {
+          "tokenId": 46993,
+          "text": "computers",
+          "probability": 0.0545
+        },
+        {
+          "tokenId": 18781,
+          "text": "data",
+          "probability": 0.0545
+        },
+        {
+          "tokenId": 34439,
+          "text": "machines",
+          "probability": 0.0545
+        }
+      ]
+    },
+    {
+      "id": "evt_0048",
+      "seq": 48,
       "type": "TOKEN",
       "t": 1134,
       "level": "MEASURED",
@@ -2179,8 +2694,8 @@
       "latencyMs": 71
     },
     {
-      "id": "evt_0030",
-      "seq": 30,
+      "id": "evt_0049",
+      "seq": 49,
       "type": "LAYER_ACTIVITY",
       "t": 1134,
       "level": "DERIVED",
@@ -2250,8 +2765,38 @@
       ]
     },
     {
-      "id": "evt_0031",
-      "seq": 31,
+      "id": "evt_0050",
+      "seq": 50,
+      "type": "CONCEPT",
+      "t": 1134,
+      "level": "INTERPRETED",
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.2584,
+      "positions": [
+        20
+      ],
+      "evidence": [
+        {
+          "tokenId": 9919,
+          "text": "therefore",
+          "probability": 0.0861
+        },
+        {
+          "tokenId": 17113,
+          "text": "causes",
+          "probability": 0.0861
+        },
+        {
+          "tokenId": 11316,
+          "text": "leads",
+          "probability": 0.0861
+        }
+      ]
+    },
+    {
+      "id": "evt_0051",
+      "seq": 51,
       "type": "TOKEN",
       "t": 1219,
       "level": "MEASURED",
@@ -2333,8 +2878,8 @@
       "latencyMs": 70
     },
     {
-      "id": "evt_0032",
-      "seq": 32,
+      "id": "evt_0052",
+      "seq": 52,
       "type": "LAYER_ACTIVITY",
       "t": 1219,
       "level": "DERIVED",
@@ -2404,18 +2949,38 @@
       ]
     },
     {
-      "id": "evt_0033",
-      "seq": 33,
+      "id": "evt_0053",
+      "seq": 53,
       "type": "CONCEPT",
       "t": 1219,
       "level": "INTERPRETED",
-      "conceptId": "concept_ecosystem",
-      "label": "ecosystem",
-      "score": 0.77
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.2041,
+      "positions": [
+        21
+      ],
+      "evidence": [
+        {
+          "tokenId": 17113,
+          "text": "causes",
+          "probability": 0.068
+        },
+        {
+          "tokenId": 16828,
+          "text": "caused",
+          "probability": 0.068
+        },
+        {
+          "tokenId": 20861,
+          "text": "results",
+          "probability": 0.068
+        }
+      ]
     },
     {
-      "id": "evt_0034",
-      "seq": 34,
+      "id": "evt_0054",
+      "seq": 54,
       "type": "TOKEN",
       "t": 1276,
       "level": "MEASURED",
@@ -2497,8 +3062,8 @@
       "latencyMs": 42
     },
     {
-      "id": "evt_0035",
-      "seq": 35,
+      "id": "evt_0055",
+      "seq": 55,
       "type": "LAYER_ACTIVITY",
       "t": 1276,
       "level": "DERIVED",
@@ -2568,8 +3133,38 @@
       ]
     },
     {
-      "id": "evt_0036",
-      "seq": 36,
+      "id": "evt_0056",
+      "seq": 56,
+      "type": "CONCEPT",
+      "t": 1276,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.1909,
+      "positions": [
+        22
+      ],
+      "evidence": [
+        {
+          "tokenId": 37940,
+          "text": "code",
+          "probability": 0.0636
+        },
+        {
+          "tokenId": 40564,
+          "text": "system",
+          "probability": 0.0636
+        },
+        {
+          "tokenId": 34439,
+          "text": "machines",
+          "probability": 0.0636
+        }
+      ]
+    },
+    {
+      "id": "evt_0057",
+      "seq": 57,
       "type": "TOKEN",
       "t": 1359,
       "level": "MEASURED",
@@ -2651,8 +3246,8 @@
       "latencyMs": 68
     },
     {
-      "id": "evt_0037",
-      "seq": 37,
+      "id": "evt_0058",
+      "seq": 58,
       "type": "LAYER_ACTIVITY",
       "t": 1359,
       "level": "DERIVED",
@@ -2722,8 +3317,58 @@
       ]
     },
     {
-      "id": "evt_0038",
-      "seq": 38,
+      "id": "evt_0059",
+      "seq": 59,
+      "type": "CONCEPT",
+      "t": 1359,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.367,
+      "positions": [
+        23
+      ],
+      "evidence": [
+        {
+          "tokenId": 36082,
+          "text": "perhaps",
+          "probability": 0.1223
+        },
+        {
+          "tokenId": 15248,
+          "text": "depends",
+          "probability": 0.1223
+        },
+        {
+          "tokenId": 48767,
+          "text": "often",
+          "probability": 0.1223
+        }
+      ]
+    },
+    {
+      "id": "evt_0060",
+      "seq": 60,
+      "type": "CONCEPT",
+      "t": 1359,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.0975,
+      "positions": [
+        23
+      ],
+      "evidence": [
+        {
+          "tokenId": 38810,
+          "text": "syntax",
+          "probability": 0.0975
+        }
+      ]
+    },
+    {
+      "id": "evt_0061",
+      "seq": 61,
       "type": "TOKEN",
       "t": 1429,
       "level": "MEASURED",
@@ -2805,8 +3450,8 @@
       "latencyMs": 55
     },
     {
-      "id": "evt_0039",
-      "seq": 39,
+      "id": "evt_0062",
+      "seq": 62,
       "type": "LAYER_ACTIVITY",
       "t": 1429,
       "level": "DERIVED",
@@ -2876,8 +3521,38 @@
       ]
     },
     {
-      "id": "evt_0040",
-      "seq": 40,
+      "id": "evt_0063",
+      "seq": 63,
+      "type": "CONCEPT",
+      "t": 1429,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.1661,
+      "positions": [
+        24
+      ],
+      "evidence": [
+        {
+          "tokenId": 30062,
+          "text": "probably",
+          "probability": 0.0554
+        },
+        {
+          "tokenId": 15629,
+          "text": "likely",
+          "probability": 0.0554
+        },
+        {
+          "tokenId": 9540,
+          "text": "seems",
+          "probability": 0.0554
+        }
+      ]
+    },
+    {
+      "id": "evt_0064",
+      "seq": 64,
       "type": "TOKEN",
       "t": 1509,
       "level": "MEASURED",
@@ -2959,8 +3634,8 @@
       "latencyMs": 65
     },
     {
-      "id": "evt_0041",
-      "seq": 41,
+      "id": "evt_0065",
+      "seq": 65,
       "type": "LAYER_ACTIVITY",
       "t": 1509,
       "level": "DERIVED",
@@ -3030,8 +3705,88 @@
       ]
     },
     {
-      "id": "evt_0042",
-      "seq": 42,
+      "id": "evt_0066",
+      "seq": 66,
+      "type": "CONCEPT",
+      "t": 1509,
+      "level": "INTERPRETED",
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.2291,
+      "positions": [
+        25
+      ],
+      "evidence": [
+        {
+          "tokenId": 5461,
+          "text": "since",
+          "probability": 0.0764
+        },
+        {
+          "tokenId": 11316,
+          "text": "leads",
+          "probability": 0.0764
+        },
+        {
+          "tokenId": 20861,
+          "text": "results",
+          "probability": 0.0764
+        }
+      ]
+    },
+    {
+      "id": "evt_0067",
+      "seq": 67,
+      "type": "CONCEPT",
+      "t": 1509,
+      "level": "INTERPRETED",
+      "conceptId": "concept_science",
+      "label": "science / nature",
+      "score": 0.1292,
+      "positions": [
+        25
+      ],
+      "evidence": [
+        {
+          "tokenId": 38695,
+          "text": "light",
+          "probability": 0.0431
+        },
+        {
+          "tokenId": 34348,
+          "text": "biology",
+          "probability": 0.0431
+        },
+        {
+          "tokenId": 6150,
+          "text": "natural",
+          "probability": 0.0431
+        }
+      ]
+    },
+    {
+      "id": "evt_0068",
+      "seq": 68,
+      "type": "CONCEPT",
+      "t": 1509,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.0934,
+      "positions": [
+        25
+      ],
+      "evidence": [
+        {
+          "tokenId": 29422,
+          "text": "before",
+          "probability": 0.0934
+        }
+      ]
+    },
+    {
+      "id": "evt_0069",
+      "seq": 69,
       "type": "TOKEN",
       "t": 1600,
       "level": "MEASURED",
@@ -3113,8 +3868,8 @@
       "latencyMs": 76
     },
     {
-      "id": "evt_0043",
-      "seq": 43,
+      "id": "evt_0070",
+      "seq": 70,
       "type": "LAYER_ACTIVITY",
       "t": 1600,
       "level": "DERIVED",
@@ -3184,8 +3939,38 @@
       ]
     },
     {
-      "id": "evt_0044",
-      "seq": 44,
+      "id": "evt_0071",
+      "seq": 71,
+      "type": "CONCEPT",
+      "t": 1600,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.7485,
+      "positions": [
+        26
+      ],
+      "evidence": [
+        {
+          "tokenId": 25523,
+          "text": "language",
+          "probability": 0.2277
+        },
+        {
+          "tokenId": 45972,
+          "text": "meaning",
+          "probability": 0.2277
+        },
+        {
+          "tokenId": 21691,
+          "text": "reading",
+          "probability": 0.2277
+        }
+      ]
+    },
+    {
+      "id": "evt_0072",
+      "seq": 72,
       "type": "TOKEN",
       "t": 1700,
       "level": "MEASURED",
@@ -3267,8 +4052,8 @@
       "latencyMs": 85
     },
     {
-      "id": "evt_0045",
-      "seq": 45,
+      "id": "evt_0073",
+      "seq": 73,
       "type": "LAYER_ACTIVITY",
       "t": 1700,
       "level": "DERIVED",
@@ -3338,8 +4123,58 @@
       ]
     },
     {
-      "id": "evt_0046",
-      "seq": 46,
+      "id": "evt_0074",
+      "seq": 74,
+      "type": "CONCEPT",
+      "t": 1700,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.3478,
+      "positions": [
+        27
+      ],
+      "evidence": [
+        {
+          "tokenId": 16542,
+          "text": "people",
+          "probability": 0.1159
+        },
+        {
+          "tokenId": 20592,
+          "text": "everyone",
+          "probability": 0.1159
+        },
+        {
+          "tokenId": 46764,
+          "text": "workers",
+          "probability": 0.1159
+        }
+      ]
+    },
+    {
+      "id": "evt_0075",
+      "seq": 75,
+      "type": "CONCEPT",
+      "t": 1700,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.0644,
+      "positions": [
+        27
+      ],
+      "evidence": [
+        {
+          "tokenId": 38810,
+          "text": "syntax",
+          "probability": 0.0644
+        }
+      ]
+    },
+    {
+      "id": "evt_0076",
+      "seq": 76,
       "type": "TOKEN",
       "t": 1764,
       "level": "MEASURED",
@@ -3421,8 +4256,8 @@
       "latencyMs": 49
     },
     {
-      "id": "evt_0047",
-      "seq": 47,
+      "id": "evt_0077",
+      "seq": 77,
       "type": "LAYER_ACTIVITY",
       "t": 1764,
       "level": "DERIVED",
@@ -3492,8 +4327,38 @@
       ]
     },
     {
-      "id": "evt_0048",
-      "seq": 48,
+      "id": "evt_0078",
+      "seq": 78,
+      "type": "CONCEPT",
+      "t": 1764,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.2175,
+      "positions": [
+        28
+      ],
+      "evidence": [
+        {
+          "tokenId": 25523,
+          "text": "language",
+          "probability": 0.0725
+        },
+        {
+          "tokenId": 47955,
+          "text": "learning",
+          "probability": 0.0725
+        },
+        {
+          "tokenId": 44949,
+          "text": "read",
+          "probability": 0.0725
+        }
+      ]
+    },
+    {
+      "id": "evt_0079",
+      "seq": 79,
       "type": "TOKEN",
       "t": 1836,
       "level": "MEASURED",
@@ -3575,8 +4440,8 @@
       "latencyMs": 57
     },
     {
-      "id": "evt_0049",
-      "seq": 49,
+      "id": "evt_0080",
+      "seq": 80,
       "type": "LAYER_ACTIVITY",
       "t": 1836,
       "level": "DERIVED",
@@ -3646,8 +4511,38 @@
       ]
     },
     {
-      "id": "evt_0050",
-      "seq": 50,
+      "id": "evt_0081",
+      "seq": 81,
+      "type": "CONCEPT",
+      "t": 1836,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1581,
+      "positions": [
+        29
+      ],
+      "evidence": [
+        {
+          "tokenId": 44720,
+          "text": "languages",
+          "probability": 0.0527
+        },
+        {
+          "tokenId": 44949,
+          "text": "read",
+          "probability": 0.0527
+        },
+        {
+          "tokenId": 1358,
+          "text": "grammar",
+          "probability": 0.0527
+        }
+      ]
+    },
+    {
+      "id": "evt_0082",
+      "seq": 82,
       "type": "TOKEN",
       "t": 1912,
       "level": "MEASURED",
@@ -3729,8 +4624,8 @@
       "latencyMs": 61
     },
     {
-      "id": "evt_0051",
-      "seq": 51,
+      "id": "evt_0083",
+      "seq": 83,
       "type": "LAYER_ACTIVITY",
       "t": 1912,
       "level": "DERIVED",
@@ -3800,8 +4695,68 @@
       ]
     },
     {
-      "id": "evt_0052",
-      "seq": 52,
+      "id": "evt_0084",
+      "seq": 84,
+      "type": "CONCEPT",
+      "t": 1912,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.5116,
+      "positions": [
+        30
+      ],
+      "evidence": [
+        {
+          "tokenId": 32208,
+          "text": "person",
+          "probability": 0.1593
+        },
+        {
+          "tokenId": 20592,
+          "text": "everyone",
+          "probability": 0.1593
+        },
+        {
+          "tokenId": 21001,
+          "text": "students",
+          "probability": 0.1593
+        }
+      ]
+    },
+    {
+      "id": "evt_0085",
+      "seq": 85,
+      "type": "CONCEPT",
+      "t": 1912,
+      "level": "INTERPRETED",
+      "conceptId": "concept_science",
+      "label": "science / nature",
+      "score": 0.2964,
+      "positions": [
+        30
+      ],
+      "evidence": [
+        {
+          "tokenId": 8291,
+          "text": "weather",
+          "probability": 0.0988
+        },
+        {
+          "tokenId": 5813,
+          "text": "science",
+          "probability": 0.0988
+        },
+        {
+          "tokenId": 47888,
+          "text": "color",
+          "probability": 0.0988
+        }
+      ]
+    },
+    {
+      "id": "evt_0086",
+      "seq": 86,
       "type": "TOKEN",
       "t": 2027,
       "level": "MEASURED",
@@ -3883,8 +4838,8 @@
       "latencyMs": 100
     },
     {
-      "id": "evt_0053",
-      "seq": 53,
+      "id": "evt_0087",
+      "seq": 87,
       "type": "LAYER_ACTIVITY",
       "t": 2027,
       "level": "DERIVED",
@@ -3954,8 +4909,68 @@
       ]
     },
     {
-      "id": "evt_0054",
-      "seq": 54,
+      "id": "evt_0088",
+      "seq": 88,
+      "type": "CONCEPT",
+      "t": 2027,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.2084,
+      "positions": [
+        31
+      ],
+      "evidence": [
+        {
+          "tokenId": 32362,
+          "text": "user",
+          "probability": 0.0695
+        },
+        {
+          "tokenId": 20647,
+          "text": "readers",
+          "probability": 0.0695
+        },
+        {
+          "tokenId": 46764,
+          "text": "workers",
+          "probability": 0.0695
+        }
+      ]
+    },
+    {
+      "id": "evt_0089",
+      "seq": 89,
+      "type": "CONCEPT",
+      "t": 2027,
+      "level": "INTERPRETED",
+      "conceptId": "concept_quantity",
+      "label": "quantity / degree",
+      "score": 0.1141,
+      "positions": [
+        31
+      ],
+      "evidence": [
+        {
+          "tokenId": 13913,
+          "text": "few",
+          "probability": 0.038
+        },
+        {
+          "tokenId": 20926,
+          "text": "minority",
+          "probability": 0.038
+        },
+        {
+          "tokenId": 23497,
+          "text": "lots",
+          "probability": 0.038
+        }
+      ]
+    },
+    {
+      "id": "evt_0090",
+      "seq": 90,
       "type": "TOKEN",
       "t": 2107,
       "level": "MEASURED",
@@ -4037,8 +5052,8 @@
       "latencyMs": 65
     },
     {
-      "id": "evt_0055",
-      "seq": 55,
+      "id": "evt_0091",
+      "seq": 91,
       "type": "LAYER_ACTIVITY",
       "t": 2107,
       "level": "DERIVED",
@@ -4108,8 +5123,38 @@
       ]
     },
     {
-      "id": "evt_0056",
-      "seq": 56,
+      "id": "evt_0092",
+      "seq": 92,
+      "type": "CONCEPT",
+      "t": 2107,
+      "level": "INTERPRETED",
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.1979,
+      "positions": [
+        32
+      ],
+      "evidence": [
+        {
+          "tokenId": 24907,
+          "text": "because",
+          "probability": 0.066
+        },
+        {
+          "tokenId": 9919,
+          "text": "therefore",
+          "probability": 0.066
+        },
+        {
+          "tokenId": 46068,
+          "text": "hence",
+          "probability": 0.066
+        }
+      ]
+    },
+    {
+      "id": "evt_0093",
+      "seq": 93,
       "type": "TOKEN",
       "t": 2183,
       "level": "MEASURED",
@@ -4191,8 +5236,8 @@
       "latencyMs": 61
     },
     {
-      "id": "evt_0057",
-      "seq": 57,
+      "id": "evt_0094",
+      "seq": 94,
       "type": "LAYER_ACTIVITY",
       "t": 2183,
       "level": "DERIVED",
@@ -4262,8 +5307,68 @@
       ]
     },
     {
-      "id": "evt_0058",
-      "seq": 58,
+      "id": "evt_0095",
+      "seq": 95,
+      "type": "CONCEPT",
+      "t": 2183,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.1934,
+      "positions": [
+        33
+      ],
+      "evidence": [
+        {
+          "tokenId": 8191,
+          "text": "worse",
+          "probability": 0.0645
+        },
+        {
+          "tokenId": 37655,
+          "text": "best",
+          "probability": 0.0645
+        },
+        {
+          "tokenId": 39877,
+          "text": "options",
+          "probability": 0.0645
+        }
+      ]
+    },
+    {
+      "id": "evt_0096",
+      "seq": 96,
+      "type": "CONCEPT",
+      "t": 2183,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.0925,
+      "positions": [
+        33
+      ],
+      "evidence": [
+        {
+          "tokenId": 7034,
+          "text": "certainly",
+          "probability": 0.0308
+        },
+        {
+          "tokenId": 24645,
+          "text": "obviously",
+          "probability": 0.0308
+        },
+        {
+          "tokenId": 3883,
+          "text": "exactly",
+          "probability": 0.0308
+        }
+      ]
+    },
+    {
+      "id": "evt_0097",
+      "seq": 97,
       "type": "TOKEN",
       "t": 2271,
       "level": "MEASURED",
@@ -4345,8 +5450,8 @@
       "latencyMs": 73
     },
     {
-      "id": "evt_0059",
-      "seq": 59,
+      "id": "evt_0098",
+      "seq": 98,
       "type": "LAYER_ACTIVITY",
       "t": 2271,
       "level": "DERIVED",
@@ -4416,8 +5521,68 @@
       ]
     },
     {
-      "id": "evt_0060",
-      "seq": 60,
+      "id": "evt_0099",
+      "seq": 99,
+      "type": "CONCEPT",
+      "t": 2271,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.1606,
+      "positions": [
+        34
+      ],
+      "evidence": [
+        {
+          "tokenId": 37940,
+          "text": "code",
+          "probability": 0.0533
+        },
+        {
+          "tokenId": 4787,
+          "text": "models",
+          "probability": 0.0533
+        },
+        {
+          "tokenId": 15347,
+          "text": "digital",
+          "probability": 0.0533
+        }
+      ]
+    },
+    {
+      "id": "evt_0100",
+      "seq": 100,
+      "type": "CONCEPT",
+      "t": 2271,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.1406,
+      "positions": [
+        34
+      ],
+      "evidence": [
+        {
+          "tokenId": 12183,
+          "text": "now",
+          "probability": 0.0469
+        },
+        {
+          "tokenId": 41799,
+          "text": "history",
+          "probability": 0.0469
+        },
+        {
+          "tokenId": 18993,
+          "text": "after",
+          "probability": 0.0469
+        }
+      ]
+    },
+    {
+      "id": "evt_0101",
+      "seq": 101,
       "type": "TOKEN",
       "t": 2360,
       "level": "MEASURED",
@@ -4499,8 +5664,8 @@
       "latencyMs": 74
     },
     {
-      "id": "evt_0061",
-      "seq": 61,
+      "id": "evt_0102",
+      "seq": 102,
       "type": "LAYER_ACTIVITY",
       "t": 2360,
       "level": "DERIVED",
@@ -4570,8 +5735,8 @@
       ]
     },
     {
-      "id": "evt_0062",
-      "seq": 62,
+      "id": "evt_0103",
+      "seq": 103,
       "type": "TOKEN",
       "t": 2457,
       "level": "MEASURED",
@@ -4653,8 +5818,8 @@
       "latencyMs": 82
     },
     {
-      "id": "evt_0063",
-      "seq": 63,
+      "id": "evt_0104",
+      "seq": 104,
       "type": "LAYER_ACTIVITY",
       "t": 2457,
       "level": "DERIVED",
@@ -4724,8 +5889,28 @@
       ]
     },
     {
-      "id": "evt_0064",
-      "seq": 64,
+      "id": "evt_0105",
+      "seq": 105,
+      "type": "CONCEPT",
+      "t": 2457,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.1456,
+      "positions": [
+        36
+      ],
+      "evidence": [
+        {
+          "tokenId": 29422,
+          "text": "before",
+          "probability": 0.1456
+        }
+      ]
+    },
+    {
+      "id": "evt_0106",
+      "seq": 106,
       "type": "TOKEN",
       "t": 2537,
       "level": "MEASURED",
@@ -4807,8 +5992,8 @@
       "latencyMs": 65
     },
     {
-      "id": "evt_0065",
-      "seq": 65,
+      "id": "evt_0107",
+      "seq": 107,
       "type": "LAYER_ACTIVITY",
       "t": 2537,
       "level": "DERIVED",
@@ -4878,8 +6063,38 @@
       ]
     },
     {
-      "id": "evt_0066",
-      "seq": 66,
+      "id": "evt_0108",
+      "seq": 108,
+      "type": "CONCEPT",
+      "t": 2537,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.7072,
+      "positions": [
+        37
+      ],
+      "evidence": [
+        {
+          "tokenId": 37655,
+          "text": "best",
+          "probability": 0.2357
+        },
+        {
+          "tokenId": 4713,
+          "text": "instead",
+          "probability": 0.2357
+        },
+        {
+          "tokenId": 39877,
+          "text": "options",
+          "probability": 0.2357
+        }
+      ]
+    },
+    {
+      "id": "evt_0109",
+      "seq": 109,
       "type": "TOKEN",
       "t": 2598,
       "level": "MEASURED",
@@ -4961,8 +6176,8 @@
       "latencyMs": 46
     },
     {
-      "id": "evt_0067",
-      "seq": 67,
+      "id": "evt_0110",
+      "seq": 110,
       "type": "LAYER_ACTIVITY",
       "t": 2598,
       "level": "DERIVED",
@@ -5032,8 +6247,28 @@
       ]
     },
     {
-      "id": "evt_0068",
-      "seq": 68,
+      "id": "evt_0111",
+      "seq": 111,
+      "type": "CONCEPT",
+      "t": 2598,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.0934,
+      "positions": [
+        38
+      ],
+      "evidence": [
+        {
+          "tokenId": 47955,
+          "text": "learning",
+          "probability": 0.0934
+        }
+      ]
+    },
+    {
+      "id": "evt_0112",
+      "seq": 112,
       "type": "TOKEN",
       "t": 2695,
       "level": "MEASURED",
@@ -5115,8 +6350,8 @@
       "latencyMs": 82
     },
     {
-      "id": "evt_0069",
-      "seq": 69,
+      "id": "evt_0113",
+      "seq": 113,
       "type": "LAYER_ACTIVITY",
       "t": 2695,
       "level": "DERIVED",
@@ -5186,8 +6421,58 @@
       ]
     },
     {
-      "id": "evt_0070",
-      "seq": 70,
+      "id": "evt_0114",
+      "seq": 114,
+      "type": "CONCEPT",
+      "t": 2695,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.5062,
+      "positions": [
+        39
+      ],
+      "evidence": [
+        {
+          "tokenId": 27708,
+          "text": "tools",
+          "probability": 0.5062
+        }
+      ]
+    },
+    {
+      "id": "evt_0115",
+      "seq": 115,
+      "type": "CONCEPT",
+      "t": 2695,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.2196,
+      "positions": [
+        39
+      ],
+      "evidence": [
+        {
+          "tokenId": 44745,
+          "text": "clearly",
+          "probability": 0.0732
+        },
+        {
+          "tokenId": 40119,
+          "text": "surely",
+          "probability": 0.0732
+        },
+        {
+          "tokenId": 36699,
+          "text": "simply",
+          "probability": 0.0732
+        }
+      ]
+    },
+    {
+      "id": "evt_0116",
+      "seq": 116,
       "type": "TOKEN",
       "t": 2755,
       "level": "MEASURED",
@@ -5269,8 +6554,8 @@
       "latencyMs": 45
     },
     {
-      "id": "evt_0071",
-      "seq": 71,
+      "id": "evt_0117",
+      "seq": 117,
       "type": "LAYER_ACTIVITY",
       "t": 2755,
       "level": "DERIVED",
@@ -5340,18 +6625,58 @@
       ]
     },
     {
-      "id": "evt_0072",
-      "seq": 72,
+      "id": "evt_0118",
+      "seq": 118,
       "type": "CONCEPT",
       "t": 2755,
       "level": "INTERPRETED",
-      "conceptId": "concept_learning_curve",
-      "label": "learning curve",
-      "score": 0.72
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.2982,
+      "positions": [
+        40
+      ],
+      "evidence": [
+        {
+          "tokenId": 32208,
+          "text": "person",
+          "probability": 0.0994
+        },
+        {
+          "tokenId": 32362,
+          "text": "user",
+          "probability": 0.0994
+        },
+        {
+          "tokenId": 10322,
+          "text": "human",
+          "probability": 0.0994
+        }
+      ]
     },
     {
-      "id": "evt_0073",
-      "seq": 73,
+      "id": "evt_0119",
+      "seq": 119,
+      "type": "CONCEPT",
+      "t": 2755,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.1819,
+      "positions": [
+        40
+      ],
+      "evidence": [
+        {
+          "tokenId": 18781,
+          "text": "data",
+          "probability": 0.1819
+        }
+      ]
+    },
+    {
+      "id": "evt_0120",
+      "seq": 120,
       "type": "TOKEN",
       "t": 2824,
       "level": "MEASURED",
@@ -5433,8 +6758,8 @@
       "latencyMs": 54
     },
     {
-      "id": "evt_0074",
-      "seq": 74,
+      "id": "evt_0121",
+      "seq": 121,
       "type": "LAYER_ACTIVITY",
       "t": 2824,
       "level": "DERIVED",
@@ -5504,8 +6829,38 @@
       ]
     },
     {
-      "id": "evt_0075",
-      "seq": 75,
+      "id": "evt_0122",
+      "seq": 122,
+      "type": "CONCEPT",
+      "t": 2824,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.336,
+      "positions": [
+        41
+      ],
+      "evidence": [
+        {
+          "tokenId": 36082,
+          "text": "perhaps",
+          "probability": 0.112
+        },
+        {
+          "tokenId": 15629,
+          "text": "likely",
+          "probability": 0.112
+        },
+        {
+          "tokenId": 12170,
+          "text": "usually",
+          "probability": 0.112
+        }
+      ]
+    },
+    {
+      "id": "evt_0123",
+      "seq": 123,
       "type": "TOKEN",
       "t": 2908,
       "level": "MEASURED",
@@ -5587,8 +6942,8 @@
       "latencyMs": 69
     },
     {
-      "id": "evt_0076",
-      "seq": 76,
+      "id": "evt_0124",
+      "seq": 124,
       "type": "LAYER_ACTIVITY",
       "t": 2908,
       "level": "DERIVED",
@@ -5658,8 +7013,58 @@
       ]
     },
     {
-      "id": "evt_0077",
-      "seq": 77,
+      "id": "evt_0125",
+      "seq": 125,
+      "type": "CONCEPT",
+      "t": 2908,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.6708,
+      "positions": [
+        42
+      ],
+      "evidence": [
+        {
+          "tokenId": 27708,
+          "text": "tools",
+          "probability": 0.6708
+        }
+      ]
+    },
+    {
+      "id": "evt_0126",
+      "seq": 126,
+      "type": "CONCEPT",
+      "t": 2908,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1853,
+      "positions": [
+        42
+      ],
+      "evidence": [
+        {
+          "tokenId": 25523,
+          "text": "language",
+          "probability": 0.0617
+        },
+        {
+          "tokenId": 47955,
+          "text": "learning",
+          "probability": 0.0617
+        },
+        {
+          "tokenId": 8134,
+          "text": "text",
+          "probability": 0.0617
+        }
+      ]
+    },
+    {
+      "id": "evt_0127",
+      "seq": 127,
       "type": "TOKEN",
       "t": 3009,
       "level": "MEASURED",
@@ -5741,8 +7146,8 @@
       "latencyMs": 86
     },
     {
-      "id": "evt_0078",
-      "seq": 78,
+      "id": "evt_0128",
+      "seq": 128,
       "type": "LAYER_ACTIVITY",
       "t": 3009,
       "level": "DERIVED",
@@ -5812,8 +7217,68 @@
       ]
     },
     {
-      "id": "evt_0079",
-      "seq": 79,
+      "id": "evt_0129",
+      "seq": 129,
+      "type": "CONCEPT",
+      "t": 3009,
+      "level": "INTERPRETED",
+      "conceptId": "concept_quantity",
+      "label": "quantity / degree",
+      "score": 0.3817,
+      "positions": [
+        43
+      ],
+      "evidence": [
+        {
+          "tokenId": 47306,
+          "text": "many",
+          "probability": 0.1272
+        },
+        {
+          "tokenId": 13913,
+          "text": "few",
+          "probability": 0.1272
+        },
+        {
+          "tokenId": 31202,
+          "text": "most",
+          "probability": 0.1272
+        }
+      ]
+    },
+    {
+      "id": "evt_0130",
+      "seq": 130,
+      "type": "CONCEPT",
+      "t": 3009,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.3328,
+      "positions": [
+        43
+      ],
+      "evidence": [
+        {
+          "tokenId": 21499,
+          "text": "maybe",
+          "probability": 0.1109
+        },
+        {
+          "tokenId": 22766,
+          "text": "could",
+          "probability": 0.1109
+        },
+        {
+          "tokenId": 40019,
+          "text": "unclear",
+          "probability": 0.1109
+        }
+      ]
+    },
+    {
+      "id": "evt_0131",
+      "seq": 131,
       "type": "TOKEN",
       "t": 3099,
       "level": "MEASURED",
@@ -5895,8 +7360,8 @@
       "latencyMs": 75
     },
     {
-      "id": "evt_0080",
-      "seq": 80,
+      "id": "evt_0132",
+      "seq": 132,
       "type": "LAYER_ACTIVITY",
       "t": 3099,
       "level": "DERIVED",
@@ -5966,8 +7431,63 @@
       ]
     },
     {
-      "id": "evt_0081",
-      "seq": 81,
+      "id": "evt_0133",
+      "seq": 133,
+      "type": "CONCEPT",
+      "t": 3099,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.2006,
+      "positions": [
+        44
+      ],
+      "evidence": [
+        {
+          "tokenId": 27708,
+          "text": "tools",
+          "probability": 0.1791
+        },
+        {
+          "tokenId": 7029,
+          "text": "systems",
+          "probability": 0.0215
+        }
+      ]
+    },
+    {
+      "id": "evt_0134",
+      "seq": 134,
+      "type": "CONCEPT",
+      "t": 3099,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.1942,
+      "positions": [
+        44
+      ],
+      "evidence": [
+        {
+          "tokenId": 15248,
+          "text": "depends",
+          "probability": 0.0647
+        },
+        {
+          "tokenId": 48767,
+          "text": "often",
+          "probability": 0.0647
+        },
+        {
+          "tokenId": 9540,
+          "text": "seems",
+          "probability": 0.0647
+        }
+      ]
+    },
+    {
+      "id": "evt_0135",
+      "seq": 135,
       "type": "TOKEN",
       "t": 3173,
       "level": "MEASURED",
@@ -6049,8 +7569,8 @@
       "latencyMs": 59
     },
     {
-      "id": "evt_0082",
-      "seq": 82,
+      "id": "evt_0136",
+      "seq": 136,
       "type": "LAYER_ACTIVITY",
       "t": 3173,
       "level": "DERIVED",
@@ -6120,8 +7640,38 @@
       ]
     },
     {
-      "id": "evt_0083",
-      "seq": 83,
+      "id": "evt_0137",
+      "seq": 137,
+      "type": "CONCEPT",
+      "t": 3173,
+      "level": "INTERPRETED",
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.2173,
+      "positions": [
+        45
+      ],
+      "evidence": [
+        {
+          "tokenId": 9919,
+          "text": "therefore",
+          "probability": 0.0724
+        },
+        {
+          "tokenId": 16828,
+          "text": "caused",
+          "probability": 0.0724
+        },
+        {
+          "tokenId": 11316,
+          "text": "leads",
+          "probability": 0.0724
+        }
+      ]
+    },
+    {
+      "id": "evt_0138",
+      "seq": 138,
       "type": "TOKEN",
       "t": 3242,
       "level": "MEASURED",
@@ -6203,8 +7753,8 @@
       "latencyMs": 54
     },
     {
-      "id": "evt_0084",
-      "seq": 84,
+      "id": "evt_0139",
+      "seq": 139,
       "type": "LAYER_ACTIVITY",
       "t": 3242,
       "level": "DERIVED",
@@ -6274,8 +7824,68 @@
       ]
     },
     {
-      "id": "evt_0085",
-      "seq": 85,
+      "id": "evt_0140",
+      "seq": 140,
+      "type": "CONCEPT",
+      "t": 3242,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.5089,
+      "positions": [
+        46
+      ],
+      "evidence": [
+        {
+          "tokenId": 32362,
+          "text": "user",
+          "probability": 0.1696
+        },
+        {
+          "tokenId": 34803,
+          "text": "someone",
+          "probability": 0.1696
+        },
+        {
+          "tokenId": 20647,
+          "text": "readers",
+          "probability": 0.1696
+        }
+      ]
+    },
+    {
+      "id": "evt_0141",
+      "seq": 141,
+      "type": "CONCEPT",
+      "t": 3242,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.3054,
+      "positions": [
+        46
+      ],
+      "evidence": [
+        {
+          "tokenId": 18781,
+          "text": "data",
+          "probability": 0.1018
+        },
+        {
+          "tokenId": 7029,
+          "text": "systems",
+          "probability": 0.1018
+        },
+        {
+          "tokenId": 35334,
+          "text": "machine",
+          "probability": 0.1018
+        }
+      ]
+    },
+    {
+      "id": "evt_0142",
+      "seq": 142,
       "type": "TOKEN",
       "t": 3325,
       "level": "MEASURED",
@@ -6357,8 +7967,8 @@
       "latencyMs": 68
     },
     {
-      "id": "evt_0086",
-      "seq": 86,
+      "id": "evt_0143",
+      "seq": 143,
       "type": "LAYER_ACTIVITY",
       "t": 3325,
       "level": "DERIVED",
@@ -6428,8 +8038,63 @@
       ]
     },
     {
-      "id": "evt_0087",
-      "seq": 87,
+      "id": "evt_0144",
+      "seq": 144,
+      "type": "CONCEPT",
+      "t": 3325,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.2631,
+      "positions": [
+        47
+      ],
+      "evidence": [
+        {
+          "tokenId": 27708,
+          "text": "tools",
+          "probability": 0.2338
+        },
+        {
+          "tokenId": 7029,
+          "text": "systems",
+          "probability": 0.0294
+        }
+      ]
+    },
+    {
+      "id": "evt_0145",
+      "seq": 145,
+      "type": "CONCEPT",
+      "t": 3325,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.1738,
+      "positions": [
+        47
+      ],
+      "evidence": [
+        {
+          "tokenId": 35329,
+          "text": "later",
+          "probability": 0.0579
+        },
+        {
+          "tokenId": 25396,
+          "text": "year",
+          "probability": 0.0579
+        },
+        {
+          "tokenId": 40757,
+          "text": "past",
+          "probability": 0.0579
+        }
+      ]
+    },
+    {
+      "id": "evt_0146",
+      "seq": 146,
       "type": "TOKEN",
       "t": 3394,
       "level": "MEASURED",
@@ -6511,8 +8176,8 @@
       "latencyMs": 54
     },
     {
-      "id": "evt_0088",
-      "seq": 88,
+      "id": "evt_0147",
+      "seq": 147,
       "type": "LAYER_ACTIVITY",
       "t": 3394,
       "level": "DERIVED",
@@ -6582,8 +8247,68 @@
       ]
     },
     {
-      "id": "evt_0089",
-      "seq": 89,
+      "id": "evt_0148",
+      "seq": 148,
+      "type": "CONCEPT",
+      "t": 3394,
+      "level": "INTERPRETED",
+      "conceptId": "concept_quantity",
+      "label": "quantity / degree",
+      "score": 0.1083,
+      "positions": [
+        48
+      ],
+      "evidence": [
+        {
+          "tokenId": 5428,
+          "text": "half",
+          "probability": 0.0361
+        },
+        {
+          "tokenId": 4163,
+          "text": "twice",
+          "probability": 0.0361
+        },
+        {
+          "tokenId": 36554,
+          "text": "majority",
+          "probability": 0.0361
+        }
+      ]
+    },
+    {
+      "id": "evt_0149",
+      "seq": 149,
+      "type": "CONCEPT",
+      "t": 3394,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.097,
+      "positions": [
+        48
+      ],
+      "evidence": [
+        {
+          "tokenId": 32208,
+          "text": "person",
+          "probability": 0.0323
+        },
+        {
+          "tokenId": 21001,
+          "text": "students",
+          "probability": 0.0323
+        },
+        {
+          "tokenId": 38722,
+          "text": "developers",
+          "probability": 0.0323
+        }
+      ]
+    },
+    {
+      "id": "evt_0150",
+      "seq": 150,
       "type": "TOKEN",
       "t": 3456,
       "level": "MEASURED",
@@ -6665,8 +8390,8 @@
       "latencyMs": 47
     },
     {
-      "id": "evt_0090",
-      "seq": 90,
+      "id": "evt_0151",
+      "seq": 151,
       "type": "LAYER_ACTIVITY",
       "t": 3456,
       "level": "DERIVED",
@@ -6736,8 +8461,88 @@
       ]
     },
     {
-      "id": "evt_0091",
-      "seq": 91,
+      "id": "evt_0152",
+      "seq": 152,
+      "type": "CONCEPT",
+      "t": 3456,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.1826,
+      "positions": [
+        49
+      ],
+      "evidence": [
+        {
+          "tokenId": 37940,
+          "text": "code",
+          "probability": 0.0609
+        },
+        {
+          "tokenId": 4787,
+          "text": "models",
+          "probability": 0.0609
+        },
+        {
+          "tokenId": 15347,
+          "text": "digital",
+          "probability": 0.0609
+        }
+      ]
+    },
+    {
+      "id": "evt_0153",
+      "seq": 153,
+      "type": "CONCEPT",
+      "t": 3456,
+      "level": "INTERPRETED",
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.1254,
+      "positions": [
+        49
+      ],
+      "evidence": [
+        {
+          "tokenId": 24907,
+          "text": "because",
+          "probability": 0.0418
+        },
+        {
+          "tokenId": 9919,
+          "text": "therefore",
+          "probability": 0.0418
+        },
+        {
+          "tokenId": 20861,
+          "text": "results",
+          "probability": 0.0418
+        }
+      ]
+    },
+    {
+      "id": "evt_0154",
+      "seq": 154,
+      "type": "CONCEPT",
+      "t": 3456,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1056,
+      "positions": [
+        49
+      ],
+      "evidence": [
+        {
+          "tokenId": 38810,
+          "text": "syntax",
+          "probability": 0.1056
+        }
+      ]
+    },
+    {
+      "id": "evt_0155",
+      "seq": 155,
       "type": "TOKEN",
       "t": 3519,
       "level": "MEASURED",
@@ -6819,8 +8624,8 @@
       "latencyMs": 48
     },
     {
-      "id": "evt_0092",
-      "seq": 92,
+      "id": "evt_0156",
+      "seq": 156,
       "type": "LAYER_ACTIVITY",
       "t": 3519,
       "level": "DERIVED",
@@ -6890,8 +8695,68 @@
       ]
     },
     {
-      "id": "evt_0093",
-      "seq": 93,
+      "id": "evt_0157",
+      "seq": 157,
+      "type": "CONCEPT",
+      "t": 3519,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.2345,
+      "positions": [
+        50
+      ],
+      "evidence": [
+        {
+          "tokenId": 8191,
+          "text": "worse",
+          "probability": 0.0782
+        },
+        {
+          "tokenId": 11315,
+          "text": "versus",
+          "probability": 0.0782
+        },
+        {
+          "tokenId": 4713,
+          "text": "instead",
+          "probability": 0.0782
+        }
+      ]
+    },
+    {
+      "id": "evt_0158",
+      "seq": 158,
+      "type": "CONCEPT",
+      "t": 3519,
+      "level": "INTERPRETED",
+      "conceptId": "concept_quantity",
+      "label": "quantity / degree",
+      "score": 0.1827,
+      "positions": [
+        50
+      ],
+      "evidence": [
+        {
+          "tokenId": 47306,
+          "text": "many",
+          "probability": 0.0609
+        },
+        {
+          "tokenId": 7409,
+          "text": "numbers",
+          "probability": 0.0609
+        },
+        {
+          "tokenId": 21957,
+          "text": "plenty",
+          "probability": 0.0609
+        }
+      ]
+    },
+    {
+      "id": "evt_0159",
+      "seq": 159,
       "type": "TOKEN",
       "t": 3627,
       "level": "MEASURED",
@@ -6973,8 +8838,8 @@
       "latencyMs": 93
     },
     {
-      "id": "evt_0094",
-      "seq": 94,
+      "id": "evt_0160",
+      "seq": 160,
       "type": "LAYER_ACTIVITY",
       "t": 3627,
       "level": "DERIVED",
@@ -7044,8 +8909,38 @@
       ]
     },
     {
-      "id": "evt_0095",
-      "seq": 95,
+      "id": "evt_0161",
+      "seq": 161,
+      "type": "CONCEPT",
+      "t": 3627,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.2286,
+      "positions": [
+        51
+      ],
+      "evidence": [
+        {
+          "tokenId": 24645,
+          "text": "obviously",
+          "probability": 0.0762
+        },
+        {
+          "tokenId": 40119,
+          "text": "surely",
+          "probability": 0.0762
+        },
+        {
+          "tokenId": 36699,
+          "text": "simply",
+          "probability": 0.0762
+        }
+      ]
+    },
+    {
+      "id": "evt_0162",
+      "seq": 162,
       "type": "TOKEN",
       "t": 3698,
       "level": "MEASURED",
@@ -7127,8 +9022,8 @@
       "latencyMs": 56
     },
     {
-      "id": "evt_0096",
-      "seq": 96,
+      "id": "evt_0163",
+      "seq": 163,
       "type": "LAYER_ACTIVITY",
       "t": 3698,
       "level": "DERIVED",
@@ -7198,8 +9093,58 @@
       ]
     },
     {
-      "id": "evt_0097",
-      "seq": 97,
+      "id": "evt_0164",
+      "seq": 164,
+      "type": "CONCEPT",
+      "t": 3698,
+      "level": "INTERPRETED",
+      "conceptId": "concept_science",
+      "label": "science / nature",
+      "score": 0.2231,
+      "positions": [
+        52
+      ],
+      "evidence": [
+        {
+          "tokenId": 17829,
+          "text": "energy",
+          "probability": 0.0744
+        },
+        {
+          "tokenId": 4588,
+          "text": "climate",
+          "probability": 0.0744
+        },
+        {
+          "tokenId": 19561,
+          "text": "chemical",
+          "probability": 0.0744
+        }
+      ]
+    },
+    {
+      "id": "evt_0165",
+      "seq": 165,
+      "type": "CONCEPT",
+      "t": 3698,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.067,
+      "positions": [
+        52
+      ],
+      "evidence": [
+        {
+          "tokenId": 27708,
+          "text": "tools",
+          "probability": 0.067
+        }
+      ]
+    },
+    {
+      "id": "evt_0166",
+      "seq": 166,
       "type": "TOKEN",
       "t": 3782,
       "level": "MEASURED",
@@ -7281,8 +9226,8 @@
       "latencyMs": 69
     },
     {
-      "id": "evt_0098",
-      "seq": 98,
+      "id": "evt_0167",
+      "seq": 167,
       "type": "LAYER_ACTIVITY",
       "t": 3782,
       "level": "DERIVED",
@@ -7352,8 +9297,58 @@
       ]
     },
     {
-      "id": "evt_0099",
-      "seq": 99,
+      "id": "evt_0168",
+      "seq": 168,
+      "type": "CONCEPT",
+      "t": 3782,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.2005,
+      "positions": [
+        53
+      ],
+      "evidence": [
+        {
+          "tokenId": 7488,
+          "text": "computer",
+          "probability": 0.0668
+        },
+        {
+          "tokenId": 37940,
+          "text": "code",
+          "probability": 0.0668
+        },
+        {
+          "tokenId": 48077,
+          "text": "network",
+          "probability": 0.0668
+        }
+      ]
+    },
+    {
+      "id": "evt_0169",
+      "seq": 169,
+      "type": "CONCEPT",
+      "t": 3782,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.1419,
+      "positions": [
+        53
+      ],
+      "evidence": [
+        {
+          "tokenId": 46063,
+          "text": "better",
+          "probability": 0.1419
+        }
+      ]
+    },
+    {
+      "id": "evt_0170",
+      "seq": 170,
       "type": "TOKEN",
       "t": 3867,
       "level": "MEASURED",
@@ -7435,8 +9430,8 @@
       "latencyMs": 70
     },
     {
-      "id": "evt_0100",
-      "seq": 100,
+      "id": "evt_0171",
+      "seq": 171,
       "type": "LAYER_ACTIVITY",
       "t": 3867,
       "level": "DERIVED",
@@ -7506,8 +9501,88 @@
       ]
     },
     {
-      "id": "evt_0101",
-      "seq": 101,
+      "id": "evt_0172",
+      "seq": 172,
+      "type": "CONCEPT",
+      "t": 3867,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.264,
+      "positions": [
+        54
+      ],
+      "evidence": [
+        {
+          "tokenId": 25523,
+          "text": "language",
+          "probability": 0.0767
+        },
+        {
+          "tokenId": 21691,
+          "text": "reading",
+          "probability": 0.0767
+        },
+        {
+          "tokenId": 22480,
+          "text": "practice",
+          "probability": 0.0767
+        }
+      ]
+    },
+    {
+      "id": "evt_0173",
+      "seq": 173,
+      "type": "CONCEPT",
+      "t": 3867,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.2449,
+      "positions": [
+        54
+      ],
+      "evidence": [
+        {
+          "tokenId": 25396,
+          "text": "year",
+          "probability": 0.0816
+        },
+        {
+          "tokenId": 45231,
+          "text": "century",
+          "probability": 0.0816
+        },
+        {
+          "tokenId": 40757,
+          "text": "past",
+          "probability": 0.0816
+        }
+      ]
+    },
+    {
+      "id": "evt_0174",
+      "seq": 174,
+      "type": "CONCEPT",
+      "t": 3867,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.0805,
+      "positions": [
+        54
+      ],
+      "evidence": [
+        {
+          "tokenId": 16542,
+          "text": "people",
+          "probability": 0.0805
+        }
+      ]
+    },
+    {
+      "id": "evt_0175",
+      "seq": 175,
       "type": "TOKEN",
       "t": 3972,
       "level": "MEASURED",
@@ -7589,8 +9664,8 @@
       "latencyMs": 90
     },
     {
-      "id": "evt_0102",
-      "seq": 102,
+      "id": "evt_0176",
+      "seq": 176,
       "type": "LAYER_ACTIVITY",
       "t": 3972,
       "level": "DERIVED",
@@ -7660,8 +9735,68 @@
       ]
     },
     {
-      "id": "evt_0103",
-      "seq": 103,
+      "id": "evt_0177",
+      "seq": 177,
+      "type": "CONCEPT",
+      "t": 3972,
+      "level": "INTERPRETED",
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.2102,
+      "positions": [
+        55
+      ],
+      "evidence": [
+        {
+          "tokenId": 47573,
+          "text": "thus",
+          "probability": 0.0701
+        },
+        {
+          "tokenId": 46068,
+          "text": "hence",
+          "probability": 0.0701
+        },
+        {
+          "tokenId": 41609,
+          "text": "why",
+          "probability": 0.0701
+        }
+      ]
+    },
+    {
+      "id": "evt_0178",
+      "seq": 178,
+      "type": "CONCEPT",
+      "t": 3972,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.1344,
+      "positions": [
+        55
+      ],
+      "evidence": [
+        {
+          "tokenId": 8191,
+          "text": "worse",
+          "probability": 0.0448
+        },
+        {
+          "tokenId": 44222,
+          "text": "similar",
+          "probability": 0.0448
+        },
+        {
+          "tokenId": 26560,
+          "text": "alternative",
+          "probability": 0.0448
+        }
+      ]
+    },
+    {
+      "id": "evt_0179",
+      "seq": 179,
       "type": "TOKEN",
       "t": 4066,
       "level": "MEASURED",
@@ -7743,8 +9878,8 @@
       "latencyMs": 79
     },
     {
-      "id": "evt_0104",
-      "seq": 104,
+      "id": "evt_0180",
+      "seq": 180,
       "type": "LAYER_ACTIVITY",
       "t": 4066,
       "level": "DERIVED",
@@ -7814,8 +9949,38 @@
       ]
     },
     {
-      "id": "evt_0105",
-      "seq": 105,
+      "id": "evt_0181",
+      "seq": 181,
+      "type": "CONCEPT",
+      "t": 4066,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.2011,
+      "positions": [
+        56
+      ],
+      "evidence": [
+        {
+          "tokenId": 21691,
+          "text": "reading",
+          "probability": 0.067
+        },
+        {
+          "tokenId": 9204,
+          "text": "write",
+          "probability": 0.067
+        },
+        {
+          "tokenId": 34876,
+          "text": "sentence",
+          "probability": 0.067
+        }
+      ]
+    },
+    {
+      "id": "evt_0182",
+      "seq": 182,
       "type": "TOKEN",
       "t": 4123,
       "level": "MEASURED",
@@ -7897,8 +10062,8 @@
       "latencyMs": 42
     },
     {
-      "id": "evt_0106",
-      "seq": 106,
+      "id": "evt_0183",
+      "seq": 183,
       "type": "LAYER_ACTIVITY",
       "t": 4123,
       "level": "DERIVED",
@@ -7968,8 +10133,58 @@
       ]
     },
     {
-      "id": "evt_0107",
-      "seq": 107,
+      "id": "evt_0184",
+      "seq": 184,
+      "type": "CONCEPT",
+      "t": 4123,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.4,
+      "positions": [
+        57
+      ],
+      "evidence": [
+        {
+          "tokenId": 12183,
+          "text": "now",
+          "probability": 0.1333
+        },
+        {
+          "tokenId": 40757,
+          "text": "past",
+          "probability": 0.1333
+        },
+        {
+          "tokenId": 25643,
+          "text": "changed",
+          "probability": 0.1333
+        }
+      ]
+    },
+    {
+      "id": "evt_0185",
+      "seq": 185,
+      "type": "CONCEPT",
+      "t": 4123,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.0931,
+      "positions": [
+        57
+      ],
+      "evidence": [
+        {
+          "tokenId": 38810,
+          "text": "syntax",
+          "probability": 0.0931
+        }
+      ]
+    },
+    {
+      "id": "evt_0186",
+      "seq": 186,
       "type": "TOKEN",
       "t": 4197,
       "level": "MEASURED",
@@ -8051,8 +10266,8 @@
       "latencyMs": 59
     },
     {
-      "id": "evt_0108",
-      "seq": 108,
+      "id": "evt_0187",
+      "seq": 187,
       "type": "LAYER_ACTIVITY",
       "t": 4197,
       "level": "DERIVED",
@@ -8122,8 +10337,68 @@
       ]
     },
     {
-      "id": "evt_0109",
-      "seq": 109,
+      "id": "evt_0188",
+      "seq": 188,
+      "type": "CONCEPT",
+      "t": 4197,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.1745,
+      "positions": [
+        58
+      ],
+      "evidence": [
+        {
+          "tokenId": 48800,
+          "text": "must",
+          "probability": 0.0582
+        },
+        {
+          "tokenId": 44745,
+          "text": "clearly",
+          "probability": 0.0582
+        },
+        {
+          "tokenId": 24645,
+          "text": "obviously",
+          "probability": 0.0582
+        }
+      ]
+    },
+    {
+      "id": "evt_0189",
+      "seq": 189,
+      "type": "CONCEPT",
+      "t": 4197,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.1137,
+      "positions": [
+        58
+      ],
+      "evidence": [
+        {
+          "tokenId": 21499,
+          "text": "maybe",
+          "probability": 0.0379
+        },
+        {
+          "tokenId": 36082,
+          "text": "perhaps",
+          "probability": 0.0379
+        },
+        {
+          "tokenId": 22766,
+          "text": "could",
+          "probability": 0.0379
+        }
+      ]
+    },
+    {
+      "id": "evt_0190",
+      "seq": 190,
       "type": "TOKEN",
       "t": 4282,
       "level": "MEASURED",
@@ -8205,8 +10480,8 @@
       "latencyMs": 70
     },
     {
-      "id": "evt_0110",
-      "seq": 110,
+      "id": "evt_0191",
+      "seq": 191,
       "type": "LAYER_ACTIVITY",
       "t": 4282,
       "level": "DERIVED",
@@ -8276,8 +10551,38 @@
       ]
     },
     {
-      "id": "evt_0111",
-      "seq": 111,
+      "id": "evt_0192",
+      "seq": 192,
+      "type": "CONCEPT",
+      "t": 4282,
+      "level": "INTERPRETED",
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.2791,
+      "positions": [
+        59
+      ],
+      "evidence": [
+        {
+          "tokenId": 47573,
+          "text": "thus",
+          "probability": 0.093
+        },
+        {
+          "tokenId": 17113,
+          "text": "causes",
+          "probability": 0.093
+        },
+        {
+          "tokenId": 31293,
+          "text": "due",
+          "probability": 0.093
+        }
+      ]
+    },
+    {
+      "id": "evt_0193",
+      "seq": 193,
       "type": "TOKEN",
       "t": 4358,
       "level": "MEASURED",
@@ -8359,8 +10664,8 @@
       "latencyMs": 61
     },
     {
-      "id": "evt_0112",
-      "seq": 112,
+      "id": "evt_0194",
+      "seq": 194,
       "type": "LAYER_ACTIVITY",
       "t": 4358,
       "level": "DERIVED",
@@ -8430,8 +10735,38 @@
       ]
     },
     {
-      "id": "evt_0113",
-      "seq": 113,
+      "id": "evt_0195",
+      "seq": 195,
+      "type": "CONCEPT",
+      "t": 4358,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.1577,
+      "positions": [
+        60
+      ],
+      "evidence": [
+        {
+          "tokenId": 7034,
+          "text": "certainly",
+          "probability": 0.0526
+        },
+        {
+          "tokenId": 40119,
+          "text": "surely",
+          "probability": 0.0526
+        },
+        {
+          "tokenId": 36699,
+          "text": "simply",
+          "probability": 0.0526
+        }
+      ]
+    },
+    {
+      "id": "evt_0196",
+      "seq": 196,
       "type": "TOKEN",
       "t": 4422,
       "level": "MEASURED",
@@ -8513,8 +10848,8 @@
       "latencyMs": 49
     },
     {
-      "id": "evt_0114",
-      "seq": 114,
+      "id": "evt_0197",
+      "seq": 197,
       "type": "LAYER_ACTIVITY",
       "t": 4422,
       "level": "DERIVED",
@@ -8584,8 +10919,38 @@
       ]
     },
     {
-      "id": "evt_0115",
-      "seq": 115,
+      "id": "evt_0198",
+      "seq": 198,
+      "type": "CONCEPT",
+      "t": 4422,
+      "level": "INTERPRETED",
+      "conceptId": "concept_quantity",
+      "label": "quantity / degree",
+      "score": 0.2282,
+      "positions": [
+        61
+      ],
+      "evidence": [
+        {
+          "tokenId": 31202,
+          "text": "most",
+          "probability": 0.0761
+        },
+        {
+          "tokenId": 20926,
+          "text": "minority",
+          "probability": 0.0761
+        },
+        {
+          "tokenId": 23497,
+          "text": "lots",
+          "probability": 0.0761
+        }
+      ]
+    },
+    {
+      "id": "evt_0199",
+      "seq": 199,
       "type": "TOKEN",
       "t": 4485,
       "level": "MEASURED",
@@ -8667,8 +11032,8 @@
       "latencyMs": 48
     },
     {
-      "id": "evt_0116",
-      "seq": 116,
+      "id": "evt_0200",
+      "seq": 200,
       "type": "LAYER_ACTIVITY",
       "t": 4485,
       "level": "DERIVED",
@@ -8738,18 +11103,58 @@
       ]
     },
     {
-      "id": "evt_0117",
-      "seq": 117,
+      "id": "evt_0201",
+      "seq": 201,
       "type": "CONCEPT",
       "t": 4485,
       "level": "INTERPRETED",
-      "conceptId": "concept_recommendation",
-      "label": "recommendation",
-      "score": 0.88
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1977,
+      "positions": [
+        62
+      ],
+      "evidence": [
+        {
+          "tokenId": 43197,
+          "text": "learn",
+          "probability": 0.0659
+        },
+        {
+          "tokenId": 32039,
+          "text": "writing",
+          "probability": 0.0659
+        },
+        {
+          "tokenId": 38810,
+          "text": "syntax",
+          "probability": 0.0659
+        }
+      ]
     },
     {
-      "id": "evt_0118",
-      "seq": 118,
+      "id": "evt_0202",
+      "seq": 202,
+      "type": "CONCEPT",
+      "t": 4485,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.0649,
+      "positions": [
+        62
+      ],
+      "evidence": [
+        {
+          "tokenId": 29422,
+          "text": "before",
+          "probability": 0.0649
+        }
+      ]
+    },
+    {
+      "id": "evt_0203",
+      "seq": 203,
       "type": "TOKEN",
       "t": 4582,
       "level": "MEASURED",
@@ -8831,8 +11236,8 @@
       "latencyMs": 82
     },
     {
-      "id": "evt_0119",
-      "seq": 119,
+      "id": "evt_0204",
+      "seq": 204,
       "type": "LAYER_ACTIVITY",
       "t": 4582,
       "level": "DERIVED",
@@ -8902,8 +11307,8 @@
       ]
     },
     {
-      "id": "evt_0120",
-      "seq": 120,
+      "id": "evt_0205",
+      "seq": 205,
       "type": "TOKEN",
       "t": 4670,
       "level": "MEASURED",
@@ -8985,8 +11390,8 @@
       "latencyMs": 73
     },
     {
-      "id": "evt_0121",
-      "seq": 121,
+      "id": "evt_0206",
+      "seq": 206,
       "type": "LAYER_ACTIVITY",
       "t": 4670,
       "level": "DERIVED",
@@ -9056,8 +11461,58 @@
       ]
     },
     {
-      "id": "evt_0122",
-      "seq": 122,
+      "id": "evt_0207",
+      "seq": 207,
+      "type": "CONCEPT",
+      "t": 4670,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.3291,
+      "positions": [
+        64
+      ],
+      "evidence": [
+        {
+          "tokenId": 46063,
+          "text": "better",
+          "probability": 0.1097
+        },
+        {
+          "tokenId": 30418,
+          "text": "difference",
+          "probability": 0.1097
+        },
+        {
+          "tokenId": 18654,
+          "text": "choice",
+          "probability": 0.1097
+        }
+      ]
+    },
+    {
+      "id": "evt_0208",
+      "seq": 208,
+      "type": "CONCEPT",
+      "t": 4670,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.0628,
+      "positions": [
+        64
+      ],
+      "evidence": [
+        {
+          "tokenId": 25523,
+          "text": "language",
+          "probability": 0.0628
+        }
+      ]
+    },
+    {
+      "id": "evt_0209",
+      "seq": 209,
       "type": "TOKEN",
       "t": 4734,
       "level": "MEASURED",
@@ -9139,8 +11594,8 @@
       "latencyMs": 49
     },
     {
-      "id": "evt_0123",
-      "seq": 123,
+      "id": "evt_0210",
+      "seq": 210,
       "type": "LAYER_ACTIVITY",
       "t": 4734,
       "level": "DERIVED",
@@ -9210,8 +11665,38 @@
       ]
     },
     {
-      "id": "evt_0124",
-      "seq": 124,
+      "id": "evt_0211",
+      "seq": 211,
+      "type": "CONCEPT",
+      "t": 4734,
+      "level": "INTERPRETED",
+      "conceptId": "concept_science",
+      "label": "science / nature",
+      "score": 0.1873,
+      "positions": [
+        65
+      ],
+      "evidence": [
+        {
+          "tokenId": 8291,
+          "text": "weather",
+          "probability": 0.0624
+        },
+        {
+          "tokenId": 13783,
+          "text": "air",
+          "probability": 0.0624
+        },
+        {
+          "tokenId": 16601,
+          "text": "colors",
+          "probability": 0.0624
+        }
+      ]
+    },
+    {
+      "id": "evt_0212",
+      "seq": 212,
       "type": "TOKEN",
       "t": 4795,
       "level": "MEASURED",
@@ -9293,8 +11778,8 @@
       "latencyMs": 46
     },
     {
-      "id": "evt_0125",
-      "seq": 125,
+      "id": "evt_0213",
+      "seq": 213,
       "type": "LAYER_ACTIVITY",
       "t": 4795,
       "level": "DERIVED",
@@ -9364,8 +11849,38 @@
       ]
     },
     {
-      "id": "evt_0126",
-      "seq": 126,
+      "id": "evt_0214",
+      "seq": 214,
+      "type": "CONCEPT",
+      "t": 4795,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.1606,
+      "positions": [
+        66
+      ],
+      "evidence": [
+        {
+          "tokenId": 8322,
+          "text": "definitely",
+          "probability": 0.0535
+        },
+        {
+          "tokenId": 48785,
+          "text": "truly",
+          "probability": 0.0535
+        },
+        {
+          "tokenId": 40119,
+          "text": "surely",
+          "probability": 0.0535
+        }
+      ]
+    },
+    {
+      "id": "evt_0215",
+      "seq": 215,
       "type": "TOKEN",
       "t": 4879,
       "level": "MEASURED",
@@ -9447,8 +11962,8 @@
       "latencyMs": 69
     },
     {
-      "id": "evt_0127",
-      "seq": 127,
+      "id": "evt_0216",
+      "seq": 216,
       "type": "LAYER_ACTIVITY",
       "t": 4879,
       "level": "DERIVED",
@@ -9518,8 +12033,58 @@
       ]
     },
     {
-      "id": "evt_0128",
-      "seq": 128,
+      "id": "evt_0217",
+      "seq": 217,
+      "type": "CONCEPT",
+      "t": 4879,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.6397,
+      "positions": [
+        67
+      ],
+      "evidence": [
+        {
+          "tokenId": 14696,
+          "text": "might",
+          "probability": 0.2132
+        },
+        {
+          "tokenId": 18265,
+          "text": "sometimes",
+          "probability": 0.2132
+        },
+        {
+          "tokenId": 15532,
+          "text": "generally",
+          "probability": 0.2132
+        }
+      ]
+    },
+    {
+      "id": "evt_0218",
+      "seq": 218,
+      "type": "CONCEPT",
+      "t": 4879,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.0743,
+      "positions": [
+        67
+      ],
+      "evidence": [
+        {
+          "tokenId": 48800,
+          "text": "must",
+          "probability": 0.0743
+        }
+      ]
+    },
+    {
+      "id": "evt_0219",
+      "seq": 219,
       "type": "TOKEN",
       "t": 4954,
       "level": "MEASURED",
@@ -9601,8 +12166,8 @@
       "latencyMs": 60
     },
     {
-      "id": "evt_0129",
-      "seq": 129,
+      "id": "evt_0220",
+      "seq": 220,
       "type": "LAYER_ACTIVITY",
       "t": 4954,
       "level": "DERIVED",
@@ -9672,8 +12237,8 @@
       ]
     },
     {
-      "id": "evt_0130",
-      "seq": 130,
+      "id": "evt_0221",
+      "seq": 221,
       "type": "TOKEN",
       "t": 5029,
       "level": "MEASURED",
@@ -9755,8 +12320,8 @@
       "latencyMs": 60
     },
     {
-      "id": "evt_0131",
-      "seq": 131,
+      "id": "evt_0222",
+      "seq": 222,
       "type": "LAYER_ACTIVITY",
       "t": 5029,
       "level": "DERIVED",
@@ -9826,8 +12391,58 @@
       ]
     },
     {
-      "id": "evt_0132",
-      "seq": 132,
+      "id": "evt_0223",
+      "seq": 223,
+      "type": "CONCEPT",
+      "t": 5029,
+      "level": "INTERPRETED",
+      "conceptId": "concept_quantity",
+      "label": "quantity / degree",
+      "score": 0.3393,
+      "positions": [
+        69
+      ],
+      "evidence": [
+        {
+          "tokenId": 13913,
+          "text": "few",
+          "probability": 0.1131
+        },
+        {
+          "tokenId": 4163,
+          "text": "twice",
+          "probability": 0.1131
+        },
+        {
+          "tokenId": 36554,
+          "text": "majority",
+          "probability": 0.1131
+        }
+      ]
+    },
+    {
+      "id": "evt_0224",
+      "seq": 224,
+      "type": "CONCEPT",
+      "t": 5029,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.1596,
+      "positions": [
+        69
+      ],
+      "evidence": [
+        {
+          "tokenId": 29422,
+          "text": "before",
+          "probability": 0.1596
+        }
+      ]
+    },
+    {
+      "id": "evt_0225",
+      "seq": 225,
       "type": "TOKEN",
       "t": 5102,
       "level": "MEASURED",
@@ -9909,8 +12524,8 @@
       "latencyMs": 58
     },
     {
-      "id": "evt_0133",
-      "seq": 133,
+      "id": "evt_0226",
+      "seq": 226,
       "type": "LAYER_ACTIVITY",
       "t": 5102,
       "level": "DERIVED",
@@ -9980,8 +12595,38 @@
       ]
     },
     {
-      "id": "evt_0134",
-      "seq": 134,
+      "id": "evt_0227",
+      "seq": 227,
+      "type": "CONCEPT",
+      "t": 5102,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.1711,
+      "positions": [
+        70
+      ],
+      "evidence": [
+        {
+          "tokenId": 32362,
+          "text": "user",
+          "probability": 0.057
+        },
+        {
+          "tokenId": 34803,
+          "text": "someone",
+          "probability": 0.057
+        },
+        {
+          "tokenId": 38722,
+          "text": "developers",
+          "probability": 0.057
+        }
+      ]
+    },
+    {
+      "id": "evt_0228",
+      "seq": 228,
       "type": "TOKEN",
       "t": 5185,
       "level": "MEASURED",
@@ -10063,8 +12708,8 @@
       "latencyMs": 68
     },
     {
-      "id": "evt_0135",
-      "seq": 135,
+      "id": "evt_0229",
+      "seq": 229,
       "type": "LAYER_ACTIVITY",
       "t": 5185,
       "level": "DERIVED",
@@ -10134,8 +12779,68 @@
       ]
     },
     {
-      "id": "evt_0136",
-      "seq": 136,
+      "id": "evt_0230",
+      "seq": 230,
+      "type": "CONCEPT",
+      "t": 5185,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.3262,
+      "positions": [
+        71
+      ],
+      "evidence": [
+        {
+          "tokenId": 7034,
+          "text": "certainly",
+          "probability": 0.0872
+        },
+        {
+          "tokenId": 44745,
+          "text": "clearly",
+          "probability": 0.0872
+        },
+        {
+          "tokenId": 48785,
+          "text": "truly",
+          "probability": 0.0872
+        }
+      ]
+    },
+    {
+      "id": "evt_0231",
+      "seq": 231,
+      "type": "CONCEPT",
+      "t": 5185,
+      "level": "INTERPRETED",
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.2138,
+      "positions": [
+        71
+      ],
+      "evidence": [
+        {
+          "tokenId": 9919,
+          "text": "therefore",
+          "probability": 0.0713
+        },
+        {
+          "tokenId": 47573,
+          "text": "thus",
+          "probability": 0.0713
+        },
+        {
+          "tokenId": 38025,
+          "text": "reason",
+          "probability": 0.0713
+        }
+      ]
+    },
+    {
+      "id": "evt_0232",
+      "seq": 232,
       "type": "TOKEN",
       "t": 5278,
       "level": "MEASURED",
@@ -10217,8 +12922,8 @@
       "latencyMs": 78
     },
     {
-      "id": "evt_0137",
-      "seq": 137,
+      "id": "evt_0233",
+      "seq": 233,
       "type": "LAYER_ACTIVITY",
       "t": 5278,
       "level": "DERIVED",
@@ -10288,8 +12993,28 @@
       ]
     },
     {
-      "id": "evt_0138",
-      "seq": 138,
+      "id": "evt_0234",
+      "seq": 234,
+      "type": "CONCEPT",
+      "t": 5278,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1231,
+      "positions": [
+        72
+      ],
+      "evidence": [
+        {
+          "tokenId": 43197,
+          "text": "learn",
+          "probability": 0.1231
+        }
+      ]
+    },
+    {
+      "id": "evt_0235",
+      "seq": 235,
       "type": "TOKEN",
       "t": 5346,
       "level": "MEASURED",
@@ -10371,8 +13096,8 @@
       "latencyMs": 53
     },
     {
-      "id": "evt_0139",
-      "seq": 139,
+      "id": "evt_0236",
+      "seq": 236,
       "type": "LAYER_ACTIVITY",
       "t": 5346,
       "level": "DERIVED",
@@ -10442,8 +13167,38 @@
       ]
     },
     {
-      "id": "evt_0140",
-      "seq": 140,
+      "id": "evt_0237",
+      "seq": 237,
+      "type": "CONCEPT",
+      "t": 5346,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.1417,
+      "positions": [
+        73
+      ],
+      "evidence": [
+        {
+          "tokenId": 30418,
+          "text": "difference",
+          "probability": 0.0472
+        },
+        {
+          "tokenId": 44222,
+          "text": "similar",
+          "probability": 0.0472
+        },
+        {
+          "tokenId": 18654,
+          "text": "choice",
+          "probability": 0.0472
+        }
+      ]
+    },
+    {
+      "id": "evt_0238",
+      "seq": 238,
       "type": "TOKEN",
       "t": 5422,
       "level": "MEASURED",
@@ -10525,8 +13280,8 @@
       "latencyMs": 61
     },
     {
-      "id": "evt_0141",
-      "seq": 141,
+      "id": "evt_0239",
+      "seq": 239,
       "type": "LAYER_ACTIVITY",
       "t": 5422,
       "level": "DERIVED",
@@ -10596,8 +13351,78 @@
       ]
     },
     {
-      "id": "evt_0142",
-      "seq": 142,
+      "id": "evt_0240",
+      "seq": 240,
+      "type": "CONCEPT",
+      "t": 5422,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.2112,
+      "positions": [
+        74
+      ],
+      "evidence": [
+        {
+          "tokenId": 27708,
+          "text": "tools",
+          "probability": 0.2112
+        }
+      ]
+    },
+    {
+      "id": "evt_0241",
+      "seq": 241,
+      "type": "CONCEPT",
+      "t": 5422,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.1479,
+      "positions": [
+        74
+      ],
+      "evidence": [
+        {
+          "tokenId": 36082,
+          "text": "perhaps",
+          "probability": 0.0493
+        },
+        {
+          "tokenId": 31948,
+          "text": "uncertain",
+          "probability": 0.0493
+        },
+        {
+          "tokenId": 48767,
+          "text": "often",
+          "probability": 0.0493
+        }
+      ]
+    },
+    {
+      "id": "evt_0242",
+      "seq": 242,
+      "type": "CONCEPT",
+      "t": 5422,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.0684,
+      "positions": [
+        74
+      ],
+      "evidence": [
+        {
+          "tokenId": 46063,
+          "text": "better",
+          "probability": 0.0684
+        }
+      ]
+    },
+    {
+      "id": "evt_0243",
+      "seq": 243,
       "type": "TOKEN",
       "t": 5525,
       "level": "MEASURED",
@@ -10679,8 +13504,8 @@
       "latencyMs": 88
     },
     {
-      "id": "evt_0143",
-      "seq": 143,
+      "id": "evt_0244",
+      "seq": 244,
       "type": "LAYER_ACTIVITY",
       "t": 5525,
       "level": "DERIVED",
@@ -10750,8 +13575,38 @@
       ]
     },
     {
-      "id": "evt_0144",
-      "seq": 144,
+      "id": "evt_0245",
+      "seq": 245,
+      "type": "CONCEPT",
+      "t": 5525,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.3272,
+      "positions": [
+        75
+      ],
+      "evidence": [
+        {
+          "tokenId": 7034,
+          "text": "certainly",
+          "probability": 0.1091
+        },
+        {
+          "tokenId": 24645,
+          "text": "obviously",
+          "probability": 0.1091
+        },
+        {
+          "tokenId": 36699,
+          "text": "simply",
+          "probability": 0.1091
+        }
+      ]
+    },
+    {
+      "id": "evt_0246",
+      "seq": 246,
       "type": "TOKEN",
       "t": 5591,
       "level": "MEASURED",
@@ -10833,8 +13688,8 @@
       "latencyMs": 51
     },
     {
-      "id": "evt_0145",
-      "seq": 145,
+      "id": "evt_0247",
+      "seq": 247,
       "type": "LAYER_ACTIVITY",
       "t": 5591,
       "level": "DERIVED",
@@ -10904,8 +13759,38 @@
       ]
     },
     {
-      "id": "evt_0146",
-      "seq": 146,
+      "id": "evt_0248",
+      "seq": 248,
+      "type": "CONCEPT",
+      "t": 5591,
+      "level": "INTERPRETED",
+      "conceptId": "concept_science",
+      "label": "science / nature",
+      "score": 0.2414,
+      "positions": [
+        76
+      ],
+      "evidence": [
+        {
+          "tokenId": 38695,
+          "text": "light",
+          "probability": 0.0805
+        },
+        {
+          "tokenId": 4588,
+          "text": "climate",
+          "probability": 0.0805
+        },
+        {
+          "tokenId": 48111,
+          "text": "earth",
+          "probability": 0.0805
+        }
+      ]
+    },
+    {
+      "id": "evt_0249",
+      "seq": 249,
       "type": "TOKEN",
       "t": 5661,
       "level": "MEASURED",
@@ -10987,8 +13872,8 @@
       "latencyMs": 55
     },
     {
-      "id": "evt_0147",
-      "seq": 147,
+      "id": "evt_0250",
+      "seq": 250,
       "type": "LAYER_ACTIVITY",
       "t": 5661,
       "level": "DERIVED",
@@ -11058,8 +13943,38 @@
       ]
     },
     {
-      "id": "evt_0148",
-      "seq": 148,
+      "id": "evt_0251",
+      "seq": 251,
+      "type": "CONCEPT",
+      "t": 5661,
+      "level": "INTERPRETED",
+      "conceptId": "concept_quantity",
+      "label": "quantity / degree",
+      "score": 0.1577,
+      "positions": [
+        77
+      ],
+      "evidence": [
+        {
+          "tokenId": 47306,
+          "text": "many",
+          "probability": 0.0526
+        },
+        {
+          "tokenId": 13913,
+          "text": "few",
+          "probability": 0.0526
+        },
+        {
+          "tokenId": 23497,
+          "text": "lots",
+          "probability": 0.0526
+        }
+      ]
+    },
+    {
+      "id": "evt_0252",
+      "seq": 252,
       "type": "TOKEN",
       "t": 5719,
       "level": "MEASURED",
@@ -11141,8 +14056,8 @@
       "latencyMs": 43
     },
     {
-      "id": "evt_0149",
-      "seq": 149,
+      "id": "evt_0253",
+      "seq": 253,
       "type": "LAYER_ACTIVITY",
       "t": 5719,
       "level": "DERIVED",
@@ -11212,8 +14127,38 @@
       ]
     },
     {
-      "id": "evt_0150",
-      "seq": 150,
+      "id": "evt_0254",
+      "seq": 254,
+      "type": "CONCEPT",
+      "t": 5719,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.1353,
+      "positions": [
+        78
+      ],
+      "evidence": [
+        {
+          "tokenId": 8322,
+          "text": "definitely",
+          "probability": 0.0451
+        },
+        {
+          "tokenId": 48800,
+          "text": "must",
+          "probability": 0.0451
+        },
+        {
+          "tokenId": 36699,
+          "text": "simply",
+          "probability": 0.0451
+        }
+      ]
+    },
+    {
+      "id": "evt_0255",
+      "seq": 255,
       "type": "TOKEN",
       "t": 5801,
       "level": "MEASURED",
@@ -11295,8 +14240,8 @@
       "latencyMs": 67
     },
     {
-      "id": "evt_0151",
-      "seq": 151,
+      "id": "evt_0256",
+      "seq": 256,
       "type": "LAYER_ACTIVITY",
       "t": 5801,
       "level": "DERIVED",
@@ -11366,8 +14311,38 @@
       ]
     },
     {
-      "id": "evt_0152",
-      "seq": 152,
+      "id": "evt_0257",
+      "seq": 257,
+      "type": "CONCEPT",
+      "t": 5801,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.2453,
+      "positions": [
+        79
+      ],
+      "evidence": [
+        {
+          "tokenId": 9483,
+          "text": "humans",
+          "probability": 0.0818
+        },
+        {
+          "tokenId": 20647,
+          "text": "readers",
+          "probability": 0.0818
+        },
+        {
+          "tokenId": 46764,
+          "text": "workers",
+          "probability": 0.0818
+        }
+      ]
+    },
+    {
+      "id": "evt_0258",
+      "seq": 258,
       "type": "TOKEN",
       "t": 5882,
       "level": "MEASURED",
@@ -11449,8 +14424,8 @@
       "latencyMs": 66
     },
     {
-      "id": "evt_0153",
-      "seq": 153,
+      "id": "evt_0259",
+      "seq": 259,
       "type": "LAYER_ACTIVITY",
       "t": 5882,
       "level": "DERIVED",
@@ -11520,8 +14495,38 @@
       ]
     },
     {
-      "id": "evt_0154",
-      "seq": 154,
+      "id": "evt_0260",
+      "seq": 260,
+      "type": "CONCEPT",
+      "t": 5882,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.2115,
+      "positions": [
+        80
+      ],
+      "evidence": [
+        {
+          "tokenId": 40564,
+          "text": "system",
+          "probability": 0.0705
+        },
+        {
+          "tokenId": 7029,
+          "text": "systems",
+          "probability": 0.0705
+        },
+        {
+          "tokenId": 16991,
+          "text": "tool",
+          "probability": 0.0705
+        }
+      ]
+    },
+    {
+      "id": "evt_0261",
+      "seq": 261,
       "type": "TOKEN",
       "t": 5945,
       "level": "MEASURED",
@@ -11603,8 +14608,8 @@
       "latencyMs": 48
     },
     {
-      "id": "evt_0155",
-      "seq": 155,
+      "id": "evt_0262",
+      "seq": 262,
       "type": "LAYER_ACTIVITY",
       "t": 5945,
       "level": "DERIVED",
@@ -11674,8 +14679,58 @@
       ]
     },
     {
-      "id": "evt_0156",
-      "seq": 156,
+      "id": "evt_0263",
+      "seq": 263,
+      "type": "CONCEPT",
+      "t": 5945,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.6473,
+      "positions": [
+        81
+      ],
+      "evidence": [
+        {
+          "tokenId": 32362,
+          "text": "user",
+          "probability": 0.2158
+        },
+        {
+          "tokenId": 34803,
+          "text": "someone",
+          "probability": 0.2158
+        },
+        {
+          "tokenId": 46764,
+          "text": "workers",
+          "probability": 0.2158
+        }
+      ]
+    },
+    {
+      "id": "evt_0264",
+      "seq": 264,
+      "type": "CONCEPT",
+      "t": 5945,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.0618,
+      "positions": [
+        81
+      ],
+      "evidence": [
+        {
+          "tokenId": 7029,
+          "text": "systems",
+          "probability": 0.0618
+        }
+      ]
+    },
+    {
+      "id": "evt_0265",
+      "seq": 265,
       "type": "TOKEN",
       "t": 6025,
       "level": "MEASURED",
@@ -11757,8 +14812,8 @@
       "latencyMs": 65
     },
     {
-      "id": "evt_0157",
-      "seq": 157,
+      "id": "evt_0266",
+      "seq": 266,
       "type": "LAYER_ACTIVITY",
       "t": 6025,
       "level": "DERIVED",
@@ -11828,8 +14883,28 @@
       ]
     },
     {
-      "id": "evt_0158",
-      "seq": 158,
+      "id": "evt_0267",
+      "seq": 267,
+      "type": "CONCEPT",
+      "t": 6025,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.1559,
+      "positions": [
+        82
+      ],
+      "evidence": [
+        {
+          "tokenId": 48800,
+          "text": "must",
+          "probability": 0.1559
+        }
+      ]
+    },
+    {
+      "id": "evt_0268",
+      "seq": 268,
       "type": "TOKEN",
       "t": 6122,
       "level": "MEASURED",
@@ -11911,8 +14986,8 @@
       "latencyMs": 82
     },
     {
-      "id": "evt_0159",
-      "seq": 159,
+      "id": "evt_0269",
+      "seq": 269,
       "type": "LAYER_ACTIVITY",
       "t": 6122,
       "level": "DERIVED",
@@ -11982,8 +15057,68 @@
       ]
     },
     {
-      "id": "evt_0160",
-      "seq": 160,
+      "id": "evt_0270",
+      "seq": 270,
+      "type": "CONCEPT",
+      "t": 6122,
+      "level": "INTERPRETED",
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.234,
+      "positions": [
+        83
+      ],
+      "evidence": [
+        {
+          "tokenId": 17113,
+          "text": "causes",
+          "probability": 0.078
+        },
+        {
+          "tokenId": 5884,
+          "text": "result",
+          "probability": 0.078
+        },
+        {
+          "tokenId": 46068,
+          "text": "hence",
+          "probability": 0.078
+        }
+      ]
+    },
+    {
+      "id": "evt_0271",
+      "seq": 271,
+      "type": "CONCEPT",
+      "t": 6122,
+      "level": "INTERPRETED",
+      "conceptId": "concept_quantity",
+      "label": "quantity / degree",
+      "score": 0.1665,
+      "positions": [
+        83
+      ],
+      "evidence": [
+        {
+          "tokenId": 27055,
+          "text": "several",
+          "probability": 0.0555
+        },
+        {
+          "tokenId": 36554,
+          "text": "majority",
+          "probability": 0.0555
+        },
+        {
+          "tokenId": 20926,
+          "text": "minority",
+          "probability": 0.0555
+        }
+      ]
+    },
+    {
+      "id": "evt_0272",
+      "seq": 272,
       "type": "TOKEN",
       "t": 6217,
       "level": "MEASURED",
@@ -12065,8 +15200,8 @@
       "latencyMs": 80
     },
     {
-      "id": "evt_0161",
-      "seq": 161,
+      "id": "evt_0273",
+      "seq": 273,
       "type": "LAYER_ACTIVITY",
       "t": 6217,
       "level": "DERIVED",
@@ -12136,8 +15271,58 @@
       ]
     },
     {
-      "id": "evt_0162",
-      "seq": 162,
+      "id": "evt_0274",
+      "seq": 274,
+      "type": "CONCEPT",
+      "t": 6217,
+      "level": "INTERPRETED",
+      "conceptId": "concept_science",
+      "label": "science / nature",
+      "score": 0.1671,
+      "positions": [
+        84
+      ],
+      "evidence": [
+        {
+          "tokenId": 13783,
+          "text": "air",
+          "probability": 0.0557
+        },
+        {
+          "tokenId": 6330,
+          "text": "molecules",
+          "probability": 0.0557
+        },
+        {
+          "tokenId": 42241,
+          "text": "atoms",
+          "probability": 0.0557
+        }
+      ]
+    },
+    {
+      "id": "evt_0275",
+      "seq": 275,
+      "type": "CONCEPT",
+      "t": 6217,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.1212,
+      "positions": [
+        84
+      ],
+      "evidence": [
+        {
+          "tokenId": 7029,
+          "text": "systems",
+          "probability": 0.1212
+        }
+      ]
+    },
+    {
+      "id": "evt_0276",
+      "seq": 276,
       "type": "TOKEN",
       "t": 6290,
       "level": "MEASURED",
@@ -12219,8 +15404,8 @@
       "latencyMs": 58
     },
     {
-      "id": "evt_0163",
-      "seq": 163,
+      "id": "evt_0277",
+      "seq": 277,
       "type": "LAYER_ACTIVITY",
       "t": 6290,
       "level": "DERIVED",
@@ -12290,8 +15475,58 @@
       ]
     },
     {
-      "id": "evt_0164",
-      "seq": 164,
+      "id": "evt_0278",
+      "seq": 278,
+      "type": "CONCEPT",
+      "t": 6290,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.2893,
+      "positions": [
+        85
+      ],
+      "evidence": [
+        {
+          "tokenId": 7029,
+          "text": "systems",
+          "probability": 0.2893
+        }
+      ]
+    },
+    {
+      "id": "evt_0279",
+      "seq": 279,
+      "type": "CONCEPT",
+      "t": 6290,
+      "level": "INTERPRETED",
+      "conceptId": "concept_science",
+      "label": "science / nature",
+      "score": 0.2273,
+      "positions": [
+        85
+      ],
+      "evidence": [
+        {
+          "tokenId": 38695,
+          "text": "light",
+          "probability": 0.0758
+        },
+        {
+          "tokenId": 13783,
+          "text": "air",
+          "probability": 0.0758
+        },
+        {
+          "tokenId": 47888,
+          "text": "color",
+          "probability": 0.0758
+        }
+      ]
+    },
+    {
+      "id": "evt_0280",
+      "seq": 280,
       "type": "TOKEN",
       "t": 6353,
       "level": "MEASURED",
@@ -12373,8 +15608,8 @@
       "latencyMs": 48
     },
     {
-      "id": "evt_0165",
-      "seq": 165,
+      "id": "evt_0281",
+      "seq": 281,
       "type": "LAYER_ACTIVITY",
       "t": 6353,
       "level": "DERIVED",
@@ -12444,8 +15679,38 @@
       ]
     },
     {
-      "id": "evt_0166",
-      "seq": 166,
+      "id": "evt_0282",
+      "seq": 282,
+      "type": "CONCEPT",
+      "t": 6353,
+      "level": "INTERPRETED",
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.1409,
+      "positions": [
+        86
+      ],
+      "evidence": [
+        {
+          "tokenId": 47573,
+          "text": "thus",
+          "probability": 0.047
+        },
+        {
+          "tokenId": 16828,
+          "text": "caused",
+          "probability": 0.047
+        },
+        {
+          "tokenId": 41609,
+          "text": "why",
+          "probability": 0.047
+        }
+      ]
+    },
+    {
+      "id": "evt_0283",
+      "seq": 283,
       "type": "TOKEN",
       "t": 6457,
       "level": "MEASURED",
@@ -12527,8 +15792,8 @@
       "latencyMs": 89
     },
     {
-      "id": "evt_0167",
-      "seq": 167,
+      "id": "evt_0284",
+      "seq": 284,
       "type": "LAYER_ACTIVITY",
       "t": 6457,
       "level": "DERIVED",
@@ -12598,8 +15863,38 @@
       ]
     },
     {
-      "id": "evt_0168",
-      "seq": 168,
+      "id": "evt_0285",
+      "seq": 285,
+      "type": "CONCEPT",
+      "t": 6457,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.2001,
+      "positions": [
+        87
+      ],
+      "evidence": [
+        {
+          "tokenId": 7488,
+          "text": "computer",
+          "probability": 0.0667
+        },
+        {
+          "tokenId": 37940,
+          "text": "code",
+          "probability": 0.0667
+        },
+        {
+          "tokenId": 27708,
+          "text": "tools",
+          "probability": 0.0667
+        }
+      ]
+    },
+    {
+      "id": "evt_0286",
+      "seq": 286,
       "type": "TOKEN",
       "t": 6539,
       "level": "MEASURED",
@@ -12681,8 +15976,8 @@
       "latencyMs": 67
     },
     {
-      "id": "evt_0169",
-      "seq": 169,
+      "id": "evt_0287",
+      "seq": 287,
       "type": "LAYER_ACTIVITY",
       "t": 6539,
       "level": "DERIVED",
@@ -12752,8 +16047,38 @@
       ]
     },
     {
-      "id": "evt_0170",
-      "seq": 170,
+      "id": "evt_0288",
+      "seq": 288,
+      "type": "CONCEPT",
+      "t": 6539,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1517,
+      "positions": [
+        88
+      ],
+      "evidence": [
+        {
+          "tokenId": 5269,
+          "text": "word",
+          "probability": 0.0506
+        },
+        {
+          "tokenId": 21691,
+          "text": "reading",
+          "probability": 0.0506
+        },
+        {
+          "tokenId": 9204,
+          "text": "write",
+          "probability": 0.0506
+        }
+      ]
+    },
+    {
+      "id": "evt_0289",
+      "seq": 289,
       "type": "TOKEN",
       "t": 6612,
       "level": "MEASURED",
@@ -12835,8 +16160,8 @@
       "latencyMs": 58
     },
     {
-      "id": "evt_0171",
-      "seq": 171,
+      "id": "evt_0290",
+      "seq": 290,
       "type": "LAYER_ACTIVITY",
       "t": 6612,
       "level": "DERIVED",
@@ -12906,8 +16231,58 @@
       ]
     },
     {
-      "id": "evt_0172",
-      "seq": 172,
+      "id": "evt_0291",
+      "seq": 291,
+      "type": "CONCEPT",
+      "t": 6612,
+      "level": "INTERPRETED",
+      "conceptId": "concept_science",
+      "label": "science / nature",
+      "score": 0.1467,
+      "positions": [
+        89
+      ],
+      "evidence": [
+        {
+          "tokenId": 4588,
+          "text": "climate",
+          "probability": 0.0489
+        },
+        {
+          "tokenId": 6150,
+          "text": "natural",
+          "probability": 0.0489
+        },
+        {
+          "tokenId": 20963,
+          "text": "sunlight",
+          "probability": 0.0489
+        }
+      ]
+    },
+    {
+      "id": "evt_0292",
+      "seq": 292,
+      "type": "CONCEPT",
+      "t": 6612,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.1269,
+      "positions": [
+        89
+      ],
+      "evidence": [
+        {
+          "tokenId": 18781,
+          "text": "data",
+          "probability": 0.1269
+        }
+      ]
+    },
+    {
+      "id": "evt_0293",
+      "seq": 293,
       "type": "TOKEN",
       "t": 6709,
       "level": "MEASURED",
@@ -12989,8 +16364,8 @@
       "latencyMs": 82
     },
     {
-      "id": "evt_0173",
-      "seq": 173,
+      "id": "evt_0294",
+      "seq": 294,
       "type": "LAYER_ACTIVITY",
       "t": 6709,
       "level": "DERIVED",
@@ -13060,8 +16435,38 @@
       ]
     },
     {
-      "id": "evt_0174",
-      "seq": 174,
+      "id": "evt_0295",
+      "seq": 295,
+      "type": "CONCEPT",
+      "t": 6709,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1842,
+      "positions": [
+        90
+      ],
+      "evidence": [
+        {
+          "tokenId": 44949,
+          "text": "read",
+          "probability": 0.0614
+        },
+        {
+          "tokenId": 21691,
+          "text": "reading",
+          "probability": 0.0614
+        },
+        {
+          "tokenId": 1358,
+          "text": "grammar",
+          "probability": 0.0614
+        }
+      ]
+    },
+    {
+      "id": "evt_0296",
+      "seq": 296,
       "type": "TOKEN",
       "t": 6796,
       "level": "MEASURED",
@@ -13143,8 +16548,8 @@
       "latencyMs": 72
     },
     {
-      "id": "evt_0175",
-      "seq": 175,
+      "id": "evt_0297",
+      "seq": 297,
       "type": "LAYER_ACTIVITY",
       "t": 6796,
       "level": "DERIVED",
@@ -13214,8 +16619,68 @@
       ]
     },
     {
-      "id": "evt_0176",
-      "seq": 176,
+      "id": "evt_0298",
+      "seq": 298,
+      "type": "CONCEPT",
+      "t": 6796,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.4912,
+      "positions": [
+        91
+      ],
+      "evidence": [
+        {
+          "tokenId": 14696,
+          "text": "might",
+          "probability": 0.1637
+        },
+        {
+          "tokenId": 30062,
+          "text": "probably",
+          "probability": 0.1637
+        },
+        {
+          "tokenId": 15248,
+          "text": "depends",
+          "probability": 0.1637
+        }
+      ]
+    },
+    {
+      "id": "evt_0299",
+      "seq": 299,
+      "type": "CONCEPT",
+      "t": 6796,
+      "level": "INTERPRETED",
+      "conceptId": "concept_quantity",
+      "label": "quantity / degree",
+      "score": 0.3489,
+      "positions": [
+        91
+      ],
+      "evidence": [
+        {
+          "tokenId": 47306,
+          "text": "many",
+          "probability": 0.1163
+        },
+        {
+          "tokenId": 36554,
+          "text": "majority",
+          "probability": 0.1163
+        },
+        {
+          "tokenId": 20926,
+          "text": "minority",
+          "probability": 0.1163
+        }
+      ]
+    },
+    {
+      "id": "evt_0300",
+      "seq": 300,
       "type": "TOKEN",
       "t": 6872,
       "level": "MEASURED",
@@ -13297,8 +16762,8 @@
       "latencyMs": 61
     },
     {
-      "id": "evt_0177",
-      "seq": 177,
+      "id": "evt_0301",
+      "seq": 301,
       "type": "LAYER_ACTIVITY",
       "t": 6872,
       "level": "DERIVED",
@@ -13368,8 +16833,38 @@
       ]
     },
     {
-      "id": "evt_0178",
-      "seq": 178,
+      "id": "evt_0302",
+      "seq": 302,
+      "type": "CONCEPT",
+      "t": 6872,
+      "level": "INTERPRETED",
+      "conceptId": "concept_science",
+      "label": "science / nature",
+      "score": 0.1407,
+      "positions": [
+        92
+      ],
+      "evidence": [
+        {
+          "tokenId": 4588,
+          "text": "climate",
+          "probability": 0.0469
+        },
+        {
+          "tokenId": 34348,
+          "text": "biology",
+          "probability": 0.0469
+        },
+        {
+          "tokenId": 25417,
+          "text": "sun",
+          "probability": 0.0469
+        }
+      ]
+    },
+    {
+      "id": "evt_0303",
+      "seq": 303,
       "type": "TOKEN",
       "t": 6941,
       "level": "MEASURED",
@@ -13451,8 +16946,8 @@
       "latencyMs": 54
     },
     {
-      "id": "evt_0179",
-      "seq": 179,
+      "id": "evt_0304",
+      "seq": 304,
       "type": "LAYER_ACTIVITY",
       "t": 6941,
       "level": "DERIVED",
@@ -13522,8 +17017,68 @@
       ]
     },
     {
-      "id": "evt_0180",
-      "seq": 180,
+      "id": "evt_0305",
+      "seq": 305,
+      "type": "CONCEPT",
+      "t": 6941,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.1727,
+      "positions": [
+        93
+      ],
+      "evidence": [
+        {
+          "tokenId": 29422,
+          "text": "before",
+          "probability": 0.0707
+        },
+        {
+          "tokenId": 35329,
+          "text": "later",
+          "probability": 0.034
+        },
+        {
+          "tokenId": 17092,
+          "text": "eventually",
+          "probability": 0.034
+        }
+      ]
+    },
+    {
+      "id": "evt_0306",
+      "seq": 306,
+      "type": "CONCEPT",
+      "t": 6941,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1564,
+      "positions": [
+        93
+      ],
+      "evidence": [
+        {
+          "tokenId": 5269,
+          "text": "word",
+          "probability": 0.0521
+        },
+        {
+          "tokenId": 47955,
+          "text": "learning",
+          "probability": 0.0521
+        },
+        {
+          "tokenId": 16686,
+          "text": "teaching",
+          "probability": 0.0521
+        }
+      ]
+    },
+    {
+      "id": "evt_0307",
+      "seq": 307,
       "type": "TOKEN",
       "t": 6998,
       "level": "MEASURED",
@@ -13605,8 +17160,8 @@
       "latencyMs": 42
     },
     {
-      "id": "evt_0181",
-      "seq": 181,
+      "id": "evt_0308",
+      "seq": 308,
       "type": "LAYER_ACTIVITY",
       "t": 6998,
       "level": "DERIVED",
@@ -13676,8 +17231,88 @@
       ]
     },
     {
-      "id": "evt_0182",
-      "seq": 182,
+      "id": "evt_0309",
+      "seq": 309,
+      "type": "CONCEPT",
+      "t": 6998,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.1845,
+      "positions": [
+        94
+      ],
+      "evidence": [
+        {
+          "tokenId": 35329,
+          "text": "later",
+          "probability": 0.0615
+        },
+        {
+          "tokenId": 48185,
+          "text": "decade",
+          "probability": 0.0615
+        },
+        {
+          "tokenId": 18993,
+          "text": "after",
+          "probability": 0.0615
+        }
+      ]
+    },
+    {
+      "id": "evt_0310",
+      "seq": 310,
+      "type": "CONCEPT",
+      "t": 6998,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1748,
+      "positions": [
+        94
+      ],
+      "evidence": [
+        {
+          "tokenId": 47955,
+          "text": "learning",
+          "probability": 0.1748
+        }
+      ]
+    },
+    {
+      "id": "evt_0311",
+      "seq": 311,
+      "type": "CONCEPT",
+      "t": 6998,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.1085,
+      "positions": [
+        94
+      ],
+      "evidence": [
+        {
+          "tokenId": 39656,
+          "text": "software",
+          "probability": 0.0311
+        },
+        {
+          "tokenId": 34439,
+          "text": "machines",
+          "probability": 0.0311
+        },
+        {
+          "tokenId": 16991,
+          "text": "tool",
+          "probability": 0.0311
+        }
+      ]
+    },
+    {
+      "id": "evt_0312",
+      "seq": 312,
       "type": "TOKEN",
       "t": 7110,
       "level": "MEASURED",
@@ -13759,8 +17394,8 @@
       "latencyMs": 97
     },
     {
-      "id": "evt_0183",
-      "seq": 183,
+      "id": "evt_0313",
+      "seq": 313,
       "type": "LAYER_ACTIVITY",
       "t": 7110,
       "level": "DERIVED",
@@ -13830,8 +17465,68 @@
       ]
     },
     {
-      "id": "evt_0184",
-      "seq": 184,
+      "id": "evt_0314",
+      "seq": 314,
+      "type": "CONCEPT",
+      "t": 7110,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.1742,
+      "positions": [
+        95
+      ],
+      "evidence": [
+        {
+          "tokenId": 37655,
+          "text": "best",
+          "probability": 0.0581
+        },
+        {
+          "tokenId": 4713,
+          "text": "instead",
+          "probability": 0.0581
+        },
+        {
+          "tokenId": 48711,
+          "text": "prefer",
+          "probability": 0.0581
+        }
+      ]
+    },
+    {
+      "id": "evt_0315",
+      "seq": 315,
+      "type": "CONCEPT",
+      "t": 7110,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.1626,
+      "positions": [
+        95
+      ],
+      "evidence": [
+        {
+          "tokenId": 16542,
+          "text": "people",
+          "probability": 0.0542
+        },
+        {
+          "tokenId": 32208,
+          "text": "person",
+          "probability": 0.0542
+        },
+        {
+          "tokenId": 46764,
+          "text": "workers",
+          "probability": 0.0542
+        }
+      ]
+    },
+    {
+      "id": "evt_0316",
+      "seq": 316,
       "type": "TOKEN",
       "t": 7190,
       "level": "MEASURED",
@@ -13913,8 +17608,8 @@
       "latencyMs": 65
     },
     {
-      "id": "evt_0185",
-      "seq": 185,
+      "id": "evt_0317",
+      "seq": 317,
       "type": "LAYER_ACTIVITY",
       "t": 7190,
       "level": "DERIVED",
@@ -13984,8 +17679,68 @@
       ]
     },
     {
-      "id": "evt_0186",
-      "seq": 186,
+      "id": "evt_0318",
+      "seq": 318,
+      "type": "CONCEPT",
+      "t": 7190,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.1779,
+      "positions": [
+        96
+      ],
+      "evidence": [
+        {
+          "tokenId": 8322,
+          "text": "definitely",
+          "probability": 0.0593
+        },
+        {
+          "tokenId": 48800,
+          "text": "must",
+          "probability": 0.0593
+        },
+        {
+          "tokenId": 24645,
+          "text": "obviously",
+          "probability": 0.0593
+        }
+      ]
+    },
+    {
+      "id": "evt_0319",
+      "seq": 319,
+      "type": "CONCEPT",
+      "t": 7190,
+      "level": "INTERPRETED",
+      "conceptId": "concept_quantity",
+      "label": "quantity / degree",
+      "score": 0.1579,
+      "positions": [
+        96
+      ],
+      "evidence": [
+        {
+          "tokenId": 13913,
+          "text": "few",
+          "probability": 0.0526
+        },
+        {
+          "tokenId": 31202,
+          "text": "most",
+          "probability": 0.0526
+        },
+        {
+          "tokenId": 7409,
+          "text": "numbers",
+          "probability": 0.0526
+        }
+      ]
+    },
+    {
+      "id": "evt_0320",
+      "seq": 320,
       "type": "TOKEN",
       "t": 7260,
       "level": "MEASURED",
@@ -14067,8 +17822,8 @@
       "latencyMs": 55
     },
     {
-      "id": "evt_0187",
-      "seq": 187,
+      "id": "evt_0321",
+      "seq": 321,
       "type": "LAYER_ACTIVITY",
       "t": 7260,
       "level": "DERIVED",
@@ -14138,8 +17893,38 @@
       ]
     },
     {
-      "id": "evt_0188",
-      "seq": 188,
+      "id": "evt_0322",
+      "seq": 322,
+      "type": "CONCEPT",
+      "t": 7260,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.5006,
+      "positions": [
+        97
+      ],
+      "evidence": [
+        {
+          "tokenId": 44720,
+          "text": "languages",
+          "probability": 0.1669
+        },
+        {
+          "tokenId": 45972,
+          "text": "meaning",
+          "probability": 0.1669
+        },
+        {
+          "tokenId": 9204,
+          "text": "write",
+          "probability": 0.1669
+        }
+      ]
+    },
+    {
+      "id": "evt_0323",
+      "seq": 323,
       "type": "TOKEN",
       "t": 7320,
       "level": "MEASURED",
@@ -14221,8 +18006,8 @@
       "latencyMs": 45
     },
     {
-      "id": "evt_0189",
-      "seq": 189,
+      "id": "evt_0324",
+      "seq": 324,
       "type": "LAYER_ACTIVITY",
       "t": 7320,
       "level": "DERIVED",
@@ -14292,8 +18077,38 @@
       ]
     },
     {
-      "id": "evt_0190",
-      "seq": 190,
+      "id": "evt_0325",
+      "seq": 325,
+      "type": "CONCEPT",
+      "t": 7320,
+      "level": "INTERPRETED",
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.2477,
+      "positions": [
+        98
+      ],
+      "evidence": [
+        {
+          "tokenId": 31293,
+          "text": "due",
+          "probability": 0.0826
+        },
+        {
+          "tokenId": 38025,
+          "text": "reason",
+          "probability": 0.0826
+        },
+        {
+          "tokenId": 41609,
+          "text": "why",
+          "probability": 0.0826
+        }
+      ]
+    },
+    {
+      "id": "evt_0326",
+      "seq": 326,
       "type": "TOKEN",
       "t": 7429,
       "level": "MEASURED",
@@ -14375,8 +18190,8 @@
       "latencyMs": 94
     },
     {
-      "id": "evt_0191",
-      "seq": 191,
+      "id": "evt_0327",
+      "seq": 327,
       "type": "LAYER_ACTIVITY",
       "t": 7429,
       "level": "DERIVED",
@@ -14446,8 +18261,63 @@
       ]
     },
     {
-      "id": "evt_0192",
-      "seq": 192,
+      "id": "evt_0328",
+      "seq": 328,
+      "type": "CONCEPT",
+      "t": 7429,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1978,
+      "positions": [
+        99
+      ],
+      "evidence": [
+        {
+          "tokenId": 43197,
+          "text": "learn",
+          "probability": 0.1892
+        },
+        {
+          "tokenId": 38810,
+          "text": "syntax",
+          "probability": 0.0087
+        }
+      ]
+    },
+    {
+      "id": "evt_0329",
+      "seq": 329,
+      "type": "CONCEPT",
+      "t": 7429,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.1765,
+      "positions": [
+        99
+      ],
+      "evidence": [
+        {
+          "tokenId": 22766,
+          "text": "could",
+          "probability": 0.0588
+        },
+        {
+          "tokenId": 3462,
+          "text": "possibly",
+          "probability": 0.0588
+        },
+        {
+          "tokenId": 9540,
+          "text": "seems",
+          "probability": 0.0588
+        }
+      ]
+    },
+    {
+      "id": "evt_0330",
+      "seq": 330,
       "type": "TOKEN",
       "t": 7504,
       "level": "MEASURED",
@@ -14529,8 +18399,8 @@
       "latencyMs": 60
     },
     {
-      "id": "evt_0193",
-      "seq": 193,
+      "id": "evt_0331",
+      "seq": 331,
       "type": "LAYER_ACTIVITY",
       "t": 7504,
       "level": "DERIVED",
@@ -14600,8 +18470,78 @@
       ]
     },
     {
-      "id": "evt_0194",
-      "seq": 194,
+      "id": "evt_0332",
+      "seq": 332,
+      "type": "CONCEPT",
+      "t": 7504,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.186,
+      "positions": [
+        100
+      ],
+      "evidence": [
+        {
+          "tokenId": 48800,
+          "text": "must",
+          "probability": 0.186
+        }
+      ]
+    },
+    {
+      "id": "evt_0333",
+      "seq": 333,
+      "type": "CONCEPT",
+      "t": 7504,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.1844,
+      "positions": [
+        100
+      ],
+      "evidence": [
+        {
+          "tokenId": 21499,
+          "text": "maybe",
+          "probability": 0.0615
+        },
+        {
+          "tokenId": 22766,
+          "text": "could",
+          "probability": 0.0615
+        },
+        {
+          "tokenId": 15532,
+          "text": "generally",
+          "probability": 0.0615
+        }
+      ]
+    },
+    {
+      "id": "evt_0334",
+      "seq": 334,
+      "type": "CONCEPT",
+      "t": 7504,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.0585,
+      "positions": [
+        100
+      ],
+      "evidence": [
+        {
+          "tokenId": 16542,
+          "text": "people",
+          "probability": 0.0585
+        }
+      ]
+    },
+    {
+      "id": "evt_0335",
+      "seq": 335,
       "type": "TOKEN",
       "t": 7568,
       "level": "MEASURED",
@@ -14683,8 +18623,8 @@
       "latencyMs": 49
     },
     {
-      "id": "evt_0195",
-      "seq": 195,
+      "id": "evt_0336",
+      "seq": 336,
       "type": "LAYER_ACTIVITY",
       "t": 7568,
       "level": "DERIVED",
@@ -14754,8 +18694,78 @@
       ]
     },
     {
-      "id": "evt_0196",
-      "seq": 196,
+      "id": "evt_0337",
+      "seq": 337,
+      "type": "CONCEPT",
+      "t": 7568,
+      "level": "INTERPRETED",
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.2035,
+      "positions": [
+        101
+      ],
+      "evidence": [
+        {
+          "tokenId": 20861,
+          "text": "results",
+          "probability": 0.0678
+        },
+        {
+          "tokenId": 38025,
+          "text": "reason",
+          "probability": 0.0678
+        },
+        {
+          "tokenId": 11005,
+          "text": "explains",
+          "probability": 0.0678
+        }
+      ]
+    },
+    {
+      "id": "evt_0338",
+      "seq": 338,
+      "type": "CONCEPT",
+      "t": 7568,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.1714,
+      "positions": [
+        101
+      ],
+      "evidence": [
+        {
+          "tokenId": 18781,
+          "text": "data",
+          "probability": 0.1714
+        }
+      ]
+    },
+    {
+      "id": "evt_0339",
+      "seq": 339,
+      "type": "CONCEPT",
+      "t": 7568,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.1246,
+      "positions": [
+        101
+      ],
+      "evidence": [
+        {
+          "tokenId": 48800,
+          "text": "must",
+          "probability": 0.1246
+        }
+      ]
+    },
+    {
+      "id": "evt_0340",
+      "seq": 340,
       "type": "TOKEN",
       "t": 7655,
       "level": "MEASURED",
@@ -14837,8 +18847,8 @@
       "latencyMs": 72
     },
     {
-      "id": "evt_0197",
-      "seq": 197,
+      "id": "evt_0341",
+      "seq": 341,
       "type": "LAYER_ACTIVITY",
       "t": 7655,
       "level": "DERIVED",
@@ -14908,8 +18918,38 @@
       ]
     },
     {
-      "id": "evt_0198",
-      "seq": 198,
+      "id": "evt_0342",
+      "seq": 342,
+      "type": "CONCEPT",
+      "t": 7655,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1829,
+      "positions": [
+        102
+      ],
+      "evidence": [
+        {
+          "tokenId": 5269,
+          "text": "word",
+          "probability": 0.061
+        },
+        {
+          "tokenId": 47955,
+          "text": "learning",
+          "probability": 0.061
+        },
+        {
+          "tokenId": 16686,
+          "text": "teaching",
+          "probability": 0.061
+        }
+      ]
+    },
+    {
+      "id": "evt_0343",
+      "seq": 343,
       "type": "TOKEN",
       "t": 7742,
       "level": "MEASURED",
@@ -14991,8 +19031,8 @@
       "latencyMs": 72
     },
     {
-      "id": "evt_0199",
-      "seq": 199,
+      "id": "evt_0344",
+      "seq": 344,
       "type": "LAYER_ACTIVITY",
       "t": 7742,
       "level": "DERIVED",
@@ -15062,8 +19102,38 @@
       ]
     },
     {
-      "id": "evt_0200",
-      "seq": 200,
+      "id": "evt_0345",
+      "seq": 345,
+      "type": "CONCEPT",
+      "t": 7742,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.1934,
+      "positions": [
+        103
+      ],
+      "evidence": [
+        {
+          "tokenId": 35329,
+          "text": "later",
+          "probability": 0.0645
+        },
+        {
+          "tokenId": 17092,
+          "text": "eventually",
+          "probability": 0.0645
+        },
+        {
+          "tokenId": 28613,
+          "text": "years",
+          "probability": 0.0645
+        }
+      ]
+    },
+    {
+      "id": "evt_0346",
+      "seq": 346,
       "type": "TOKEN",
       "t": 7818,
       "level": "MEASURED",
@@ -15145,8 +19215,8 @@
       "latencyMs": 61
     },
     {
-      "id": "evt_0201",
-      "seq": 201,
+      "id": "evt_0347",
+      "seq": 347,
       "type": "LAYER_ACTIVITY",
       "t": 7818,
       "level": "DERIVED",
@@ -15216,8 +19286,68 @@
       ]
     },
     {
-      "id": "evt_0202",
-      "seq": 202,
+      "id": "evt_0348",
+      "seq": 348,
+      "type": "CONCEPT",
+      "t": 7818,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.4182,
+      "positions": [
+        104
+      ],
+      "evidence": [
+        {
+          "tokenId": 21499,
+          "text": "maybe",
+          "probability": 0.1394
+        },
+        {
+          "tokenId": 18265,
+          "text": "sometimes",
+          "probability": 0.1394
+        },
+        {
+          "tokenId": 15532,
+          "text": "generally",
+          "probability": 0.1394
+        }
+      ]
+    },
+    {
+      "id": "evt_0349",
+      "seq": 349,
+      "type": "CONCEPT",
+      "t": 7818,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.36,
+      "positions": [
+        104
+      ],
+      "evidence": [
+        {
+          "tokenId": 7034,
+          "text": "certainly",
+          "probability": 0.12
+        },
+        {
+          "tokenId": 24645,
+          "text": "obviously",
+          "probability": 0.12
+        },
+        {
+          "tokenId": 48785,
+          "text": "truly",
+          "probability": 0.12
+        }
+      ]
+    },
+    {
+      "id": "evt_0350",
+      "seq": 350,
       "type": "TOKEN",
       "t": 7892,
       "level": "MEASURED",
@@ -15299,8 +19429,8 @@
       "latencyMs": 59
     },
     {
-      "id": "evt_0203",
-      "seq": 203,
+      "id": "evt_0351",
+      "seq": 351,
       "type": "LAYER_ACTIVITY",
       "t": 7892,
       "level": "DERIVED",
@@ -15370,8 +19500,58 @@
       ]
     },
     {
-      "id": "evt_0204",
-      "seq": 204,
+      "id": "evt_0352",
+      "seq": 352,
+      "type": "CONCEPT",
+      "t": 7892,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.3025,
+      "positions": [
+        105
+      ],
+      "evidence": [
+        {
+          "tokenId": 32362,
+          "text": "user",
+          "probability": 0.1008
+        },
+        {
+          "tokenId": 10322,
+          "text": "human",
+          "probability": 0.1008
+        },
+        {
+          "tokenId": 9483,
+          "text": "humans",
+          "probability": 0.1008
+        }
+      ]
+    },
+    {
+      "id": "evt_0353",
+      "seq": 353,
+      "type": "CONCEPT",
+      "t": 7892,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1091,
+      "positions": [
+        105
+      ],
+      "evidence": [
+        {
+          "tokenId": 43197,
+          "text": "learn",
+          "probability": 0.1091
+        }
+      ]
+    },
+    {
+      "id": "evt_0354",
+      "seq": 354,
       "type": "TOKEN",
       "t": 7971,
       "level": "MEASURED",
@@ -15453,8 +19633,8 @@
       "latencyMs": 64
     },
     {
-      "id": "evt_0205",
-      "seq": 205,
+      "id": "evt_0355",
+      "seq": 355,
       "type": "LAYER_ACTIVITY",
       "t": 7971,
       "level": "DERIVED",
@@ -15524,8 +19704,88 @@
       ]
     },
     {
-      "id": "evt_0206",
-      "seq": 206,
+      "id": "evt_0356",
+      "seq": 356,
+      "type": "CONCEPT",
+      "t": 7971,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.1934,
+      "positions": [
+        106
+      ],
+      "evidence": [
+        {
+          "tokenId": 16542,
+          "text": "people",
+          "probability": 0.0645
+        },
+        {
+          "tokenId": 32362,
+          "text": "user",
+          "probability": 0.0645
+        },
+        {
+          "tokenId": 20647,
+          "text": "readers",
+          "probability": 0.0645
+        }
+      ]
+    },
+    {
+      "id": "evt_0357",
+      "seq": 357,
+      "type": "CONCEPT",
+      "t": 7971,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1038,
+      "positions": [
+        106
+      ],
+      "evidence": [
+        {
+          "tokenId": 25523,
+          "text": "language",
+          "probability": 0.1038
+        }
+      ]
+    },
+    {
+      "id": "evt_0358",
+      "seq": 358,
+      "type": "CONCEPT",
+      "t": 7971,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.0933,
+      "positions": [
+        106
+      ],
+      "evidence": [
+        {
+          "tokenId": 22473,
+          "text": "certain",
+          "probability": 0.0311
+        },
+        {
+          "tokenId": 35904,
+          "text": "indeed",
+          "probability": 0.0311
+        },
+        {
+          "tokenId": 36699,
+          "text": "simply",
+          "probability": 0.0311
+        }
+      ]
+    },
+    {
+      "id": "evt_0359",
+      "seq": 359,
       "type": "TOKEN",
       "t": 8080,
       "level": "MEASURED",
@@ -15607,8 +19867,8 @@
       "latencyMs": 94
     },
     {
-      "id": "evt_0207",
-      "seq": 207,
+      "id": "evt_0360",
+      "seq": 360,
       "type": "LAYER_ACTIVITY",
       "t": 8080,
       "level": "DERIVED",
@@ -15678,8 +19938,58 @@
       ]
     },
     {
-      "id": "evt_0208",
-      "seq": 208,
+      "id": "evt_0361",
+      "seq": 361,
+      "type": "CONCEPT",
+      "t": 8080,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.1824,
+      "positions": [
+        107
+      ],
+      "evidence": [
+        {
+          "tokenId": 25396,
+          "text": "year",
+          "probability": 0.0608
+        },
+        {
+          "tokenId": 48185,
+          "text": "decade",
+          "probability": 0.0608
+        },
+        {
+          "tokenId": 18993,
+          "text": "after",
+          "probability": 0.0608
+        }
+      ]
+    },
+    {
+      "id": "evt_0362",
+      "seq": 362,
+      "type": "CONCEPT",
+      "t": 8080,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.1298,
+      "positions": [
+        107
+      ],
+      "evidence": [
+        {
+          "tokenId": 25523,
+          "text": "language",
+          "probability": 0.1298
+        }
+      ]
+    },
+    {
+      "id": "evt_0363",
+      "seq": 363,
       "type": "TOKEN",
       "t": 8135,
       "level": "MEASURED",
@@ -15761,8 +20071,8 @@
       "latencyMs": 40
     },
     {
-      "id": "evt_0209",
-      "seq": 209,
+      "id": "evt_0364",
+      "seq": 364,
       "type": "LAYER_ACTIVITY",
       "t": 8135,
       "level": "DERIVED",
@@ -15832,8 +20142,58 @@
       ]
     },
     {
-      "id": "evt_0210",
-      "seq": 210,
+      "id": "evt_0365",
+      "seq": 365,
+      "type": "CONCEPT",
+      "t": 8135,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.5176,
+      "positions": [
+        108
+      ],
+      "evidence": [
+        {
+          "tokenId": 43197,
+          "text": "learn",
+          "probability": 0.1933
+        },
+        {
+          "tokenId": 25523,
+          "text": "language",
+          "probability": 0.1081
+        },
+        {
+          "tokenId": 36618,
+          "text": "words",
+          "probability": 0.1081
+        }
+      ]
+    },
+    {
+      "id": "evt_0366",
+      "seq": 366,
+      "type": "CONCEPT",
+      "t": 8135,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.0782,
+      "positions": [
+        108
+      ],
+      "evidence": [
+        {
+          "tokenId": 48800,
+          "text": "must",
+          "probability": 0.0782
+        }
+      ]
+    },
+    {
+      "id": "evt_0367",
+      "seq": 367,
       "type": "TOKEN",
       "t": 8218,
       "level": "MEASURED",
@@ -15915,8 +20275,8 @@
       "latencyMs": 68
     },
     {
-      "id": "evt_0211",
-      "seq": 211,
+      "id": "evt_0368",
+      "seq": 368,
       "type": "LAYER_ACTIVITY",
       "t": 8218,
       "level": "DERIVED",
@@ -15986,8 +20346,68 @@
       ]
     },
     {
-      "id": "evt_0212",
-      "seq": 212,
+      "id": "evt_0369",
+      "seq": 369,
+      "type": "CONCEPT",
+      "t": 8218,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.2558,
+      "positions": [
+        109
+      ],
+      "evidence": [
+        {
+          "tokenId": 46063,
+          "text": "better",
+          "probability": 0.1086
+        },
+        {
+          "tokenId": 26560,
+          "text": "alternative",
+          "probability": 0.0491
+        },
+        {
+          "tokenId": 18654,
+          "text": "choice",
+          "probability": 0.0491
+        }
+      ]
+    },
+    {
+      "id": "evt_0370",
+      "seq": 370,
+      "type": "CONCEPT",
+      "t": 8218,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.1001,
+      "positions": [
+        109
+      ],
+      "evidence": [
+        {
+          "tokenId": 40564,
+          "text": "system",
+          "probability": 0.0334
+        },
+        {
+          "tokenId": 15347,
+          "text": "digital",
+          "probability": 0.0334
+        },
+        {
+          "tokenId": 1243,
+          "text": "program",
+          "probability": 0.0334
+        }
+      ]
+    },
+    {
+      "id": "evt_0371",
+      "seq": 371,
       "type": "TOKEN",
       "t": 8294,
       "level": "MEASURED",
@@ -16069,8 +20489,8 @@
       "latencyMs": 61
     },
     {
-      "id": "evt_0213",
-      "seq": 213,
+      "id": "evt_0372",
+      "seq": 372,
       "type": "LAYER_ACTIVITY",
       "t": 8294,
       "level": "DERIVED",
@@ -16140,8 +20560,38 @@
       ]
     },
     {
-      "id": "evt_0214",
-      "seq": 214,
+      "id": "evt_0373",
+      "seq": 373,
+      "type": "CONCEPT",
+      "t": 8294,
+      "level": "INTERPRETED",
+      "conceptId": "concept_science",
+      "label": "science / nature",
+      "score": 0.1947,
+      "positions": [
+        110
+      ],
+      "evidence": [
+        {
+          "tokenId": 8291,
+          "text": "weather",
+          "probability": 0.0649
+        },
+        {
+          "tokenId": 5813,
+          "text": "science",
+          "probability": 0.0649
+        },
+        {
+          "tokenId": 42241,
+          "text": "atoms",
+          "probability": 0.0649
+        }
+      ]
+    },
+    {
+      "id": "evt_0374",
+      "seq": 374,
       "type": "TOKEN",
       "t": 8375,
       "level": "MEASURED",
@@ -16223,8 +20673,8 @@
       "latencyMs": 66
     },
     {
-      "id": "evt_0215",
-      "seq": 215,
+      "id": "evt_0375",
+      "seq": 375,
       "type": "LAYER_ACTIVITY",
       "t": 8375,
       "level": "DERIVED",
@@ -16294,8 +20744,38 @@
       ]
     },
     {
-      "id": "evt_0216",
-      "seq": 216,
+      "id": "evt_0376",
+      "seq": 376,
+      "type": "CONCEPT",
+      "t": 8375,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.1829,
+      "positions": [
+        111
+      ],
+      "evidence": [
+        {
+          "tokenId": 14696,
+          "text": "might",
+          "probability": 0.061
+        },
+        {
+          "tokenId": 15629,
+          "text": "likely",
+          "probability": 0.061
+        },
+        {
+          "tokenId": 31948,
+          "text": "uncertain",
+          "probability": 0.061
+        }
+      ]
+    },
+    {
+      "id": "evt_0377",
+      "seq": 377,
       "type": "TOKEN",
       "t": 8467,
       "level": "MEASURED",
@@ -16377,8 +20857,8 @@
       "latencyMs": 77
     },
     {
-      "id": "evt_0217",
-      "seq": 217,
+      "id": "evt_0378",
+      "seq": 378,
       "type": "LAYER_ACTIVITY",
       "t": 8467,
       "level": "DERIVED",
@@ -16448,8 +20928,58 @@
       ]
     },
     {
-      "id": "evt_0218",
-      "seq": 218,
+      "id": "evt_0379",
+      "seq": 379,
+      "type": "CONCEPT",
+      "t": 8467,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.2321,
+      "positions": [
+        112
+      ],
+      "evidence": [
+        {
+          "tokenId": 35329,
+          "text": "later",
+          "probability": 0.0774
+        },
+        {
+          "tokenId": 17092,
+          "text": "eventually",
+          "probability": 0.0774
+        },
+        {
+          "tokenId": 18993,
+          "text": "after",
+          "probability": 0.0774
+        }
+      ]
+    },
+    {
+      "id": "evt_0380",
+      "seq": 380,
+      "type": "CONCEPT",
+      "t": 8467,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.0572,
+      "positions": [
+        112
+      ],
+      "evidence": [
+        {
+          "tokenId": 46063,
+          "text": "better",
+          "probability": 0.0572
+        }
+      ]
+    },
+    {
+      "id": "evt_0381",
+      "seq": 381,
       "type": "TOKEN",
       "t": 8543,
       "level": "MEASURED",
@@ -16531,8 +21061,8 @@
       "latencyMs": 61
     },
     {
-      "id": "evt_0219",
-      "seq": 219,
+      "id": "evt_0382",
+      "seq": 382,
       "type": "LAYER_ACTIVITY",
       "t": 8543,
       "level": "DERIVED",
@@ -16602,8 +21132,58 @@
       ]
     },
     {
-      "id": "evt_0220",
-      "seq": 220,
+      "id": "evt_0383",
+      "seq": 383,
+      "type": "CONCEPT",
+      "t": 8543,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.2747,
+      "positions": [
+        113
+      ],
+      "evidence": [
+        {
+          "tokenId": 37940,
+          "text": "code",
+          "probability": 0.0916
+        },
+        {
+          "tokenId": 34439,
+          "text": "machines",
+          "probability": 0.0916
+        },
+        {
+          "tokenId": 1313,
+          "text": "hardware",
+          "probability": 0.0916
+        }
+      ]
+    },
+    {
+      "id": "evt_0384",
+      "seq": 384,
+      "type": "CONCEPT",
+      "t": 8543,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.0648,
+      "positions": [
+        113
+      ],
+      "evidence": [
+        {
+          "tokenId": 38810,
+          "text": "syntax",
+          "probability": 0.0648
+        }
+      ]
+    },
+    {
+      "id": "evt_0385",
+      "seq": 385,
       "type": "TOKEN",
       "t": 8621,
       "level": "MEASURED",
@@ -16685,8 +21265,8 @@
       "latencyMs": 63
     },
     {
-      "id": "evt_0221",
-      "seq": 221,
+      "id": "evt_0386",
+      "seq": 386,
       "type": "LAYER_ACTIVITY",
       "t": 8621,
       "level": "DERIVED",
@@ -16756,8 +21336,38 @@
       ]
     },
     {
-      "id": "evt_0222",
-      "seq": 222,
+      "id": "evt_0387",
+      "seq": 387,
+      "type": "CONCEPT",
+      "t": 8621,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.2855,
+      "positions": [
+        114
+      ],
+      "evidence": [
+        {
+          "tokenId": 16542,
+          "text": "people",
+          "probability": 0.0952
+        },
+        {
+          "tokenId": 32208,
+          "text": "person",
+          "probability": 0.0952
+        },
+        {
+          "tokenId": 34803,
+          "text": "someone",
+          "probability": 0.0952
+        }
+      ]
+    },
+    {
+      "id": "evt_0388",
+      "seq": 388,
       "type": "TOKEN",
       "t": 8706,
       "level": "MEASURED",
@@ -16839,8 +21449,8 @@
       "latencyMs": 70
     },
     {
-      "id": "evt_0223",
-      "seq": 223,
+      "id": "evt_0389",
+      "seq": 389,
       "type": "LAYER_ACTIVITY",
       "t": 8706,
       "level": "DERIVED",
@@ -16910,8 +21520,68 @@
       ]
     },
     {
-      "id": "evt_0224",
-      "seq": 224,
+      "id": "evt_0390",
+      "seq": 390,
+      "type": "CONCEPT",
+      "t": 8706,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.1694,
+      "positions": [
+        115
+      ],
+      "evidence": [
+        {
+          "tokenId": 25238,
+          "text": "today",
+          "probability": 0.0565
+        },
+        {
+          "tokenId": 35329,
+          "text": "later",
+          "probability": 0.0565
+        },
+        {
+          "tokenId": 17092,
+          "text": "eventually",
+          "probability": 0.0565
+        }
+      ]
+    },
+    {
+      "id": "evt_0391",
+      "seq": 391,
+      "type": "CONCEPT",
+      "t": 8706,
+      "level": "INTERPRETED",
+      "conceptId": "concept_quantity",
+      "label": "quantity / degree",
+      "score": 0.1348,
+      "positions": [
+        115
+      ],
+      "evidence": [
+        {
+          "tokenId": 4163,
+          "text": "twice",
+          "probability": 0.0449
+        },
+        {
+          "tokenId": 20926,
+          "text": "minority",
+          "probability": 0.0449
+        },
+        {
+          "tokenId": 21957,
+          "text": "plenty",
+          "probability": 0.0449
+        }
+      ]
+    },
+    {
+      "id": "evt_0392",
+      "seq": 392,
       "type": "TOKEN",
       "t": 8769,
       "level": "MEASURED",
@@ -16993,8 +21663,8 @@
       "latencyMs": 48
     },
     {
-      "id": "evt_0225",
-      "seq": 225,
+      "id": "evt_0393",
+      "seq": 393,
       "type": "LAYER_ACTIVITY",
       "t": 8769,
       "level": "DERIVED",
@@ -17064,8 +21734,38 @@
       ]
     },
     {
-      "id": "evt_0226",
-      "seq": 226,
+      "id": "evt_0394",
+      "seq": 394,
+      "type": "CONCEPT",
+      "t": 8769,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.2379,
+      "positions": [
+        116
+      ],
+      "evidence": [
+        {
+          "tokenId": 25396,
+          "text": "year",
+          "probability": 0.0793
+        },
+        {
+          "tokenId": 41799,
+          "text": "history",
+          "probability": 0.0793
+        },
+        {
+          "tokenId": 5834,
+          "text": "changes",
+          "probability": 0.0793
+        }
+      ]
+    },
+    {
+      "id": "evt_0395",
+      "seq": 395,
       "type": "TOKEN",
       "t": 8837,
       "level": "MEASURED",
@@ -17147,8 +21847,8 @@
       "latencyMs": 53
     },
     {
-      "id": "evt_0227",
-      "seq": 227,
+      "id": "evt_0396",
+      "seq": 396,
       "type": "LAYER_ACTIVITY",
       "t": 8837,
       "level": "DERIVED",
@@ -17218,8 +21918,38 @@
       ]
     },
     {
-      "id": "evt_0228",
-      "seq": 228,
+      "id": "evt_0397",
+      "seq": 397,
+      "type": "CONCEPT",
+      "t": 8837,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.2344,
+      "positions": [
+        117
+      ],
+      "evidence": [
+        {
+          "tokenId": 30418,
+          "text": "difference",
+          "probability": 0.0781
+        },
+        {
+          "tokenId": 44222,
+          "text": "similar",
+          "probability": 0.0781
+        },
+        {
+          "tokenId": 28689,
+          "text": "trade",
+          "probability": 0.0781
+        }
+      ]
+    },
+    {
+      "id": "evt_0398",
+      "seq": 398,
       "type": "TOKEN",
       "t": 8890,
       "level": "MEASURED",
@@ -17301,8 +22031,8 @@
       "latencyMs": 38
     },
     {
-      "id": "evt_0229",
-      "seq": 229,
+      "id": "evt_0399",
+      "seq": 399,
       "type": "LAYER_ACTIVITY",
       "t": 8890,
       "level": "DERIVED",
@@ -17372,8 +22102,28 @@
       ]
     },
     {
-      "id": "evt_0230",
-      "seq": 230,
+      "id": "evt_0400",
+      "seq": 400,
+      "type": "CONCEPT",
+      "t": 8890,
+      "level": "INTERPRETED",
+      "conceptId": "concept_language",
+      "label": "language / learning",
+      "score": 0.0754,
+      "positions": [
+        118
+      ],
+      "evidence": [
+        {
+          "tokenId": 47955,
+          "text": "learning",
+          "probability": 0.0754
+        }
+      ]
+    },
+    {
+      "id": "evt_0401",
+      "seq": 401,
       "type": "TOKEN",
       "t": 8985,
       "level": "MEASURED",
@@ -17455,8 +22205,8 @@
       "latencyMs": 80
     },
     {
-      "id": "evt_0231",
-      "seq": 231,
+      "id": "evt_0402",
+      "seq": 402,
       "type": "LAYER_ACTIVITY",
       "t": 8985,
       "level": "DERIVED",
@@ -17526,8 +22276,68 @@
       ]
     },
     {
-      "id": "evt_0232",
-      "seq": 232,
+      "id": "evt_0403",
+      "seq": 403,
+      "type": "CONCEPT",
+      "t": 8985,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.4648,
+      "positions": [
+        119
+      ],
+      "evidence": [
+        {
+          "tokenId": 33594,
+          "text": "soon",
+          "probability": 0.1549
+        },
+        {
+          "tokenId": 17092,
+          "text": "eventually",
+          "probability": 0.1549
+        },
+        {
+          "tokenId": 5834,
+          "text": "changes",
+          "probability": 0.1549
+        }
+      ]
+    },
+    {
+      "id": "evt_0404",
+      "seq": 404,
+      "type": "CONCEPT",
+      "t": 8985,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.3687,
+      "positions": [
+        119
+      ],
+      "evidence": [
+        {
+          "tokenId": 8476,
+          "text": "worst",
+          "probability": 0.1229
+        },
+        {
+          "tokenId": 28689,
+          "text": "trade",
+          "probability": 0.1229
+        },
+        {
+          "tokenId": 39877,
+          "text": "options",
+          "probability": 0.1229
+        }
+      ]
+    },
+    {
+      "id": "evt_0405",
+      "seq": 405,
       "type": "TOKEN",
       "t": 9044,
       "level": "MEASURED",
@@ -17609,8 +22419,8 @@
       "latencyMs": 44
     },
     {
-      "id": "evt_0233",
-      "seq": 233,
+      "id": "evt_0406",
+      "seq": 406,
       "type": "LAYER_ACTIVITY",
       "t": 9044,
       "level": "DERIVED",
@@ -17680,8 +22490,58 @@
       ]
     },
     {
-      "id": "evt_0234",
-      "seq": 234,
+      "id": "evt_0407",
+      "seq": 407,
+      "type": "CONCEPT",
+      "t": 9044,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.1671,
+      "positions": [
+        120
+      ],
+      "evidence": [
+        {
+          "tokenId": 27220,
+          "text": "always",
+          "probability": 0.0557
+        },
+        {
+          "tokenId": 44745,
+          "text": "clearly",
+          "probability": 0.0557
+        },
+        {
+          "tokenId": 3883,
+          "text": "exactly",
+          "probability": 0.0557
+        }
+      ]
+    },
+    {
+      "id": "evt_0408",
+      "seq": 408,
+      "type": "CONCEPT",
+      "t": 9044,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.0591,
+      "positions": [
+        120
+      ],
+      "evidence": [
+        {
+          "tokenId": 29422,
+          "text": "before",
+          "probability": 0.0591
+        }
+      ]
+    },
+    {
+      "id": "evt_0409",
+      "seq": 409,
       "type": "TOKEN",
       "t": 9108,
       "level": "MEASURED",
@@ -17763,8 +22623,8 @@
       "latencyMs": 49
     },
     {
-      "id": "evt_0235",
-      "seq": 235,
+      "id": "evt_0410",
+      "seq": 410,
       "type": "LAYER_ACTIVITY",
       "t": 9108,
       "level": "DERIVED",
@@ -17834,8 +22694,28 @@
       ]
     },
     {
-      "id": "evt_0236",
-      "seq": 236,
+      "id": "evt_0411",
+      "seq": 411,
+      "type": "CONCEPT",
+      "t": 9108,
+      "level": "INTERPRETED",
+      "conceptId": "concept_agency",
+      "label": "people / agency",
+      "score": 0.0722,
+      "positions": [
+        121
+      ],
+      "evidence": [
+        {
+          "tokenId": 16542,
+          "text": "people",
+          "probability": 0.0722
+        }
+      ]
+    },
+    {
+      "id": "evt_0412",
+      "seq": 412,
       "type": "TOKEN",
       "t": 9196,
       "level": "MEASURED",
@@ -17917,8 +22797,8 @@
       "latencyMs": 73
     },
     {
-      "id": "evt_0237",
-      "seq": 237,
+      "id": "evt_0413",
+      "seq": 413,
       "type": "LAYER_ACTIVITY",
       "t": 9196,
       "level": "DERIVED",
@@ -17988,8 +22868,38 @@
       ]
     },
     {
-      "id": "evt_0238",
-      "seq": 238,
+      "id": "evt_0414",
+      "seq": 414,
+      "type": "CONCEPT",
+      "t": 9196,
+      "level": "INTERPRETED",
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.1847,
+      "positions": [
+        122
+      ],
+      "evidence": [
+        {
+          "tokenId": 46068,
+          "text": "hence",
+          "probability": 0.0616
+        },
+        {
+          "tokenId": 41609,
+          "text": "why",
+          "probability": 0.0616
+        },
+        {
+          "tokenId": 11005,
+          "text": "explains",
+          "probability": 0.0616
+        }
+      ]
+    },
+    {
+      "id": "evt_0415",
+      "seq": 415,
       "type": "TOKEN",
       "t": 9308,
       "level": "MEASURED",
@@ -18071,8 +22981,8 @@
       "latencyMs": 97
     },
     {
-      "id": "evt_0239",
-      "seq": 239,
+      "id": "evt_0416",
+      "seq": 416,
       "type": "LAYER_ACTIVITY",
       "t": 9308,
       "level": "DERIVED",
@@ -18142,8 +23052,38 @@
       ]
     },
     {
-      "id": "evt_0240",
-      "seq": 240,
+      "id": "evt_0417",
+      "seq": 417,
+      "type": "CONCEPT",
+      "t": 9308,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.1558,
+      "positions": [
+        123
+      ],
+      "evidence": [
+        {
+          "tokenId": 27220,
+          "text": "always",
+          "probability": 0.0519
+        },
+        {
+          "tokenId": 48800,
+          "text": "must",
+          "probability": 0.0519
+        },
+        {
+          "tokenId": 35904,
+          "text": "indeed",
+          "probability": 0.0519
+        }
+      ]
+    },
+    {
+      "id": "evt_0418",
+      "seq": 418,
       "type": "TOKEN",
       "t": 9389,
       "level": "MEASURED",
@@ -18225,8 +23165,8 @@
       "latencyMs": 66
     },
     {
-      "id": "evt_0241",
-      "seq": 241,
+      "id": "evt_0419",
+      "seq": 419,
       "type": "LAYER_ACTIVITY",
       "t": 9389,
       "level": "DERIVED",
@@ -18296,8 +23236,88 @@
       ]
     },
     {
-      "id": "evt_0242",
-      "seq": 242,
+      "id": "evt_0420",
+      "seq": 420,
+      "type": "CONCEPT",
+      "t": 9389,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.4368,
+      "positions": [
+        124
+      ],
+      "evidence": [
+        {
+          "tokenId": 27708,
+          "text": "tools",
+          "probability": 0.4368
+        }
+      ]
+    },
+    {
+      "id": "evt_0421",
+      "seq": 421,
+      "type": "CONCEPT",
+      "t": 9389,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.1765,
+      "positions": [
+        124
+      ],
+      "evidence": [
+        {
+          "tokenId": 22766,
+          "text": "could",
+          "probability": 0.0588
+        },
+        {
+          "tokenId": 40019,
+          "text": "unclear",
+          "probability": 0.0588
+        },
+        {
+          "tokenId": 15248,
+          "text": "depends",
+          "probability": 0.0588
+        }
+      ]
+    },
+    {
+      "id": "evt_0422",
+      "seq": 422,
+      "type": "CONCEPT",
+      "t": 9389,
+      "level": "INTERPRETED",
+      "conceptId": "concept_time",
+      "label": "time / change",
+      "score": 0.1547,
+      "positions": [
+        124
+      ],
+      "evidence": [
+        {
+          "tokenId": 12183,
+          "text": "now",
+          "probability": 0.0516
+        },
+        {
+          "tokenId": 18993,
+          "text": "after",
+          "probability": 0.0516
+        },
+        {
+          "tokenId": 5834,
+          "text": "changes",
+          "probability": 0.0516
+        }
+      ]
+    },
+    {
+      "id": "evt_0423",
+      "seq": 423,
       "type": "TOKEN",
       "t": 9471,
       "level": "MEASURED",
@@ -18379,8 +23399,8 @@
       "latencyMs": 67
     },
     {
-      "id": "evt_0243",
-      "seq": 243,
+      "id": "evt_0424",
+      "seq": 424,
       "type": "LAYER_ACTIVITY",
       "t": 9471,
       "level": "DERIVED",
@@ -18450,8 +23470,68 @@
       ]
     },
     {
-      "id": "evt_0244",
-      "seq": 244,
+      "id": "evt_0425",
+      "seq": 425,
+      "type": "CONCEPT",
+      "t": 9471,
+      "level": "INTERPRETED",
+      "conceptId": "concept_quantity",
+      "label": "quantity / degree",
+      "score": 0.2861,
+      "positions": [
+        125
+      ],
+      "evidence": [
+        {
+          "tokenId": 11826,
+          "text": "percent",
+          "probability": 0.0954
+        },
+        {
+          "tokenId": 4163,
+          "text": "twice",
+          "probability": 0.0954
+        },
+        {
+          "tokenId": 20926,
+          "text": "minority",
+          "probability": 0.0954
+        }
+      ]
+    },
+    {
+      "id": "evt_0426",
+      "seq": 426,
+      "type": "CONCEPT",
+      "t": 9471,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.2687,
+      "positions": [
+        125
+      ],
+      "evidence": [
+        {
+          "tokenId": 8191,
+          "text": "worse",
+          "probability": 0.0896
+        },
+        {
+          "tokenId": 11315,
+          "text": "versus",
+          "probability": 0.0896
+        },
+        {
+          "tokenId": 4713,
+          "text": "instead",
+          "probability": 0.0896
+        }
+      ]
+    },
+    {
+      "id": "evt_0427",
+      "seq": 427,
       "type": "TOKEN",
       "t": 9565,
       "level": "MEASURED",
@@ -18533,8 +23613,8 @@
       "latencyMs": 79
     },
     {
-      "id": "evt_0245",
-      "seq": 245,
+      "id": "evt_0428",
+      "seq": 428,
       "type": "LAYER_ACTIVITY",
       "t": 9565,
       "level": "DERIVED",
@@ -18604,8 +23684,38 @@
       ]
     },
     {
-      "id": "evt_0246",
-      "seq": 246,
+      "id": "evt_0429",
+      "seq": 429,
+      "type": "CONCEPT",
+      "t": 9565,
+      "level": "INTERPRETED",
+      "conceptId": "concept_causality",
+      "label": "causality / explanation",
+      "score": 0.1703,
+      "positions": [
+        126
+      ],
+      "evidence": [
+        {
+          "tokenId": 20861,
+          "text": "results",
+          "probability": 0.0568
+        },
+        {
+          "tokenId": 31293,
+          "text": "due",
+          "probability": 0.0568
+        },
+        {
+          "tokenId": 41609,
+          "text": "why",
+          "probability": 0.0568
+        }
+      ]
+    },
+    {
+      "id": "evt_0430",
+      "seq": 430,
       "type": "TOKEN",
       "t": 9683,
       "level": "MEASURED",
@@ -18687,8 +23797,8 @@
       "latencyMs": 103
     },
     {
-      "id": "evt_0247",
-      "seq": 247,
+      "id": "evt_0431",
+      "seq": 431,
       "type": "LAYER_ACTIVITY",
       "t": 9683,
       "level": "DERIVED",
@@ -18758,8 +23868,88 @@
       ]
     },
     {
-      "id": "evt_0248",
-      "seq": 248,
+      "id": "evt_0432",
+      "seq": 432,
+      "type": "CONCEPT",
+      "t": 9683,
+      "level": "INTERPRETED",
+      "conceptId": "concept_science",
+      "label": "science / nature",
+      "score": 0.2654,
+      "positions": [
+        127
+      ],
+      "evidence": [
+        {
+          "tokenId": 38695,
+          "text": "light",
+          "probability": 0.0885
+        },
+        {
+          "tokenId": 42241,
+          "text": "atoms",
+          "probability": 0.0885
+        },
+        {
+          "tokenId": 42941,
+          "text": "waves",
+          "probability": 0.0885
+        }
+      ]
+    },
+    {
+      "id": "evt_0433",
+      "seq": 433,
+      "type": "CONCEPT",
+      "t": 9683,
+      "level": "INTERPRETED",
+      "conceptId": "concept_uncertainty",
+      "label": "uncertainty / hedging",
+      "score": 0.2088,
+      "positions": [
+        127
+      ],
+      "evidence": [
+        {
+          "tokenId": 36082,
+          "text": "perhaps",
+          "probability": 0.0696
+        },
+        {
+          "tokenId": 3462,
+          "text": "possibly",
+          "probability": 0.0696
+        },
+        {
+          "tokenId": 31948,
+          "text": "uncertain",
+          "probability": 0.0696
+        }
+      ]
+    },
+    {
+      "id": "evt_0434",
+      "seq": 434,
+      "type": "CONCEPT",
+      "t": 9683,
+      "level": "INTERPRETED",
+      "conceptId": "concept_technology",
+      "label": "technology / systems",
+      "score": 0.103,
+      "positions": [
+        127
+      ],
+      "evidence": [
+        {
+          "tokenId": 7029,
+          "text": "systems",
+          "probability": 0.103
+        }
+      ]
+    },
+    {
+      "id": "evt_0435",
+      "seq": 435,
       "type": "TOKEN",
       "t": 9751,
       "level": "MEASURED",
@@ -18841,8 +24031,8 @@
       "latencyMs": 53
     },
     {
-      "id": "evt_0249",
-      "seq": 249,
+      "id": "evt_0436",
+      "seq": 436,
       "type": "LAYER_ACTIVITY",
       "t": 9751,
       "level": "DERIVED",
@@ -18912,8 +24102,68 @@
       ]
     },
     {
-      "id": "evt_0250",
-      "seq": 250,
+      "id": "evt_0437",
+      "seq": 437,
+      "type": "CONCEPT",
+      "t": 9751,
+      "level": "INTERPRETED",
+      "conceptId": "concept_certainty",
+      "label": "certainty / emphasis",
+      "score": 0.2036,
+      "positions": [
+        128
+      ],
+      "evidence": [
+        {
+          "tokenId": 27220,
+          "text": "always",
+          "probability": 0.0678
+        },
+        {
+          "tokenId": 48785,
+          "text": "truly",
+          "probability": 0.0678
+        },
+        {
+          "tokenId": 3883,
+          "text": "exactly",
+          "probability": 0.0678
+        }
+      ]
+    },
+    {
+      "id": "evt_0438",
+      "seq": 438,
+      "type": "CONCEPT",
+      "t": 9751,
+      "level": "INTERPRETED",
+      "conceptId": "concept_comparison",
+      "label": "comparison / choice",
+      "score": 0.1594,
+      "positions": [
+        128
+      ],
+      "evidence": [
+        {
+          "tokenId": 8476,
+          "text": "worst",
+          "probability": 0.0531
+        },
+        {
+          "tokenId": 28689,
+          "text": "trade",
+          "probability": 0.0531
+        },
+        {
+          "tokenId": 39877,
+          "text": "options",
+          "probability": 0.0531
+        }
+      ]
+    },
+    {
+      "id": "evt_0439",
+      "seq": 439,
       "type": "DECISION",
       "t": 9755,
       "level": "DERIVED",
@@ -18921,8 +24171,8 @@
       "detail": "end-of-sequence token reached"
     },
     {
-      "id": "evt_0251",
-      "seq": 251,
+      "id": "evt_0440",
+      "seq": 440,
       "type": "OUTPUT",
       "t": 9759,
       "level": "MEASURED",

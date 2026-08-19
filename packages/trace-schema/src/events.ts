@@ -117,8 +117,21 @@ export interface ConceptEvent extends TraceEventBase {
   /** Concept identity (e.g. "concept_parsing") — distinct from the event id. */
   conceptId: string;
   label: string;
+  /** Probability mass the full next-token distribution places on the
+   *  concept's dictionary word set — the MEASURED half of this event.
+   *  The label is the INTERPRETED half. */
   score: number;
   positions?: number[];
+  /** The measured tokens that carried the mass (top few, by probability).
+   *  Shipped so the interpretation is auditable against its evidence. */
+  evidence?: ConceptEvidence[];
+}
+
+export interface ConceptEvidence {
+  tokenId: number;
+  /** Display form (BPE space marker stripped). */
+  text: string;
+  probability: number;
 }
 
 export interface EvidenceEvent extends TraceEventBase {

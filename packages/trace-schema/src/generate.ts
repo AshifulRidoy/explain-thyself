@@ -8,6 +8,10 @@
  *   - top-k probabilities descend geometrically, respecting the step's entropy
  *   - residual l2Norm grows with depth (real residual streams do)
  *   - t advances by plausible per-step latencies
+ *   - CONCEPT events are scored from the same fake distribution the
+ *     engine's FakeBackend builds (Phase 5): dictionary mass on the
+ *     renormalized top-k + bump distribution, evidence attached, so the
+ *     fixtures exercise the exact INTERPRETED-event shape the engine emits
  *
  * Same seed ⇒ byte-identical JSON (mulberry32; no Date.now, no Math.random).
  * The realism math is deliberately portable: the Python FakeBackend mirrors it.
@@ -15,6 +19,7 @@
 import type {
   AttentionEvent,
   ConceptEvent,
+  ConceptEvidence,
   DecisionEvent,
   InputEvent,
   LayerActivityEvent,
@@ -25,14 +30,11 @@ import type {
   Trace,
   TraceEvent,
 } from "./events";
-
-export interface FixtureConceptSpec {
-  id: string;
-  label: string;
-  score: number;
-  /** Emitted right after this generation step's LAYER_ACTIVITY. */
-  step: number;
-}
+import {
+  CONCEPT_ACTIVE_MASS,
+  CONCEPT_DICTIONARY,
+  CONCEPT_EVIDENCE_LIMIT,
+} from "./concepts";
 
 export interface FixtureSpec {
   key: string;
@@ -44,7 +46,6 @@ export interface FixtureSpec {
   /** Emit per-layer ATTENTION events (fixture becomes RESEARCH mode). */
   attention?: boolean;
   headCount?: number;
-  concepts?: FixtureConceptSpec[];
 }
 
 /** Deterministic PRNG — identical implementation must live in fake_backend.py. */
@@ -164,6 +165,47 @@ export function fakeAttention(
   return { mean, headEntropyBits };
 }
 
+/**
+ * Deterministic concept mass for one step's fake distribution — the exact
+ * mirror of FakeBackend._concept_bump: 0/1/2 concepts per step, mass spread
+ * over up to 3 of the concept's words, skipping ids that already carry
+ * top-k mass. Draws from a SEPARATE seeded stream (seed + 888_000 + step*173)
+ * so the main rng — and every pre-existing field — is untouched.
+ */
+export function fakeConceptBump(
+  seed: number,
+  step: number,
+  occupied: Set<number>,
+): Map<number, { word: string; share: number }> {
+  const rng = mulberry32(seed + 888_000 + step * 173);
+  const order = seededShuffle(
+    CONCEPT_DICTIONARY.map((_, i) => i),
+    rng,
+  );
+  const first = rng();
+  const nActive = first < 0.1 ? 0 : rng() < 0.72 ? 1 : 2;
+
+  const bump = new Map<number, { word: string; share: number }>();
+  for (const idx of order.slice(0, nActive)) {
+    const concept = CONCEPT_DICTIONARY[idx];
+    const words = seededShuffle(concept.words, rng);
+    const mass = 0.12 + rng() * 0.22;
+    const picked: { tokenId: number; word: string }[] = [];
+    for (const word of words) {
+      if (picked.length >= 3) break;
+      const tokenId = wordToTokenId(word);
+      if (occupied.has(tokenId) || bump.has(tokenId)) continue;
+      picked.push({ tokenId, word });
+    }
+    if (picked.length) {
+      // concept mass == authored mass regardless of skips
+      const share = mass / picked.length;
+      for (const { tokenId, word } of picked) bump.set(tokenId, { word, share });
+    }
+  }
+  return bump;
+}
+
 export function generateTraceFixture(spec: FixtureSpec): Trace {
   const rng = mulberry32(spec.seed);
   const events: TraceEvent[] = [];
@@ -212,13 +254,6 @@ export function generateTraceFixture(spec: FixtureSpec): Trace {
   // position-indexed texts for attention rows; entry 0 is the BOS every real
   // context starts with — surfaced as position -1, never dropped
   const ctxTexts = ["<bos>", ...promptTokens.map((tok) => tok.text)];
-
-  const conceptsByStep = new Map<number, FixtureConceptSpec[]>();
-  for (const c of spec.concepts ?? []) {
-    const list = conceptsByStep.get(c.step) ?? [];
-    list.push(c);
-    conceptsByStep.set(c.step, list);
-  }
 
   const outputTokenEvents: TokenEvent[] = [];
 
@@ -347,16 +382,61 @@ export function generateTraceFixture(spec: FixtureSpec): Trace {
       }
     }
 
-    for (const c of conceptsByStep.get(step) ?? []) {
+    // concepts: exact mass the renormalized fake distribution places on
+    // each dictionary word set — the same method as the engine's
+    // ConceptScorer (mass MEASURED, label INTERPRETED, evidence shipped)
+    const dist = new Map<number, number>();
+    for (const cand of topK) {
+      dist.set(cand.tokenId, Math.max(dist.get(cand.tokenId) ?? 0, cand.probability));
+    }
+    const bump = fakeConceptBump(spec.seed, step, new Set(dist.keys()));
+    for (const [tokenId, { share }] of bump) {
+      dist.set(tokenId, (dist.get(tokenId) ?? 0) + share);
+    }
+    const total = [...dist.values()].reduce((a, b) => a + b, 0);
+
+    const active: {
+      conceptId: string;
+      label: string;
+      mass: number;
+      evidence: ConceptEvidence[];
+    }[] = [];
+    for (const concept of CONCEPT_DICTIONARY) {
+      let mass = 0;
+      const carrying: { tokenId: number; word: string; p: number }[] = [];
+      for (const word of concept.words) {
+        const raw = dist.get(wordToTokenId(word));
+        if (!raw) continue;
+        const p = raw / total;
+        mass += p;
+        if (p > 1e-4) carrying.push({ tokenId: wordToTokenId(word), word, p });
+      }
+      if (mass < CONCEPT_ACTIVE_MASS) continue;
+      carrying.sort((a, b) => b.p - a.p);
+      active.push({
+        conceptId: concept.conceptId,
+        label: concept.label,
+        mass,
+        evidence: carrying.slice(0, CONCEPT_EVIDENCE_LIMIT).map(({ tokenId, word, p }) => ({
+          tokenId,
+          text: word,
+          probability: round(p, 4),
+        })),
+      });
+    }
+    active.sort((a, b) => b.mass - a.mass);
+    for (const c of active) {
       const conceptEvent: ConceptEvent = {
         id: nextId(),
         seq: seq++,
         type: "CONCEPT",
         t,
         level: "INTERPRETED",
-        conceptId: c.id,
+        conceptId: c.conceptId,
         label: c.label,
-        score: c.score,
+        score: round(c.mass, 4),
+        positions: [promptLen + step],
+        evidence: c.evidence,
       };
       events.push(conceptEvent);
     }
@@ -440,13 +520,6 @@ export const FIXTURES: FixtureSpec[] = [
       "performance matters. A reasonable path is Python first, build real " +
       "things, then learn Rust when a project genuinely demands it. Learning " +
       "Rust without a motivating problem tends to end in frustration.",
-    concepts: [
-      { id: "concept_career_decision", label: "career decision", score: 0.86, step: 2 },
-      { id: "concept_language_comparison", label: "language comparison", score: 0.91, step: 7 },
-      { id: "concept_ecosystem", label: "ecosystem", score: 0.77, step: 14 },
-      { id: "concept_learning_curve", label: "learning curve", score: 0.72, step: 33 },
-      { id: "concept_recommendation", label: "recommendation", score: 0.88, step: 55 },
-    ],
   },
   {
     key: "trace-sky-blue",

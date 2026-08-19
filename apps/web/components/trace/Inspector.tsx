@@ -1,5 +1,6 @@
 import type {
   AttentionEvent,
+  ConceptEvent,
   LayerActivityEvent,
   TraceEvent,
   TraceMode,
@@ -55,6 +56,7 @@ export function Inspector({
   event,
   layerActivity,
   attention,
+  concepts,
   traceMode,
 }: {
   event: TraceEvent | null;
@@ -62,6 +64,8 @@ export function Inspector({
   layerActivity: LayerActivityEvent | null;
   /** ATTENTION events (all layers) paired to a selected TOKEN, if collected */
   attention?: AttentionEvent[] | null;
+  /** CONCEPT events measured at the selected TOKEN's position, if any */
+  concepts?: ConceptEvent[] | null;
   /** envelope mode — lets the panel say "RESEARCH only", not just "awaiting" */
   traceMode?: TraceMode;
 }) {
@@ -96,6 +100,7 @@ export function Inspector({
           <ProbabilityDistribution topK={event.topK} sampledTokenId={event.tokenId} />
           <LayerActivityPanel activity={layerActivity} />
           <AttentionPanel attention={attention ?? null} traceMode={traceMode} />
+          {concepts && concepts.length > 0 && <ConceptsAtStep concepts={concepts} />}
         </>
       )}
 
@@ -106,9 +111,48 @@ export function Inspector({
       )}
 
       {event.type === "CONCEPT" && (
-        <section className="divide-y divide-line border-t border-line">
-          <Field taxonomyKey="concept.score" label="Score" value={event.score.toFixed(2)} />
-        </section>
+        <>
+          <section className="divide-y divide-line border-t border-line">
+            <div className="flex items-baseline justify-between gap-4 py-1.5">
+              <span className="machine-label shrink-0">Label</span>
+              <span className="font-serif text-sm italic text-muted">
+                {event.label}
+              </span>
+            </div>
+            <Field
+              taxonomyKey="concept.score"
+              label="Mass"
+              value={event.score.toFixed(4)}
+              hint={
+                event.positions?.length
+                  ? `at position ${event.positions[event.positions.length - 1]}`
+                  : undefined
+              }
+            />
+          </section>
+          {event.evidence?.length ? (
+            <section className="border-t border-line">
+              <div className="machine-label pt-2">
+                Evidence — tokens carrying the mass
+              </div>
+              <ul className="mt-1">
+                {event.evidence.map((evidence) => (
+                  <li
+                    key={`${evidence.tokenId}-${evidence.text}`}
+                    className="flex items-baseline justify-between gap-4 border-b border-line py-1 last:border-b-0"
+                  >
+                    <span className="font-serif text-sm italic text-muted">
+                      {evidence.text}
+                    </span>
+                    <span className="font-mono text-sm tabular-nums">
+                      {evidence.probability.toFixed(4)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+        </>
       )}
 
       {event.type === "OUTPUT" && (
@@ -124,5 +168,27 @@ export function Inspector({
         <AttentionPanel attention={[event]} traceMode="RESEARCH" />
       )}
     </div>
+  );
+}
+
+/** The concepts measured at this step — mass + interpreted label pairs. */
+function ConceptsAtStep({ concepts }: { concepts: ConceptEvent[] }) {
+  return (
+    <section className="border-t border-line pt-2" data-testid="token-concepts">
+      <div className="machine-label">
+        Concepts at this step <span className="italic text-muted">interpreted</span>
+      </div>
+      <ul className="mt-1">
+        {concepts.map((c) => (
+          <li
+            key={c.id}
+            className="flex items-baseline justify-between gap-4 border-b border-line py-1 last:border-b-0"
+          >
+            <span className="font-serif text-sm italic text-muted">{c.label}</span>
+            <span className="font-mono text-sm tabular-nums">{c.score.toFixed(4)}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

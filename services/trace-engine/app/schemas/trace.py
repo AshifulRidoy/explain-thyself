@@ -117,14 +117,24 @@ class AttentionEvent(TraceEventBase):
     headEntropyBits: Optional[list[float]] = None
 
 
+class ConceptEvidence(StrictModel):
+    tokenId: int = Field(ge=0)
+    text: str
+    probability: Probability
+
+
 class ConceptEvent(TraceEventBase):
     type: Literal["CONCEPT"] = "CONCEPT"
     level: Literal["INTERPRETED"] = "INTERPRETED"
     # concept identity (e.g. "concept_parsing") — distinct from the event id
     conceptId: str
     label: str
+    # probability mass on the dictionary word set — the MEASURED half;
+    # the label is the INTERPRETED half
     score: Probability
     positions: Optional[list[int]] = None
+    # the measured tokens carrying the mass, so the label stays auditable
+    evidence: Optional[list[ConceptEvidence]] = None
 
 
 class EvidenceEvent(TraceEventBase):

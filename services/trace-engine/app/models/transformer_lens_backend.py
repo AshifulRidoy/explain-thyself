@@ -111,6 +111,25 @@ class TransformerLensBackend:
     def decode_token(self, token_id: int) -> TopToken:
         return self._decode(token_id)
 
+    def word_token_ids(self, word: str) -> list[int]:
+        """Token ids that can realize `word` in running text: the bare form
+        and the leading-space form, each only when it is a SINGLE token.
+        Multi-token words return fewer ids (or none) — the scorer then
+        measures less mass for that concept, honestly.
+        """
+        tokenizer = self.model.tokenizer
+        bare = tokenizer.encode(word, add_special_tokens=False)
+        spaced = tokenizer.encode(" " + word, add_special_tokens=False)
+        ids: list[int] = []
+        if len(bare) == 1:
+            ids.append(int(bare[0]))
+        if len(spaced) == 1 and spaced[0] not in ids:
+            ids.append(int(spaced[0]))
+        return ids
+
+    def token_text(self, token_id: int) -> str:
+        return self._decode(token_id).text
+
     def _decode(self, token_id: int) -> TopToken:
         tokenizer = self.model.tokenizer
         tid = int(token_id)

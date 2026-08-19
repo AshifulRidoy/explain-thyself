@@ -123,6 +123,12 @@ const attentionEventSchema = traceEventBase.extend({
   headEntropyBits: z.array(z.number().min(0).max(20)).optional(),
 });
 
+const conceptEvidenceSchema = z.object({
+  tokenId: z.number().int().nonnegative(),
+  text: z.string(),
+  probability: probability,
+});
+
 const conceptEventSchema = traceEventBase.extend({
   type: z.literal("CONCEPT"),
   level: z.literal("INTERPRETED"),
@@ -130,6 +136,7 @@ const conceptEventSchema = traceEventBase.extend({
   label: z.string(),
   score: probability,
   positions: z.array(z.number().int().nonnegative()).optional(),
+  evidence: z.array(conceptEvidenceSchema).max(8).optional(),
 });
 
 const evidenceEventSchema = traceEventBase.extend({

@@ -13,6 +13,7 @@ from typing import Callable
 
 import numpy as np
 
+from ..aggregation.concepts import CONCEPT_DICTIONARY
 from .backend import StepResult, TopToken
 from .registry import ModelSpec
 
@@ -83,7 +84,11 @@ def _layer_norm_curve(layer: int, layer_count: int, step_gain: float) -> float:
     return (2.5 + 2.4 * layer + 6 * frac * frac) * step_gain
 
 
-_FAKE_VOCAB = 4096
+# One slot per possible _word_to_token_id (they live in [1000, 50000)), so
+# every dictionary word lands in its OWN slot — the fake id-space stays
+# disjoint exactly like the real vocabulary, and concept mass attributes to
+# exactly one label.
+_FAKE_VOCAB = 50_000
 
 _RESPONSES: list[tuple[str, str]] = [
     (
@@ -129,6 +134,8 @@ class FakeBackend:
         self._eos_id = _word_to_token_id("<eos>")
         self._prompt_len = 0
         self._continuation: list[tuple[str, bool]] = []
+        # reverse map for token_text() (concept evidence rows)
+        self._id_words: dict[int, str] = {}
         # running per-layer mean for normRatio (mirrors the TS generator)
         self._layer_means = np.zeros(spec.layer_count)
         self._steps = 0
@@ -172,6 +179,55 @@ class FakeBackend:
             probability=1e-6,
             rank=99,
         )
+
+    def word_token_ids(self, word: str) -> list[int]:
+        # one pseudo-id per word — always a "single token" in the fake vocab
+        token_id = _word_to_token_id(word)
+        self._id_words[token_id] = word
+        return [token_id]
+
+    def token_text(self, token_id: int) -> str:
+        return self._id_words.get(token_id, f"[{token_id}]")
+
+    def _concept_bump(self, step: int, occupied: np.ndarray) -> dict[int, float]:
+        """Deterministic concept mass for this step's fake distribution.
+
+        Separate seeded stream (like _fake_attention's +777_000 offset), so
+        concept draws never shift the main randomness. Authored mass is
+        pre-renormalization; after dividing by the distribution total it
+        stays above CONCEPT_ACTIVE_MASS (0.05). Mirrored 1:1 by the TS
+        fixture generator — keep them in sync.
+        """
+        rng = mulberry32(self._seed + 888_000 + step * 173)
+        order = list(range(len(CONCEPT_DICTIONARY)))
+        for i in range(len(order) - 1, 0, -1):
+            j = int(rng() * (i + 1))
+            order[i], order[j] = order[j], order[i]
+        n_active = 0 if rng() < 0.10 else (1 if rng() < 0.72 else 2)
+
+        bump: dict[int, float] = {}
+        for idx in order[:n_active]:
+            words = list(CONCEPT_DICTIONARY[idx].words)
+            for k in range(len(words) - 1, 0, -1):
+                j = int(rng() * (k + 1))
+                words[k], words[j] = words[j], words[k]
+            mass = 0.12 + rng() * 0.22
+            picked: list[tuple[int, str]] = []
+            for word in words:
+                if len(picked) >= 3:
+                    break
+                token_id = _word_to_token_id(word)
+                # skip slots already carrying mass (a top-k candidate that
+                # IS a dictionary word) — never double-place
+                if occupied[token_id] or token_id in bump:
+                    continue
+                picked.append((token_id, word))
+            if picked:  # concept mass == authored mass regardless of skips
+                share = mass / len(picked)
+                for token_id, word in picked:
+                    bump[token_id] = share
+                    self._id_words[token_id] = word
+        return bump
 
     def _fake_attention(self, ctx: list[int], step: int):
         """Deterministic imitation of the hook-side reduction: per-layer
@@ -258,10 +314,18 @@ class FakeBackend:
             )
 
         # sparse fake distribution over the fake vocab: only the 8 candidates
-        # have mass; entropy computed downstream from this array is self-consistent
-        log_probs = np.full(_FAKE_VOCAB, -60.0, dtype=np.float32)
+        # (plus this step's concept words) have mass. Built as probabilities,
+        # renormalized to sum to 1 exactly like a real log-softmax, then
+        # logged — entropy downstream is self-consistent by construction.
+        probs = np.zeros(_FAKE_VOCAB, dtype=np.float64)
         for cand in top_k:
-            log_probs[cand.token_id % _FAKE_VOCAB] = np.log(max(cand.probability, 1e-12))
+            slot = cand.token_id % _FAKE_VOCAB
+            probs[slot] = max(probs[slot], cand.probability)
+        for token_id, mass in self._concept_bump(step, probs > 0).items():
+            probs[token_id] += mass
+        total = probs.sum()
+        probs /= total
+        log_probs = np.log(np.clip(probs, 1e-12, 1.0)).astype(np.float32)
 
         layer_stats: list[tuple[int, float]] | None = None
         if collect_layers:

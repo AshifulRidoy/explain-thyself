@@ -66,5 +66,8 @@ async def test_trace_persisted_and_readable(pool: asyncpg.Pool) -> None:
         assert types[0] == "INPUT"
         assert "TOKEN" in types and "LAYER_ACTIVITY" in types
         assert types[-1] == "OUTPUT"
-        # exactly one terminal token+activity pair per token, plus INPUT/DECISION/OUTPUT
-        assert len(events) == 6 * 2 + 3
+        # one token+activity pair per token, its CONCEPT events, plus
+        # INPUT/DECISION/OUTPUT
+        concept_count = types.count("CONCEPT")
+        assert concept_count > 0, "fake STANDARD traces are concept-bearing"
+        assert len(events) == 6 * 2 + 3 + concept_count

@@ -6,7 +6,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./fixtures": "./src/fixtures.ts",
-    "./generator": "./src/generate.ts"
+    "./generator": "./src/generate.ts",
+    "./concepts": "./src/concepts.ts"
   },
   "scripts": {
     "fixture": "tsx src/cli.ts",

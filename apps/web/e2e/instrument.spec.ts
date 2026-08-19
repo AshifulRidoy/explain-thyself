@@ -68,6 +68,40 @@ test.describe("fixture explorer", () => {
     await page.getByTestId("attention-layers").locator("button", { hasText: "05" }).click();
     await expect(panel.getByText(/L05/)).toBeVisible();
   });
+
+  test("concepts rank by total mass and inspect with their evidence", async ({
+    page,
+  }) => {
+    await page.goto("/explore?fixture=python-rust");
+
+    // the panel fills once concept events land (STANDARD fixture)
+    const rows = page.getByTestId("concept-rows");
+    await expect(rows).toBeVisible({ timeout: 60_000 });
+    await expect(page.getByTestId("concept-row").first()).toBeVisible();
+    await expect(
+      page.getByText("What concepts were most active?"),
+    ).toBeVisible();
+    // the method footnote keeps the label honest
+    await expect(
+      page.getByText(/probability mass on the concept/),
+    ).toBeVisible();
+
+    // one canvas node per concept (at its peak) — click inspects it
+    await page.locator(".react-flow__node-CONCEPT").first().click({ force: true });
+    const inspector = page.getByTestId("inspector");
+    await expect(inspector.getByText("CONCEPT", { exact: true })).toBeVisible();
+    await expect(inspector.getByText("INTERPRETED", { exact: true })).toBeVisible();
+    await expect(
+      inspector.getByText(/Evidence — tokens carrying the mass/),
+    ).toBeVisible();
+
+    // a token measured with concepts pairs them into its inspector view
+    await page.locator('button[title^="p "]').nth(2).click();
+    await expect(page.getByTestId("token-concepts")).toBeVisible();
+    await expect(
+      page.getByTestId("token-concepts").getByText(/interpreted/),
+    ).toBeVisible();
+  });
 });
 
 test("home page presents the instrument and links to explore", async ({ page }) => {

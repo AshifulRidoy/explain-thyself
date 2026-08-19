@@ -19,6 +19,7 @@ from typing import AsyncGenerator
 import numpy as np
 from nanoid import generate as nanoid
 
+from ..aggregation.concepts import CONCEPT_ACTIVE_MASS, ConceptScorer
 from ..aggregation.stats import (
     RunningNormalizer,
     entropy_from_log_probs,
@@ -29,6 +30,7 @@ from ..config import settings
 from ..models.backend import ModelBackend, TopToken
 from ..schemas.trace import (
     AttentionEvent,
+    ConceptEvent,
     DecisionEvent,
     InputEvent,
     InputToken,
@@ -166,6 +168,13 @@ async def trace_stream(
         ctx = backend.encode(prompt)
         collect_layers = trace_mode != "BASIC" and spec.emits_resid_activity
         collect_attention = trace_mode == "RESEARCH"
+        # concepts ride the distribution the step already produced — no extra
+        # forward pass, just an exact sum over the full log-probs
+        scorer = (
+            ConceptScorer(backend.word_token_ids, backend.token_text)  # type: ignore[attr-defined]
+            if trace_mode != "BASIC"
+            else None
+        )
         normalizer = RunningNormalizer(spec.layer_count) if collect_layers else None
         emitted: list[TopToken] = []
         # position-indexed texts for attention rows; index 0 of ctx is the
@@ -278,6 +287,35 @@ async def trace_stream(
                         ),
                     )
                     yield await emit(attention_event)
+
+            if scorer is not None:
+                # exact mass the FULL distribution places on each concept's
+                # token set; only concepts above threshold become events
+                active = [
+                    s for s in scorer.score(res.full_log_probs) if s.mass >= CONCEPT_ACTIVE_MASS
+                ]
+                active.sort(key=lambda s: -s.mass)
+                for scored in active:
+                    concept_event = ConceptEvent(
+                        id=next_id(),
+                        seq=seq - 1,
+                        type="CONCEPT",
+                        t=t,
+                        level="INTERPRETED",
+                        conceptId=scored.spec.conceptId,
+                        label=scored.spec.label,
+                        score=round(scored.mass, 4),
+                        positions=[prompt_len + step],
+                        evidence=[
+                            {
+                                "tokenId": token_id_,
+                                "text": text_,
+                                "probability": round(p_, 4),
+                            }
+                            for token_id_, text_, p_ in scored.evidence
+                        ],
+                    )
+                    yield await emit(concept_event)
 
             ctx.append(token_id)
             ctx_texts.append(tok.text)

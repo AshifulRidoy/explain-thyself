@@ -4,12 +4,13 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ReactFlowProvider } from "@xyflow/react";
 import { useEffect, useMemo, useState } from "react";
-import { useTraceStore, tokenEvents, layerActivityByPosition, attentionByPosition } from "@/lib/trace/store";
+import { useTraceStore, tokenEvents, layerActivityByPosition, attentionByPosition, conceptsTimeline, conceptsByPosition } from "@/lib/trace/store";
 import { useLiveTrace } from "@/lib/trace/useTraceDataSource";
 import { TraceHeader } from "./TraceHeader";
 import { Inspector } from "./Inspector";
 import { TokenStream } from "./TokenStream";
 import { EntropyMeter } from "@/components/data-viz/EntropyMeter";
+import { ConceptPanel } from "@/components/data-viz/ConceptPanel";
 
 const TraceCanvas = dynamic(
   () => import("./TraceCanvas").then((m) => m.TraceCanvas),
@@ -47,6 +48,8 @@ export function LiveExploreClient({ prompt }: { prompt: string }) {
   const tokens = useMemo(() => tokenEvents(events), [events]);
   const layersByPos = useMemo(() => layerActivityByPosition(events), [events]);
   const attentionByPos = useMemo(() => attentionByPosition(events), [events]);
+  const conceptTimeline = useMemo(() => conceptsTimeline(events), [events]);
+  const conceptsByPos = useMemo(() => conceptsByPosition(events), [events]);
   const selected = useMemo(
     () => events.find((e) => e.id === selectedEventId) ?? null,
     [events, selectedEventId],
@@ -55,6 +58,8 @@ export function LiveExploreClient({ prompt }: { prompt: string }) {
     selected?.type === "TOKEN" ? layersByPos.get(selected.position) ?? null : null;
   const selectedAttention =
     selected?.type === "TOKEN" ? attentionByPos.get(selected.position) ?? null : null;
+  const selectedConcepts =
+    selected?.type === "TOKEN" ? conceptsByPos.get(selected.position) ?? null : null;
 
   return (
     <div>
@@ -142,8 +147,16 @@ export function LiveExploreClient({ prompt }: { prompt: string }) {
             event={selected}
             layerActivity={selectedLayers}
             attention={selectedAttention}
+            concepts={selectedConcepts}
             traceMode={envelope?.traceMode ?? traceMode}
           />
+          <div className="border-t border-line pt-6">
+            <ConceptPanel
+              activities={conceptTimeline}
+              tokenCount={tokens.length}
+              traceMode={envelope?.traceMode ?? traceMode}
+            />
+          </div>
           <div className="border-t border-line pt-6">
             <EntropyMeter tokens={tokens} />
           </div>

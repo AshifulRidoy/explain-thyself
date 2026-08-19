@@ -59,7 +59,7 @@ export const SIGNAL_TAXONOMY: Record<string, SignalDefinition> = {
   "concept.score": {
     level: "INTERPRETED",
     definition:
-      "Semantic-cluster association produced by the interpretation layer. Not a property of any single neuron.",
+      "Probability mass the model's full next-token distribution places on a human-authored concept's dictionary words at one step. The mass is measured exactly; the label is an interpretation — not a property of any neuron, and not the model's thoughts.",
   },
   "decision.reason": {
     level: "DERIVED",
