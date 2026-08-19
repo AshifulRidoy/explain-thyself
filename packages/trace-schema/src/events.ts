@@ -160,16 +160,31 @@ export interface DecisionEvent extends TraceEventBase {
   detail?: string;
 }
 
+/** ANSWER_STABILITY evidence: one controlled prompt perturbation rerun. */
+export interface StabilityVariant {
+  /** machine name of the perturbation, e.g. "lowercase_first" */
+  perturbation: string;
+  /** the perturbed prompt actually rerun */
+  text: string;
+  agreedTokens: number;
+  totalTokens: number;
+  divergedPositions: number[];
+}
+
 export interface UncertaintyEvent extends TraceEventBase {
   type: "UNCERTAINTY";
-  level: "DERIVED";
+  /** null when value is null: the quantity was deliberately not measured */
+  level: "MEASURED" | "DERIVED" | null;
   kind:
     | "MODEL_UNCERTAINTY"
     | "EVIDENCE_QUALITY"
     | "INPUT_AMBIGUITY"
     | "ANSWER_STABILITY";
-  value: number;
-  window?: { fromStep: number; toStep: number };
+  value: number | null;
+  /** the method (measured) or the reason (null) — always present */
+  basis: string;
+  window?: { fromStep: number; toStep: number } | null;
+  variants?: StabilityVariant[] | null;
 }
 
 export interface OutputEvent extends TraceEventBase {

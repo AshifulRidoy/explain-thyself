@@ -2,8 +2,10 @@
  * state → React Flow graph. Pure, unit-tested.
  *
  * MVP topology (spec §15): INPUT → token₀ → token₁ → … → OUTPUT, with
- * ConceptNodes attached at their token. Deterministic hand-rolled wrap
- * layout — no dagre/elk, no animation of positions.
+ * ConceptNodes attached at their token and UncertaintyNodes under the
+ * OUTPUT they analyze (spec §22 — measured after the answer exists).
+ * Deterministic hand-rolled wrap layout — no dagre/elk, no animation of
+ * positions.
  */
 import type { Edge, Node } from "@xyflow/react";
 import type {
@@ -170,6 +172,29 @@ export function toGraph(
         style: { stroke: "var(--ink)" },
       });
     }
+
+    // the uncertainty layer hangs off the OUTPUT node — it is measured
+    // AFTER the answer exists (spec §22), never inline with tokens
+    events
+      .filter((e) => e.type === "UNCERTAINTY")
+      .forEach((u, ui) => {
+        nodes.push({
+          id: u.id,
+          type: "UNCERTAINTY",
+          position: {
+            x: col * DX + CONCEPT_OFFSET.x,
+            y: (row + 1) * DY + CONCEPT_OFFSET.y + ui * 56,
+          },
+          data: { event: u, selected: u.id === selectedEventId, latest: false },
+          draggable: false,
+        });
+        edges.push({
+          id: `${output.id}->${u.id}`,
+          source: output.id,
+          target: u.id,
+          style: { stroke: "var(--line)", strokeDasharray: "2 3" },
+        });
+      });
   }
 
   return { nodes, edges };

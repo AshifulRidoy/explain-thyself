@@ -1,16 +1,19 @@
 """End-to-end stream test with the FakeBackend (no torch, no DB).
 
 Verifies the full pipeline shape: INPUT → (TOKEN, LAYER_ACTIVITY, CONCEPT×k)*
-→ DECISION → OUTPUT → done, with gapless seq and monotone t.
+→ DECISION → OUTPUT → done, with gapless seq and monotone t. RESEARCH adds
+attention per step and the uncertainty layer after OUTPUT (spec §22).
 """
 
 from __future__ import annotations
 
 import json
+import math
 
 import pytest
 
 from app.aggregation.concepts import CONCEPT_ACTIVE_MASS, CONCEPT_DICTIONARY
+from app.aggregation.stability import UNCERTAINTY_KINDS
 from app.engine.generate import trace_stream
 from app.models.fake_backend import FakeBackend
 from app.models.registry import MODEL_REGISTRY
@@ -33,12 +36,14 @@ def parse_frames(raw: str) -> list[tuple[str | None, str]]:
     return frames
 
 
-async def collect_fake_stream(max_tokens: int = 10) -> tuple[list, list]:
+async def collect_fake_stream(
+    max_tokens: int = 10, trace_mode: str = "STANDARD"
+) -> tuple[list, list]:
     backend = FakeBackend(MODEL_REGISTRY["fake"], seed=99)
     raw = ""
     async for frame in trace_stream(
         prompt="Why is the sky blue?",
-        trace_mode="STANDARD",
+        trace_mode=trace_mode,
         max_tokens=max_tokens,
         temperature=0.0,
         top_k=None,
@@ -147,6 +152,7 @@ async def test_basic_mode_emits_no_layer_activity() -> None:
     types = [json.loads(d)["type"] for e, d in parse_frames(raw) if e == "trace_event"]
     assert "LAYER_ACTIVITY" not in types
     assert "CONCEPT" not in types  # concepts are a non-BASIC signal
+    assert "UNCERTAINTY" not in types  # uncertainty rides RESEARCH only
     assert "TOKEN" in types
 
 
@@ -182,6 +188,66 @@ async def test_standard_mode_emits_concepts() -> None:
 
     _, again = await collect_fake_stream()
     assert [m for m in again[1:] if m["type"] == "CONCEPT"] == concepts
+
+
+@pytest.mark.asyncio
+async def test_standard_mode_has_no_uncertainty_layer() -> None:
+    """STANDARD keeps the dial honest: no attention, no stability reruns —
+    the uncertainty layer is a RESEARCH signal (it re-runs the answer)."""
+    _, messages = await collect_fake_stream(trace_mode="STANDARD")
+    types = [m["type"] for m in messages[1:]]
+    assert "ATTENTION" not in types
+    assert "UNCERTAINTY" not in types
+
+
+@pytest.mark.asyncio
+async def test_research_mode_emits_uncertainty_layer() -> None:
+    """RESEARCH: after OUTPUT, the four separated quantities (spec §22) —
+    model uncertainty recomputable from the trace's own TOKEN events,
+    answer stability with per-perturbation evidence, and honest nulls for
+    the quantities this instrument cannot measure."""
+    _, messages = await collect_fake_stream(trace_mode="RESEARCH")
+    events = messages[1:]
+    types = [e["type"] for e in events]
+
+    uncertainty = [e for e in events if e["type"] == "UNCERTAINTY"]
+    assert [e["kind"] for e in uncertainty] == UNCERTAINTY_KINDS
+    # post-hoc: they land between OUTPUT and the terminal done frame
+    assert types[-6:] == ["DECISION", "OUTPUT"] + ["UNCERTAINTY"] * 4
+
+    model = uncertainty[0]
+    tokens = [e for e in events if e["type"] == "TOKEN"]
+    mean_norm = sum(t["entropyBits"] for t in tokens) / len(tokens) / math.log2(50_000)
+    assert model["level"] == "DERIVED"
+    assert model["value"] == pytest.approx(mean_norm, abs=1e-4)
+    assert model["window"] == {"fromStep": 0, "toStep": len(tokens) - 1}
+
+    for skipped in uncertainty[1:3]:  # EVIDENCE_QUALITY, INPUT_AMBIGUITY
+        assert skipped["value"] is None
+        assert skipped["level"] is None
+        assert skipped["basis"].startswith("not measured")
+
+    stability = uncertainty[3]
+    assert stability["level"] == "MEASURED"
+    assert 0 <= stability["value"] <= 1
+    variants = stability["variants"]
+    assert len(variants) == 2  # both perturbations apply to this prompt
+    assert {v["perturbation"] for v in variants} == {
+        "strip_final_punct",
+        "lowercase_first",
+    }
+    total = len(variants) * len(tokens)
+    agreed = sum(v["agreedTokens"] for v in variants)
+    assert stability["value"] == pytest.approx(round(agreed / total, 4), abs=1e-9)
+    for variant in variants:
+        assert variant["text"] != "Why is the sky blue?"
+        assert variant["totalTokens"] == len(tokens)
+        assert variant["agreedTokens"] == variant["totalTokens"] - len(variant["divergedPositions"])
+        assert variant["divergedPositions"] == sorted(set(variant["divergedPositions"]))
+        assert 0 < variant["agreedTokens"] < variant["totalTokens"]  # fake diverges, but not everywhere
+
+    _, again = await collect_fake_stream(trace_mode="RESEARCH")
+    assert [e for e in again[1:] if e["type"] == "UNCERTAINTY"] == uncertainty
 
 
 @pytest.mark.asyncio

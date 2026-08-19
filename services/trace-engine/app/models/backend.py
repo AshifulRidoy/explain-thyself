@@ -43,6 +43,11 @@ class StepResult:
 class ModelBackend(Protocol):
     spec: object  # ModelSpec; typed loosely to avoid a circular import
 
+    # vocabulary size — the denominator of normalized entropy (uncertainty
+    # layer, spec §22); real: d_vocab, fake: the fixed fake vocab
+    @property
+    def vocab_size(self) -> int: ...
+
     def load(self, device: str) -> None: ...
 
     def encode(self, text: str) -> list[int]: ...

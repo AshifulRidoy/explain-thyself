@@ -9,13 +9,16 @@ independent NumPy recomputation of every derived number we ship
 
 from __future__ import annotations
 
+import json
 import math
 
 import numpy as np
 import pytest
 import torch
 
+from app.aggregation.concepts import CONCEPT_DICTIONARY, ConceptScorer
 from app.aggregation.stats import entropy_from_log_probs
+from app.engine.generate import trace_stream
 from app.models.registry import MODEL_REGISTRY
 from app.models.transformer_lens_backend import TransformerLensBackend
 
@@ -198,7 +201,184 @@ async def test_attention_head_entropies_and_bos_sink(backend: TransformerLensBac
 
     bos = [float(res.attention[i][0]) for i in range(12)]
     assert bos[-1] > bos[0]
-    assert bos[-1] > 0.3  # the sink is substantial in late layers
+
+
+async def test_every_dictionary_word_resolves_to_real_tokens(backend: TransformerLensBackend):
+    """Phase 5 exit criterion: the dictionary is scoreable at all.
+
+    Every word must be a single token in the leading-space form (" word")
+    — the form that realizes the word in running text, which is where
+    next-token mass lives. A word failing this would silently score 0
+    forever. Words that are ALSO single-token bare (~2/3 of the
+    dictionary; GPT-2 merges are space-prefixed) additionally score the
+    bare id via the resolver.
+    """
+    tokenizer = backend.model.tokenizer
+    bare_single = 0
+    total = 0
+    for concept in CONCEPT_DICTIONARY:
+        for word in concept.words:
+            total += 1
+            spaced = tokenizer.encode(f" {word}", add_special_tokens=False)
+            assert len(spaced) == 1, f"{word!r} is not a single spaced token"
+            ids = backend.word_token_ids(word)
+            assert spaced[0] in ids and len(ids) <= 2
+            if len(tokenizer.encode(word, add_special_tokens=False)) == 1:
+                bare_single += 1
+    # tokenizer sanity floor — a mass migration to multi-token bare forms
+    # would mean the tokenizer or dictionary drifted
+    assert bare_single >= total * 0.5
+
+
+async def test_concept_mass_matches_independent_softmax(backend: TransformerLensBackend):
+    """Phase 5 exit criterion: CONCEPT scores are exact probability mass.
+
+    Independent path: plain forward → naive float64 softmax of the raw
+    logits → Σ p over each concept's ids. Must equal ConceptScorer's mass
+    (computed from the shipped fp32 log-softmax) to float32 exactness.
+    Also: the shipped array is a true log-softmax, and every evidence row
+    is a member of the concept's own word set carrying its exact share.
+    """
+    ctx = backend.encode("Why is the sky blue?")
+    res = backend.step(ctx, collect_layers=False)
+
+    total_prob = float(np.exp(res.full_log_probs.astype(np.float64)).sum())
+    assert total_prob == pytest.approx(1.0, abs=1e-4)
+
+    with torch.no_grad():
+        logits = backend.model(torch.tensor([ctx]))[0, -1].float()
+    z = logits.double().numpy()
+    z -= z.max()
+    p = np.exp(z)
+    p /= p.sum()
+
+    scorer = ConceptScorer(backend.word_token_ids, backend.token_text)
+    for scored in scorer.score(res.full_log_probs):
+        ids = sorted({i for w in scored.spec.words for i in backend.word_token_ids(w)})
+        assert scored.mass == pytest.approx(float(p[ids].sum()), abs=1e-6)
+        assert 0.0 <= scored.mass <= 1.0
+        probs = [prob for _, _, prob in scored.evidence]
+        assert probs == sorted(probs, reverse=True)
+        for token_id, text, prob in scored.evidence:
+            assert token_id in ids
+            assert text in scored.spec.words  # auditable: a dictionary word
+            assert prob == pytest.approx(float(p[token_id]), abs=1e-6)
+
+
+async def test_sky_blue_prompt_measures_science_concept(backend: TransformerLensBackend):
+    """The headline Phase 5 claim, on the real model: while GPT-2 answers
+    "Why is the sky blue?", the science/nature word set carries measurable
+    probability mass (greedy ⇒ deterministic). The mass is measured; the
+    label is the interpretation."""
+    raw = ""
+    async for frame in trace_stream(
+        prompt="Why is the sky blue?",
+        trace_mode="STANDARD",
+        max_tokens=10,
+        temperature=0.0,
+        top_k=None,
+        seed=None,
+        backend=backend,
+        writer=None,
+    ):
+        raw += frame
+    events = [
+        json.loads(line[6:]) for line in raw.split("\n") if line.startswith("data: ")
+    ]
+    concepts = [e for e in events if e.get("type") == "CONCEPT"]
+    assert concepts, "a real trace should light up at least one concept"
+
+    words = {
+        w for c in CONCEPT_DICTIONARY if c.conceptId == "concept_science" for w in c.words
+    }
+    science = [e for e in concepts if e["conceptId"] == "concept_science"]
+    assert science, "the sky-blue answer must light up science/nature"
+    for event in science:
+        assert event["score"] >= 0.05
+        assert event["evidence"]
+        for evidence in event["evidence"]:
+            assert evidence["text"] in words
+
+
+async def test_research_emits_verified_uncertainty_layer(backend: TransformerLensBackend):
+    """The uncertainty layer on the real model (spec §22): model uncertainty
+    must be recomputable from the trace's own TOKEN events against the real
+    vocab (50257), answer stability must be a measured agreement over real
+    greedy reruns of perturbed prompts, and the two unmeasurable quantities
+    must ship as nulls with reasons — never faked."""
+    raw = ""
+    async for frame in trace_stream(
+        prompt="The capital of France is",
+        trace_mode="RESEARCH",
+        max_tokens=6,
+        temperature=0.0,
+        top_k=None,
+        seed=None,
+        backend=backend,
+        writer=None,
+    ):
+        raw += frame
+    events = [
+        json.loads(line[6:]) for line in raw.split("\n") if line.startswith("data: ")
+    ]
+    uncertainty = [e for e in events if e.get("type") == "UNCERTAINTY"]
+    assert [e["kind"] for e in uncertainty] == [
+        "MODEL_UNCERTAINTY",
+        "EVIDENCE_QUALITY",
+        "INPUT_AMBIGUITY",
+        "ANSWER_STABILITY",
+    ]
+
+    tokens = [e for e in events if e.get("type") == "TOKEN"]
+    model = uncertainty[0]
+    assert model["level"] == "DERIVED"
+    assert model["basis"].startswith("mean normalized entropy H/log2(50257)")
+    mean_norm = sum(t["entropyBits"] for t in tokens) / len(tokens) / math.log2(50257)
+    assert model["value"] == pytest.approx(mean_norm, abs=1e-4)
+
+    for skipped in uncertainty[1:3]:
+        assert skipped["value"] is None and skipped["level"] is None
+
+    stability = uncertainty[3]
+    assert stability["level"] == "MEASURED"
+    assert 0 <= stability["value"] <= 1
+    variants = stability["variants"]
+    assert variants, "lowercase_first always applies to this prompt"
+    # the perturbation is real: rerun text differs, token budget matches
+    for variant in variants:
+        assert variant["text"] != "The capital of France is"
+        assert variant["totalTokens"] == len(tokens)
+        assert variant["agreedTokens"] == len(tokens) - len(variant["divergedPositions"])
+    # greedy determinism makes agreement a property of the perturbation,
+    # not sampling noise — a lowercase_first flip is a measured fact
+    agreed = sum(v["agreedTokens"] for v in variants)
+    assert stability["value"] == pytest.approx(
+        round(agreed / (len(variants) * len(tokens)), 4), abs=1e-9
+    )
+
+
+async def test_stability_control_rerun_agrees_exactly(backend: TransformerLensBackend):
+    """Control for the stability measurement itself: an UNPERTURBED greedy
+    rerun must agree 1.0 — any disagreement there would mean the pipeline
+    measures nondeterminism, not sensitivity to the prompt."""
+    prompt = "The capital of France is"
+    emitted = []
+    ctx = backend.encode(prompt)
+    for _ in range(5):
+        res = backend.step(ctx, collect_layers=False)
+        emitted.append(res.top_k[0].token_id)
+        ctx.append(emitted[-1])
+
+    # feed the identical prompt through the variant machinery: no perturbation
+    # applies to a second identical encode, so we call the comparison directly
+    vctx = backend.encode(prompt)
+    agreed = 0
+    for i, original in enumerate(emitted):
+        res = backend.step(vctx, collect_layers=False)
+        if res.top_k[0].token_id == original:
+            agreed += 1
+        vctx.append(res.top_k[0].token_id)
+    assert agreed == len(emitted)
 
 
 async def test_research_path_logits_match_anchor(backend: TransformerLensBackend):

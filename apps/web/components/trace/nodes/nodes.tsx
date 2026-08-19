@@ -1,7 +1,13 @@
 import { Handle, Position, type NodeProps, type Node } from "@xyflow/react";
-import type { InputEvent, ConceptEvent, OutputEvent } from "@ets/trace-schema";
+import type {
+  InputEvent,
+  ConceptEvent,
+  OutputEvent,
+  UncertaintyEvent,
+} from "@ets/trace-schema";
 import { MiniBars } from "@/components/data-viz/MiniBars";
 import { TraceNodeShell } from "./TraceNode";
+import { UNCERTAINTY_LABELS } from "@/lib/trace/uncertainty";
 import type { GenericNodeData, TokenNodeData } from "@/lib/trace/graph";
 
 function InputNodeView({ data }: NodeProps<Node<GenericNodeData>>) {
@@ -93,13 +99,36 @@ function OutputNodeView({ data }: NodeProps<Node<GenericNodeData>>) {
   );
 }
 
+function UncertaintyNodeView({ data }: NodeProps<Node<GenericNodeData>>) {
+  const event = data.event as UncertaintyEvent;
+  return (
+    <TraceNodeShell selected={data.selected} width={170}>
+      <Handle type="target" position={Position.Top} className="!h-1.5 !w-1.5 !border-line !bg-paper" />
+      <div className="machine-label">{UNCERTAINTY_LABELS[event.kind]}</div>
+      {event.value === null ? (
+        // the refusal is rendered, not hidden: this quantity was not measured
+        <p className="mt-0.5 font-serif text-sm italic leading-snug text-muted">
+          not measured
+        </p>
+      ) : (
+        <div className="mt-0.5 font-mono text-sm tabular-nums">
+          {event.value.toFixed(2)}
+        </div>
+      )}
+      <div className="machine-label mt-1">
+        {event.level?.toLowerCase() ?? "not measured"}
+      </div>
+    </TraceNodeShell>
+  );
+}
+
 /** Fallback for event types with no dedicated node yet (DECISION, …). */
 function GenericEventNodeView({ data }: NodeProps<Node<GenericNodeData>>) {
   return (
     <TraceNodeShell selected={data.selected} width={130}>
       <div className="machine-label">{data.event.type.toLowerCase()}</div>
       <div className="machine-label mt-1 text-ink">
-        {data.event.level.toLowerCase()}
+        {data.event.level?.toLowerCase() ?? "—"}
       </div>
     </TraceNodeShell>
   );
@@ -109,6 +138,7 @@ export {
   InputNodeView,
   TokenNodeView,
   ConceptNodeView,
+  UncertaintyNodeView,
   OutputNodeView,
   GenericEventNodeView,
 };

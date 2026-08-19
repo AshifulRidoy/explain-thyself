@@ -166,14 +166,28 @@ class UncertaintyWindow(StrictModel):
     toStep: int = Field(ge=0)
 
 
+class StabilityVariant(StrictModel):
+    perturbation: str
+    text: str
+    agreedTokens: int = Field(ge=0)
+    totalTokens: int = Field(ge=0)
+    divergedPositions: list[int] = Field(default_factory=list)
+
+
 class UncertaintyEvent(TraceEventBase):
     type: Literal["UNCERTAINTY"] = "UNCERTAINTY"
-    level: Literal["DERIVED"] = "DERIVED"
+    # None when the quantity was considered and deliberately NOT measured —
+    # then value is None too and basis carries the reason
+    level: Optional[Literal["MEASURED", "DERIVED"]] = None
     kind: Literal[
         "MODEL_UNCERTAINTY", "EVIDENCE_QUALITY", "INPUT_AMBIGUITY", "ANSWER_STABILITY"
     ]
-    value: float
+    value: Optional[Probability] = None
+    # always present: the method for a measured value, the reason for a null
+    basis: str
     window: Optional[UncertaintyWindow] = None
+    # ANSWER_STABILITY evidence: one row per perturbation actually rerun
+    variants: Optional[list[StabilityVariant]] = None
 
 
 class OutputEvent(TraceEventBase):

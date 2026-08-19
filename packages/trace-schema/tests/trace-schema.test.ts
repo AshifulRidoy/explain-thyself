@@ -8,7 +8,16 @@ import {
   mulberry32,
 } from "../src/generate.js";
 import { CONCEPT_ACTIVE_MASS, CONCEPT_DICTIONARY } from "../src/concepts.js";
-import { traceSchema, validateTrace } from "../src/schema.js";
+import {
+  FAKE_VOCAB_SIZE,
+  UNCERTAINTY_KINDS,
+} from "../src/uncertainty.js";
+import type {
+  OutputEvent,
+  TokenEvent,
+  UncertaintyEvent,
+} from "../src/events.js";
+import { traceEventSchema, traceSchema, validateTrace } from "../src/schema.js";
 import { SIGNAL_TAXONOMY } from "../src/taxonomy.js";
 
 const FIXTURES_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "fixtures");
@@ -249,6 +258,110 @@ describe("concept fixtures (Phase 5)", () => {
       expect(block.slice(2, 14)).toEqual(Array.from({ length: 12 }, () => "ATTENTION"));
       expect(block.slice(14).every((t) => t === "CONCEPT")).toBe(true);
     }
+  });
+});
+
+describe("uncertainty fixtures (spec §22)", () => {
+  it("only RESEARCH fixtures emit the four kinds, in spec display order", () => {
+    for (const spec of FIXTURES) {
+      const trace = generateTraceFixture(spec);
+      const kinds = trace.events
+        .filter((e): e is UncertaintyEvent => e.type === "UNCERTAINTY")
+        .map((e) => e.kind);
+      if (spec.attention) {
+        expect(kinds).toEqual([...UNCERTAINTY_KINDS]);
+        // post-hoc: they land after OUTPUT, before the trace ends
+        const types = trace.events.map((e) => e.type);
+        expect(types.slice(-5)).toEqual(["OUTPUT", ...Array(4).fill("UNCERTAINTY")]);
+      } else {
+        expect(kinds).toEqual([]);
+      }
+    }
+  });
+
+  it("model uncertainty is recomputable from the trace's own TOKEN events", () => {
+    const skyBlue = FIXTURES.find((f) => f.key === "trace-sky-blue")!;
+    const trace = generateTraceFixture(skyBlue);
+    const tokens = trace.events.filter((e): e is TokenEvent => e.type === "TOKEN");
+    const mean = tokens.reduce((a, e) => a + e.entropyBits, 0) / tokens.length;
+    const event = trace.events.find(
+      (e): e is UncertaintyEvent =>
+        e.type === "UNCERTAINTY" && e.kind === "MODEL_UNCERTAINTY",
+    )!;
+    // the aggregate must be auditable from shipped numbers, not hidden floats
+    expect(event.value).toBeCloseTo(mean / Math.log2(FAKE_VOCAB_SIZE), 4);
+    expect(event.level).toBe("DERIVED");
+    expect(event.window).toEqual({ fromStep: 0, toStep: tokens.length - 1 });
+  });
+
+  it("the unmeasurable quantities ship honest nulls with reasons", () => {
+    const skyBlue = FIXTURES.find((f) => f.key === "trace-sky-blue")!;
+    const trace = generateTraceFixture(skyBlue);
+    for (const kind of ["INPUT_AMBIGUITY", "EVIDENCE_QUALITY"] as const) {
+      const event = trace.events.find(
+        (e): e is UncertaintyEvent => e.type === "UNCERTAINTY" && e.kind === kind,
+      )!;
+      expect(event.value).toBeNull();
+      expect(event.level).toBeNull();
+      expect(event.basis).toMatch(/^not measured/);
+    }
+  });
+
+  it("answer stability is the mean agreement over its shipped variants", () => {
+    const skyBlue = FIXTURES.find((f) => f.key === "trace-sky-blue")!;
+    const trace = generateTraceFixture(skyBlue);
+    const output = trace.events.find(
+      (e): e is OutputEvent => e.type === "OUTPUT",
+    )!;
+    const event = trace.events.find(
+      (e): e is UncertaintyEvent =>
+        e.type === "UNCERTAINTY" && e.kind === "ANSWER_STABILITY",
+    )!;
+    expect(event.level).toBe("MEASURED");
+    expect(event.variants!.length).toBe(2); // both perturbations apply
+    expect(event.value).toBeGreaterThan(0);
+    expect(event.value).toBeLessThan(1); // the fake models real divergence
+
+    let agreedTotal = 0;
+    for (const variant of event.variants!) {
+      expect(variant.text).not.toBe(skyBlue.prompt);
+      expect(variant.totalTokens).toBe(output.tokenCount);
+      expect(variant.agreedTokens).toBe(
+        variant.totalTokens - variant.divergedPositions.length,
+      );
+      // ascending, unique within a variant (variants may share a position —
+      // two perturbations flipping the SAME token is a real observation)
+      expect([...new Set(variant.divergedPositions)].sort((a, b) => a - b)).toEqual(
+        variant.divergedPositions,
+      );
+      for (const p of variant.divergedPositions) {
+        expect(p).toBeGreaterThanOrEqual(0);
+        expect(p).toBeLessThan(variant.totalTokens);
+      }
+      agreedTotal += variant.agreedTokens;
+    }
+    expect(event.value).toBeCloseTo(
+      agreedTotal / (event.variants!.length * output.tokenCount),
+      4,
+    );
+  });
+
+  it("UNCERTAINTY events parse with Pydantic-style explicit nulls", () => {
+    // the engine emits `"variants": null` / `"window": null` on live traces —
+    // the zod side must accept that round-trip shape, not just omitted keys
+    const parsed = traceEventSchema.parse({
+      id: "evt_0002",
+      seq: 2,
+      type: "UNCERTAINTY",
+      t: 20,
+      level: null,
+      kind: "INPUT_AMBIGUITY",
+      value: null,
+      basis: "not measured — reason",
+      window: null,
+      variants: null,
+    });
+    expect(parsed.type).toBe("UNCERTAINTY");
   });
 });
 

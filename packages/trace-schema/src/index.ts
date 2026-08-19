@@ -1,5 +1,11 @@
 export * from "./events";
 export {
+  promptPerturbations,
+  FAKE_VOCAB_SIZE,
+  textSeed,
+  type PromptPerturbation,
+} from "./uncertainty";
+export {
   traceSchema,
   traceEventSchema,
   traceEventTypeSchema,

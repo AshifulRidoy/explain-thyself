@@ -16,6 +16,11 @@ import {
   layerActivityByPosition,
   tokenEvents,
 } from "./store";
+import {
+  uncertaintyQuantities,
+  uncertaintyTaxonomyKey,
+  UNCERTAINTY_LABELS,
+} from "./uncertainty";
 import { toGraph } from "./graph";
 import { SseParser } from "./sse";
 
@@ -136,6 +141,53 @@ describe("attentionByPosition (RESEARCH traces)", () => {
   });
 });
 
+describe("uncertaintyQuantities (spec §22)", () => {
+  it("returns the four kinds in spec order for RESEARCH, none for STANDARD", () => {
+    const quantities = uncertaintyQuantities(skyBlue.events);
+    expect(quantities.map((q) => q.kind)).toEqual([
+      "MODEL_UNCERTAINTY",
+      "EVIDENCE_QUALITY",
+      "INPUT_AMBIGUITY",
+      "ANSWER_STABILITY",
+    ]);
+    expect(uncertaintyQuantities(pyRust.events)).toEqual([]);
+  });
+
+  it("model uncertainty is auditable from the trace's own TOKEN events", () => {
+    const quantities = uncertaintyQuantities(skyBlue.events);
+    const tokens = tokenEvents(skyBlue.events);
+    const mean = tokens.reduce((a, e) => a + e.entropyBits, 0) / tokens.length;
+    expect(quantities[0].value).toBeCloseTo(mean / Math.log2(50_000), 4);
+
+    // stability = mean agreement over the shipped variants, recomputable
+    const stability = quantities[3];
+    const agreed = stability.variants!.reduce((a, v) => a + v.agreedTokens, 0);
+    const total = stability.variants!.reduce((a, v) => a + v.totalTokens, 0);
+    expect(stability.value).toBeCloseTo(agreed / total, 4);
+
+    // the two nulls carry their refusal in the event itself
+    for (const skipped of [quantities[1], quantities[2]]) {
+      expect(skipped.value).toBeNull();
+      expect(skipped.level).toBeNull();
+      expect(skipped.basis).toMatch(/^not measured/);
+    }
+  });
+
+  it("labels and taxonomy keys cover every kind", () => {
+    for (const kind of [
+      "MODEL_UNCERTAINTY",
+      "EVIDENCE_QUALITY",
+      "INPUT_AMBIGUITY",
+      "ANSWER_STABILITY",
+    ] as const) {
+      expect(UNCERTAINTY_LABELS[kind]).toMatch(/^[a-z ]+$/);
+      expect(uncertaintyTaxonomyKey(kind)).toBe(
+        kind.toLowerCase().replace(/_([a-z])/g, (_, c: string) => c.toUpperCase()),
+      );
+    }
+  });
+});
+
 describe("toGraph", () => {
   it("builds INPUT → token chain → OUTPUT with concept attachments", () => {
     const { nodes, edges } = toGraph(pyRust.events, null, false);
@@ -190,6 +242,27 @@ describe("toGraph", () => {
       );
       expect(event.score).toBe(peak);
     }
+  });
+
+  it("hangs UncertaintyNodes off the OUTPUT they analyze (RESEARCH)", () => {
+    const uncertainty = uncertaintyQuantities(skyBlue.events);
+    expect(uncertainty).toHaveLength(4);
+    const { nodes, edges } = toGraph(skyBlue.events, null, false);
+    const output = nodes.find((n) => n.type === "OUTPUT")!;
+
+    const uNodes = nodes.filter((n) => n.type === "UNCERTAINTY");
+    expect(uNodes).toHaveLength(4);
+    // one node per event, id = event id (clicks select the real event)
+    expect(uNodes.map((n) => n.id)).toEqual(uncertainty.map((e) => e.id));
+    for (const node of uNodes) {
+      const into = edges.filter((e) => e.target === node.id);
+      expect(into).toHaveLength(1);
+      expect(into[0].source).toBe(output.id);
+    }
+
+    // STANDARD traces stay clean — the layer is RESEARCH-only on the canvas
+    const standard = toGraph(pyRust.events, null, false);
+    expect(standard.nodes.filter((n) => n.type === "UNCERTAINTY")).toHaveLength(0);
   });
 });
 

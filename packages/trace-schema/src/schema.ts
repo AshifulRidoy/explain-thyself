@@ -163,20 +163,36 @@ const decisionEventSchema = traceEventBase.extend({
   detail: z.string().optional(),
 });
 
+const stabilityVariantSchema = z
+  .object({
+    perturbation: z.string(),
+    text: z.string(),
+    agreedTokens: z.number().int().nonnegative(),
+    totalTokens: z.number().int().nonnegative(),
+    divergedPositions: z.array(z.number().int().nonnegative()),
+  })
+  .strict();
+
 const uncertaintyEventSchema = traceEventBase.extend({
   type: z.literal("UNCERTAINTY"),
-  level: z.literal("DERIVED"),
+  // null when the quantity was considered and deliberately NOT measured —
+  // then `value` is null too and `basis` carries the reason
+  level: z.enum(["MEASURED", "DERIVED"]).nullable(),
   kind: z.enum([
     "MODEL_UNCERTAINTY",
     "EVIDENCE_QUALITY",
     "INPUT_AMBIGUITY",
     "ANSWER_STABILITY",
   ]),
-  value: z.number(),
+  value: probability.nullable(),
+  // always present: the method for a measured value, the reason for a null
+  basis: z.string(),
   window: z
     .object({ fromStep: z.number().int().nonnegative(), toStep: z.number().int().nonnegative() })
     .strict()
-    .optional(),
+    .nullish(),
+  // ANSWER_STABILITY evidence: one row per perturbation actually rerun
+  variants: z.array(stabilityVariantSchema).max(8).nullish(),
 });
 
 const outputEventSchema = traceEventBase.extend({

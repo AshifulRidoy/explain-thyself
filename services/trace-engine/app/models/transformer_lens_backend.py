@@ -104,6 +104,10 @@ class TransformerLensBackend:
         ids = self.model.to_tokens(text, prepend_bos=True)
         return ids[0].tolist()
 
+    @property
+    def vocab_size(self) -> int:
+        return int(self.model.cfg.d_vocab)
+
     def prompt_tokens(self, text: str) -> list[tuple[int, str]]:
         ids = self.model.to_tokens(text, prepend_bos=False)[0].tolist()
         return [(int(tid), self._decode(tid).text) for tid in ids]

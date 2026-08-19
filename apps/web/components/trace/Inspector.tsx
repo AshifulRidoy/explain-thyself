@@ -8,6 +8,10 @@ import type {
 import { AttentionPanel } from "@/components/data-viz/AttentionPanel";
 import { LayerActivityPanel } from "@/components/data-viz/LayerActivityPanel";
 import { ProbabilityDistribution } from "@/components/data-viz/ProbabilityDistribution";
+import {
+  UNCERTAINTY_LABELS,
+  uncertaintyTaxonomyKey,
+} from "@/lib/trace/uncertainty";
 
 /**
  * The Inspector: whatever is selected, shown with its epistemic badge from
@@ -44,10 +48,13 @@ function Field({
   );
 }
 
-function LevelBadge({ level }: { level: string }) {
+function LevelBadge({ level }: { level: string | null }) {
+  // null level = the quantity was considered and deliberately not measured
   return (
-    <span className={`machine-label ${LEVEL_CLASS[level] ?? "text-muted"}`}>
-      {level}
+    <span
+      className={`machine-label ${level ? (LEVEL_CLASS[level] ?? "text-muted") : "italic text-muted"}`}
+    >
+      {level ?? "not measured"}
     </span>
   );
 }
@@ -160,6 +167,63 @@ export function Inspector({
           <Field taxonomyKey="output.durationMs" label="Duration" value={`${event.durationMs} ms`} />
           <Field taxonomyKey="output.finishReason" label="Finish" value={event.finishReason} />
         </section>
+      )}
+
+      {event.type === "UNCERTAINTY" && (
+        <>
+          <section className="divide-y divide-line border-t border-line">
+            <Field
+              taxonomyKey={`uncertainty.${uncertaintyTaxonomyKey(event.kind)}`}
+              label="Quantity"
+              value={UNCERTAINTY_LABELS[event.kind]}
+            />
+            <Field
+              taxonomyKey={`uncertainty.${uncertaintyTaxonomyKey(event.kind)}`}
+              label="Value"
+              value={event.value === null ? "—" : event.value.toFixed(4)}
+              hint={
+                event.window
+                  ? `steps ${event.window.fromStep}–${event.window.toStep}`
+                  : undefined
+              }
+            />
+          </section>
+          <section className="border-t border-line pt-2">
+            <div className="machine-label">Basis</div>
+            <p className="mt-1 font-serif text-sm italic leading-snug text-muted">
+              {event.basis}
+            </p>
+          </section>
+          {event.variants?.length ? (
+            <section className="border-t border-line pt-2">
+              <div className="machine-label">
+                Variants — perturbed prompts actually rerun
+              </div>
+              <ul className="mt-1">
+                {event.variants.map((v) => (
+                  <li
+                    key={v.perturbation}
+                    className="border-b border-line py-1 last:border-b-0"
+                  >
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="machine-label">
+                        {v.perturbation.replaceAll("_", " ")}
+                      </span>
+                      <span className="font-mono text-sm tabular-nums">
+                        {v.agreedTokens}/{v.totalTokens}
+                      </span>
+                    </div>
+                    <div className="machine-label truncate text-muted" title={v.text}>
+                      &ldquo;{v.text}&rdquo;
+                      {v.divergedPositions.length > 0 &&
+                        ` · diverged at ${v.divergedPositions.join(", ")}`}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+        </>
       )}
 
       {event.type === "LAYER_ACTIVITY" && <LayerActivityPanel activity={event} />}

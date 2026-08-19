@@ -7,7 +7,8 @@
     ".": "./src/index.ts",
     "./fixtures": "./src/fixtures.ts",
     "./generator": "./src/generate.ts",
-    "./concepts": "./src/concepts.ts"
+    "./concepts": "./src/concepts.ts",
+    "./uncertainty": "./src/uncertainty.ts"
   },
   "scripts": {
     "fixture": "tsx src/cli.ts",

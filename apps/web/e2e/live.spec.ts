@@ -97,5 +97,14 @@ test.describe("live inference", () => {
       12,
       { timeout: 10_000 },
     );
+
+    // RESEARCH also measures the uncertainty layer — after the answer, the
+    // four separated quantities land (stability reruns take a moment)
+    const rows = page.getByTestId("uncertainty-row");
+    await expect(rows).toHaveCount(4, { timeout: 120_000 });
+    await expect(rows.nth(3).getByText("answer stability", { exact: true })).toBeVisible();
+    await expect(
+      rows.nth(3).getByText("measured", { exact: true }),
+    ).toBeVisible();
   });
 });

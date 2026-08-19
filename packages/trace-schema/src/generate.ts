@@ -12,6 +12,11 @@
  *     engine's FakeBackend builds (Phase 5): dictionary mass on the
  *     renormalized top-k + bump distribution, evidence attached, so the
  *     fixtures exercise the exact INTERPRETED-event shape the engine emits
+ *   - UNCERTAINTY events (spec §22, RESEARCH fixtures) mirror the engine's
+ *     emission: model uncertainty from the shipped entropyBits, answer
+ *     stability from the same perturbation + seeded-swap sensitivity the
+ *     FakeBackend models, and honest nulls for the quantities this
+ *     instrument cannot measure
  *
  * Same seed ⇒ byte-identical JSON (mulberry32; no Date.now, no Math.random).
  * The realism math is deliberately portable: the Python FakeBackend mirrors it.
@@ -25,16 +30,25 @@ import type {
   LayerActivityEvent,
   LayerStat,
   OutputEvent,
+  StabilityVariant,
   TokenEvent,
   TopToken,
   Trace,
   TraceEvent,
+  UncertaintyEvent,
 } from "./events";
 import {
   CONCEPT_ACTIVE_MASS,
   CONCEPT_DICTIONARY,
   CONCEPT_EVIDENCE_LIMIT,
 } from "./concepts";
+import {
+  FAKE_SWAP_POOL,
+  FAKE_SWAP_RATE,
+  FAKE_VOCAB_SIZE,
+  promptPerturbations,
+  textSeed,
+} from "./uncertainty";
 
 export interface FixtureSpec {
   key: string;
@@ -204,6 +218,27 @@ export function fakeConceptBump(
     }
   }
   return bump;
+}
+
+/**
+ * A perturbed prompt's fake continuation — the exact mirror of
+ * FakeBackend._perturb_response: the authored response with a seeded
+ * subset of content words swapped. Same draw order (one rate draw per
+ * qualifying token, a pool draw only when swapping), so engine and
+ * generator diverge at identical positions. Unperturbed prompts never
+ * pass through here.
+ */
+export function perturbResponse(response: string, seed: number): string {
+  const rng = mulberry32(seed);
+  let out = "";
+  for (const { text, leadingSpace } of splitTokens(response)) {
+    let word = text;
+    if (word.length > 2 && !/^[.,;:?!]+$/.test(word) && rng() < FAKE_SWAP_RATE) {
+      word = FAKE_SWAP_POOL[Math.floor(rng() * FAKE_SWAP_POOL.length)];
+    }
+    out += (leadingSpace ? " " : "") + word;
+  }
+  return out;
 }
 
 export function generateTraceFixture(spec: FixtureSpec): Trace {
@@ -467,6 +502,104 @@ export function generateTraceFixture(spec: FixtureSpec): Trace {
     finishReason: "stop",
   };
   events.push(outputEvent);
+
+  // The uncertainty layer (spec §22), mirrored from the engine's RESEARCH
+  // emission: four SEPARATE quantities in the spec's display order, never
+  // one blended confidence number. The two the instrument cannot measure
+  // honestly ship as nulls WITH the reason — the refusal is trace data.
+  if (spec.attention) {
+    const nOut = continuationTokens.length;
+
+    const meanNorm = round(
+      outputTokenEvents.reduce((a, e) => a + e.entropyBits, 0) / nOut / Math.log2(FAKE_VOCAB_SIZE),
+      4,
+    );
+    const modelUncertainty: UncertaintyEvent = {
+      id: nextId(),
+      seq: seq++,
+      type: "UNCERTAINTY",
+      t: t + 12,
+      level: "DERIVED",
+      kind: "MODEL_UNCERTAINTY",
+      value: meanNorm,
+      basis:
+        `mean normalized entropy H/log2(${FAKE_VOCAB_SIZE}) over ${nOut} emitted ` +
+        "tokens; one distribution cannot separate epistemic from aleatoric",
+      window: { fromStep: 0, toStep: nOut - 1 },
+    };
+    events.push(modelUncertainty);
+
+    const evidenceQuality: UncertaintyEvent = {
+      id: nextId(),
+      seq: seq++,
+      type: "UNCERTAINTY",
+      t: t + 16,
+      level: null,
+      kind: "EVIDENCE_QUALITY",
+      value: null,
+      basis:
+        "not measured — no retrieval sources are attached to this " +
+        "instrument; evidence scoring has nothing to score (spec §22)",
+    };
+    events.push(evidenceQuality);
+
+    const inputAmbiguity: UncertaintyEvent = {
+      id: nextId(),
+      seq: seq++,
+      type: "UNCERTAINTY",
+      t: t + 20,
+      level: null,
+      kind: "INPUT_AMBIGUITY",
+      value: null,
+      basis:
+        "not measured — estimating input ambiguity needs an auxiliary " +
+        "model or alternate-interpretation generation (spec §22); this " +
+        "instrument runs one small model",
+    };
+    events.push(inputAmbiguity);
+
+    // stability: agreement per position between the authored continuation
+    // and each perturbed rerun — compared by pseudo-token id, exactly the
+    // quantity the engine compares on real token ids
+    const variants: StabilityVariant[] = promptPerturbations(spec.prompt).map(
+      ({ name, text }) => {
+        const perturbed = splitTokens(perturbResponse(spec.continuation, textSeed(text)));
+        const divergedPositions: number[] = [];
+        continuationTokens.forEach((orig, i) => {
+          if (wordToTokenId(perturbed[i].text) !== wordToTokenId(orig.text)) {
+            divergedPositions.push(i);
+          }
+        });
+        return {
+          perturbation: name,
+          text,
+          agreedTokens: nOut - divergedPositions.length,
+          totalTokens: nOut,
+          divergedPositions,
+        };
+      },
+    );
+    const agreedTotal = variants.reduce((a, v) => a + v.agreedTokens, 0);
+    const stability = variants.length
+      ? round(agreedTotal / (variants.length * nOut), 4)
+      : null;
+    const answerStability: UncertaintyEvent = {
+      id: nextId(),
+      seq: seq++,
+      type: "UNCERTAINTY",
+      t: t + 24,
+      level: stability === null ? null : "MEASURED",
+      kind: "ANSWER_STABILITY",
+      value: stability,
+      basis: variants.length
+        ? `greedy token agreement across ${variants.length} surface perturbation(s) ` +
+          `of the prompt, rerun to ${nOut} tokens`
+        : "not measured — no applicable surface perturbation for this prompt (or no tokens to compare)",
+      window: stability === null ? null : { fromStep: 0, toStep: nOut - 1 },
+      variants: variants.length ? variants : null,
+    };
+    events.push(answerStability);
+  }
 
   const traceId = `tr_${spec.seed.toString(36).padStart(8, "0")}`.slice(0, 11);
 

@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import math
 import time
 from typing import AsyncGenerator
 
@@ -20,6 +21,7 @@ import numpy as np
 from nanoid import generate as nanoid
 
 from ..aggregation.concepts import CONCEPT_ACTIVE_MASS, ConceptScorer
+from ..aggregation.stability import prompt_perturbations
 from ..aggregation.stats import (
     RunningNormalizer,
     entropy_from_log_probs,
@@ -37,10 +39,13 @@ from ..schemas.trace import (
     LayerActivityEvent,
     LayerStat,
     OutputEvent,
+    StabilityVariant,
     TokenEvent,
     Trace,
     TraceEvent,
     TraceOutput,
+    UncertaintyEvent,
+    UncertaintyWindow,
 )
 from ..storage.trace_writer import TraceWriter
 from .sse import format_sse
@@ -67,6 +72,46 @@ class GenerationError(Exception):
         super().__init__(message)
         self.code = code
         self.message = message
+
+
+async def _stability_variants(
+    prompt: str, emitted_ids: list[int], backend: ModelBackend
+) -> list[StabilityVariant]:
+    """ANSWER_STABILITY evidence: rerun the answer GREEDY (regardless of the
+    main run's sampling) under each applicable surface perturbation of the
+    prompt, and record where the tokens survived. A variant that stops or
+    hits the context limit early leaves its remaining positions diverged —
+    the answer changed, so it counts against stability.
+    """
+    variants: list[StabilityVariant] = []
+    for name, variant_text in prompt_perturbations(prompt):
+        vctx = backend.encode(variant_text)  # type: ignore[attr-defined]
+        diverged: list[int] = []
+        agreed = 0
+        ended = False
+        for i, original_id in enumerate(emitted_ids):
+            if ended or len(vctx) >= settings.max_context:
+                diverged.append(i)
+                continue
+            res = await asyncio.to_thread(backend.step, vctx, False, False)
+            token_id = res.top_k[0].token_id
+            if token_id == original_id:
+                agreed += 1
+            else:
+                diverged.append(i)
+            vctx.append(token_id)
+            if backend.is_eos(token_id):  # type: ignore[attr-defined]
+                ended = True
+        variants.append(
+            StabilityVariant(
+                perturbation=name,
+                text=variant_text,
+                agreedTokens=agreed,
+                totalTokens=len(emitted_ids),
+                divergedPositions=diverged,
+            )
+        )
+    return variants
 
 
 async def trace_stream(
@@ -177,6 +222,9 @@ async def trace_stream(
         )
         normalizer = RunningNormalizer(spec.layer_count) if collect_layers else None
         emitted: list[TopToken] = []
+        # entropy as SHIPPED (4dp) — the model-uncertainty aggregate must be
+        # recomputable from the trace's own TOKEN events, not hidden floats
+        entropy_bits: list[float] = []
         # position-indexed texts for attention rows; index 0 of ctx is the
         # BOS encode() prepends — surfaced as position -1, never dropped
         ctx_texts: list[str] = ["<bos>"] + [text for _, text in prompt_toks]
@@ -236,6 +284,7 @@ async def trace_stream(
             )
             yield await emit(token_event)
             emitted.append(tok)
+            entropy_bits.append(token_event.entropyBits)
 
             if res.layer_stats and normalizer is not None:
                 ratios = normalizer.update(res.layer_stats)
@@ -353,6 +402,112 @@ async def trace_stream(
             finishReason=finish_reason,
         )
         yield await emit(output_event)
+
+        # The uncertainty layer (spec §22): four SEPARATE quantities, never
+        # one blended "AI confidence" number. RESEARCH only — answer
+        # stability re-runs the greedy answer per prompt perturbation.
+        # Emission order is the spec's display order.
+        if trace_mode == "RESEARCH":
+            n_out = len(emitted)
+            vocab = int(backend.vocab_size)  # type: ignore[attr-defined]
+
+            if entropy_bits:
+                mean_norm = sum(entropy_bits) / n_out / math.log2(vocab)
+                model_event = UncertaintyEvent(
+                    id=next_id(),
+                    seq=seq - 1,
+                    type="UNCERTAINTY",
+                    t=t + 12,
+                    level="DERIVED",
+                    kind="MODEL_UNCERTAINTY",
+                    value=round(mean_norm, 4),
+                    basis=(
+                        f"mean normalized entropy H/log2({vocab}) over {n_out} "
+                        "emitted tokens; one distribution cannot separate "
+                        "epistemic from aleatoric"
+                    ),
+                    window=UncertaintyWindow(fromStep=0, toStep=n_out - 1),
+                )
+            else:
+                model_event = UncertaintyEvent(
+                    id=next_id(),
+                    seq=seq - 1,
+                    type="UNCERTAINTY",
+                    t=t + 12,
+                    level=None,
+                    kind="MODEL_UNCERTAINTY",
+                    value=None,
+                    basis="no tokens emitted — there is no distribution to summarize",
+                )
+
+            evidence_event = UncertaintyEvent(
+                id=next_id(),
+                seq=seq - 1,
+                type="UNCERTAINTY",
+                t=t + 16,
+                level=None,
+                kind="EVIDENCE_QUALITY",
+                value=None,
+                basis=(
+                    "not measured — no retrieval sources are attached to this "
+                    "instrument; evidence scoring has nothing to score (spec §22)"
+                ),
+            )
+
+            ambiguity_event = UncertaintyEvent(
+                id=next_id(),
+                seq=seq - 1,
+                type="UNCERTAINTY",
+                t=t + 20,
+                level=None,
+                kind="INPUT_AMBIGUITY",
+                value=None,
+                basis=(
+                    "not measured — estimating input ambiguity needs an "
+                    "auxiliary model or alternate-interpretation generation "
+                    "(spec §22); this instrument runs one small model"
+                ),
+            )
+
+            variants = (
+                await _stability_variants(
+                    prompt, [tok.token_id for tok in emitted], backend
+                )
+                if n_out
+                else []
+            )
+            if variants:
+                agreed = sum(v.agreedTokens for v in variants)
+                stability_value = round(agreed / (len(variants) * n_out), 4)
+                stability_basis = (
+                    f"greedy token agreement across {len(variants)} surface "
+                    f"perturbation(s) of the prompt, rerun to {n_out} tokens"
+                )
+            else:
+                stability_value = None
+                stability_basis = (
+                    "not measured — no applicable surface perturbation for "
+                    "this prompt (or no tokens to compare)"
+                )
+            stability_event = UncertaintyEvent(
+                id=next_id(),
+                seq=seq - 1,
+                type="UNCERTAINTY",
+                t=t + 24,
+                level="MEASURED" if stability_value is not None else None,
+                kind="ANSWER_STABILITY",
+                value=stability_value,
+                basis=stability_basis,
+                window=(
+                    UncertaintyWindow(fromStep=0, toStep=n_out - 1)
+                    if stability_value is not None
+                    else None
+                ),
+                variants=variants or None,
+            )
+
+            for uncertainty_event in (model_event, evidence_event, ambiguity_event, stability_event):
+                yield await emit(uncertainty_event)
 
         if writer is not None:
             await writer.close_trace(

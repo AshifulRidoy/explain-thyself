@@ -61,6 +61,26 @@ export const SIGNAL_TAXONOMY: Record<string, SignalDefinition> = {
     definition:
       "Probability mass the model's full next-token distribution places on a human-authored concept's dictionary words at one step. The mass is measured exactly; the label is an interpretation — not a property of any neuron, and not the model's thoughts.",
   },
+  "uncertainty.modelUncertainty": {
+    level: "DERIVED",
+    definition:
+      "Mean normalized entropy H/log2(V) over the emitted tokens. One number from one distribution — it cannot separate epistemic from aleatoric uncertainty; ensembles or samples would be needed for that.",
+  },
+  "uncertainty.answerStability": {
+    level: "MEASURED",
+    definition:
+      "Fraction of greedy tokens that survived controlled surface perturbations of the prompt (strip final punctuation, lowercase first character), rerun to the same length. Low = the answer flips under input changes that carry no new meaning.",
+  },
+  "uncertainty.inputAmbiguity": {
+    level: "INTERPRETED",
+    definition:
+      "Not measured. Estimating input ambiguity requires an auxiliary model or alternate-interpretation generation (spec §22); this instrument runs one small model and ships the null rather than a fake score.",
+  },
+  "uncertainty.evidenceQuality": {
+    level: "MEASURED",
+    definition:
+      "Not measured. Evidence quality scores retrieval sources; this instrument has no retrieval and nothing to score — the null ships instead of an invented number.",
+  },
   "decision.reason": {
     level: "DERIVED",
     definition: "Why generation ended or how the token was chosen (greedy/sampled/stop).",

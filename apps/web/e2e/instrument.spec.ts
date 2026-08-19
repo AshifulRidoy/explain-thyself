@@ -86,7 +86,12 @@ test.describe("fixture explorer", () => {
       page.getByText(/probability mass on the concept/),
     ).toBeVisible();
 
-    // one canvas node per concept (at its peak) — click inspects it
+    // one canvas node per concept (at its peak) — click inspects it.
+    // Wait for Complete: force-clicking a node while the canvas is still
+    // stacking new nodes can land on a covering element at 390px.
+    await expect(page.getByText("Complete", { exact: true })).toBeVisible({
+      timeout: 60_000,
+    });
     await page.locator(".react-flow__node-CONCEPT").first().click({ force: true });
     const inspector = page.getByTestId("inspector");
     await expect(inspector.getByText("CONCEPT", { exact: true })).toBeVisible();
@@ -101,6 +106,49 @@ test.describe("fixture explorer", () => {
     await expect(
       page.getByTestId("token-concepts").getByText(/interpreted/),
     ).toBeVisible();
+  });
+
+  test("uncertainty layer separates four quantities, not one confidence number", async ({
+    page,
+  }) => {
+    await page.goto("/explore?fixture=sky-blue");
+    // exact: the panel's empty state says "…after generation completes",
+    // which a substring match for "Complete" would race ahead of
+    await expect(page.getByText("Complete", { exact: true })).toBeVisible({
+      timeout: 60_000,
+    });
+
+    const panel = page.getByTestId("uncertainty-panel");
+    await expect(panel).toBeVisible();
+    await expect(
+      page.getByText("What is the model uncertain about?"),
+    ).toBeVisible();
+
+    // four separated rows, spec display order
+    const rows = panel.getByTestId("uncertainty-row");
+    await expect(rows).toHaveCount(4, { timeout: 30_000 });
+    // exact: the null rows' basis text repeats the label ("estimating
+    // input ambiguity needs…") — a substring match would hit both
+    await expect(rows.nth(0).getByText("model uncertainty", { exact: true })).toBeVisible();
+    await expect(rows.nth(1).getByText("evidence quality", { exact: true })).toBeVisible();
+    await expect(rows.nth(2).getByText("input ambiguity", { exact: true })).toBeVisible();
+    await expect(rows.nth(3).getByText("answer stability", { exact: true })).toBeVisible();
+
+    // the refusal is rendered, not hidden — and it ships with its reason
+    await expect(
+      rows.nth(1).getByText("not measured", { exact: true }),
+    ).toBeVisible();
+    await expect(rows.nth(1).getByText(/no retrieval sources/)).toBeVisible();
+
+    // stability carries per-perturbation evidence rows
+    await expect(panel.getByTestId("uncertainty-variant").first()).toBeVisible();
+    await expect(panel.getByText(/never one confidence number/)).toBeVisible();
+
+    // canvas: one node per quantity under the OUTPUT — click inspects it
+    await page.locator(".react-flow__node-UNCERTAINTY").first().click({ force: true });
+    const inspector = page.getByTestId("inspector");
+    await expect(inspector.getByText("UNCERTAINTY", { exact: true })).toBeVisible();
+    await expect(inspector.getByText("Basis", { exact: true })).toBeVisible();
   });
 });
 

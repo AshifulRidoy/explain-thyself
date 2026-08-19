@@ -12,6 +12,8 @@ import { Inspector } from "./Inspector";
 import { TokenStream } from "./TokenStream";
 import { EntropyMeter } from "@/components/data-viz/EntropyMeter";
 import { ConceptPanel } from "@/components/data-viz/ConceptPanel";
+import { UncertaintyPanel } from "@/components/data-viz/UncertaintyPanel";
+import { uncertaintyQuantities } from "@/lib/trace/uncertainty";
 
 const TraceCanvas = dynamic(
   () => import("./TraceCanvas").then((m) => m.TraceCanvas),
@@ -44,6 +46,7 @@ export function ExploreClient({
   const attentionByPos = useMemo(() => attentionByPosition(events), [events]);
   const conceptTimeline = useMemo(() => conceptsTimeline(events), [events]);
   const conceptsByPos = useMemo(() => conceptsByPosition(events), [events]);
+  const uncertainty = useMemo(() => uncertaintyQuantities(events), [events]);
   const selected = useMemo(
     () => events.find((e) => e.id === selectedEventId) ?? null,
     [events, selectedEventId],
@@ -91,6 +94,13 @@ export function ExploreClient({
               activities={conceptTimeline}
               tokenCount={tokens.length}
               traceMode={(envelope ?? trace).traceMode}
+            />
+          </div>
+          <div className="border-t border-line pt-6">
+            <UncertaintyPanel
+              quantities={uncertainty}
+              traceMode={(envelope ?? trace).traceMode}
+              complete={status === "complete"}
             />
           </div>
           <div className="border-t border-line pt-6">

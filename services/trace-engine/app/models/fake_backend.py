@@ -14,6 +14,7 @@ from typing import Callable
 import numpy as np
 
 from ..aggregation.concepts import CONCEPT_DICTIONARY
+from ..aggregation.stability import text_seed
 from .backend import StepResult, TopToken
 from .registry import ModelSpec
 
@@ -121,6 +122,33 @@ _GENERIC_RESPONSE = (
     "layer activity, so the full pipeline can be exercised without a model."
 )
 
+# replacement words for perturbed runs — plausible running text, so a
+# diverging fake trace still reads like language (mirrored in generate.ts)
+_SWAP_POOL = [
+    "notably", "broadly", "quickly", "largely", "partly", "slowly",
+    "widely", "deeply", "often", "usually", "gently", "readily",
+]
+_SWAP_RATE = 0.18
+
+
+def _perturb_response(response: str, seed: int) -> str:
+    """A perturbed prompt's fake continuation: the authored response with a
+    deterministic seeded subset of content words swapped.
+
+    Draw order is part of the contract (mirrored 1:1 by perturbResponse in
+    generate.ts): one rate draw per qualifying token (len > 2, not all
+    punctuation), plus a pool draw only when swapping. Token count never
+    changes — swaps are word-for-word — so per-position agreement with the
+    original run is well defined.
+    """
+    rng = mulberry32(seed)
+    parts: list[str] = []
+    for word, leading in split_tokens(response):
+        if len(word) > 2 and not all(c in _PUNCT for c in word) and rng() < _SWAP_RATE:
+            word = _SWAP_POOL[int(rng() * len(_SWAP_POOL))]
+        parts.append((" " if leading else "") + word)
+    return "".join(parts)
+
 
 class FakeBackend:
     """Deterministic backend; a fixed seed reproduces a trace exactly."""
@@ -148,10 +176,22 @@ class FakeBackend:
         # nothing to load — torch-free by design
         pass
 
+    @property
+    def vocab_size(self) -> int:
+        return _FAKE_VOCAB
+
     def _choose_continuation(self, prompt: str) -> str:
+        # Canonical matching (case/punct-insensitive): the authored prompt
+        # verbatim reproduces the authored response EXACTLY (existing traces
+        # stay byte-identical); a perturbed variant models a real model's
+        # sensitivity — same response, seeded word swaps at deterministic
+        # positions. Mirrored by perturbResponse() in generate.ts.
+        canon = prompt.strip().lower().rstrip("?.!").rstrip()
         for known_prompt, response in _RESPONSES:
-            if prompt.strip().lower() == known_prompt.lower():
-                return response
+            if canon == known_prompt.strip().lower().rstrip("?.!").rstrip():
+                if prompt == known_prompt:
+                    return response
+                return _perturb_response(response, text_seed(prompt))
         return _GENERIC_RESPONSE
 
     def encode(self, text: str) -> list[int]:

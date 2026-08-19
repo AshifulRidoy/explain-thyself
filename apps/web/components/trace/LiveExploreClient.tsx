@@ -11,6 +11,8 @@ import { Inspector } from "./Inspector";
 import { TokenStream } from "./TokenStream";
 import { EntropyMeter } from "@/components/data-viz/EntropyMeter";
 import { ConceptPanel } from "@/components/data-viz/ConceptPanel";
+import { UncertaintyPanel } from "@/components/data-viz/UncertaintyPanel";
+import { uncertaintyQuantities } from "@/lib/trace/uncertainty";
 
 const TraceCanvas = dynamic(
   () => import("./TraceCanvas").then((m) => m.TraceCanvas),
@@ -50,6 +52,7 @@ export function LiveExploreClient({ prompt }: { prompt: string }) {
   const attentionByPos = useMemo(() => attentionByPosition(events), [events]);
   const conceptTimeline = useMemo(() => conceptsTimeline(events), [events]);
   const conceptsByPos = useMemo(() => conceptsByPosition(events), [events]);
+  const uncertainty = useMemo(() => uncertaintyQuantities(events), [events]);
   const selected = useMemo(
     () => events.find((e) => e.id === selectedEventId) ?? null,
     [events, selectedEventId],
@@ -107,7 +110,7 @@ export function LiveExploreClient({ prompt }: { prompt: string }) {
               onClick={() => setTraceMode(m)}
               title={
                 m === "RESEARCH"
-                  ? "adds per-layer attention (slower — extra hooks per step)"
+                  ? "adds per-layer attention + the uncertainty layer (slower — extra hooks and stability reruns)"
                   : "tokens, probabilities, entropy, layer activity"
               }
               className={`machine-label border-b pb-0.5 transition-colors ${
@@ -155,6 +158,13 @@ export function LiveExploreClient({ prompt }: { prompt: string }) {
               activities={conceptTimeline}
               tokenCount={tokens.length}
               traceMode={envelope?.traceMode ?? traceMode}
+            />
+          </div>
+          <div className="border-t border-line pt-6">
+            <UncertaintyPanel
+              quantities={uncertainty}
+              traceMode={envelope?.traceMode ?? traceMode}
+              complete={status === "complete"}
             />
           </div>
           <div className="border-t border-line pt-6">
