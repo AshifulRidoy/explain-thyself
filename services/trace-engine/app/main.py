@@ -13,7 +13,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
-from .routes import meta, traces
+from .routes import meta, search, traces
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 log = logging.getLogger("ets")
@@ -43,4 +43,5 @@ app.add_middleware(
 )
 
 app.include_router(meta.router)
+app.include_router(search.router)
 app.include_router(traces.router)

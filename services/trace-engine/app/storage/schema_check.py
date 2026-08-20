@@ -12,13 +12,18 @@ EXPECTED = {
     "traces": {
         "id", "display_id", "session_id", "model_name", "model_revision",
         "device", "trace_mode", "input", "output_text", "status",
-        "max_tokens", "temperature", "token_count", "duration_ms", "created_at",
+        "max_tokens", "temperature", "token_count", "duration_ms",
+        "envelope", "embedding", "created_at",
     },
     "trace_events": {
         "id", "trace_id", "seq", "type", "level", "position", "layer",
         "payload", "t",
     },
     "concepts": {"id", "trace_id", "label", "score", "kind", "payload"},
+    "counterfactuals": {
+        "id", "trace_id", "variable", "original_word", "replacement_word",
+        "prompt_text", "impact", "payload", "created_at",
+    },
 }
 
 

@@ -8,7 +8,7 @@
  * Every trace is validated against the zod contract before it reaches a
  * page: the DB stores jsonb payloads precisely so this check can pass.
  */
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { traceSchema, type Trace } from "@ets/trace-schema";
 import { db } from "@/lib/db";
 import { traceEvents, traces } from "@/lib/db/schema";
@@ -46,6 +46,74 @@ export async function listRecentTraces(limit = 50): Promise<TraceSummary[]> {
     .orderBy(desc(traces.createdAt), desc(traces.displayId))
     .limit(limit);
   return rows;
+}
+
+export interface SimilarTrace {
+  traceId: string;
+  displayId: number;
+  input: string;
+  similarity: number;
+  modelName: string;
+  traceMode: string;
+  tokenCount: number | null;
+}
+
+/**
+ * Spec §28 "find traces similar to this one", read through Drizzle so the
+ * replay page stays engine-independent. Mirrors trace_reader.similar_traces
+ * (cosine via pgvector `<=>`), including the model_name filter — each
+ * backend has its own representation space, so a cosine across models
+ * compares unrelated geometries. The source vector is passed as a
+ * parameterized pgvector text literal, never interpolated raw.
+ * `null` = unknown trace; an empty list = known trace with no embedding.
+ */
+export async function listSimilarTraces(
+  id: string,
+  limit = 5,
+): Promise<SimilarTrace[] | null> {
+  let source: { embedding: unknown; modelName: string } | undefined;
+  try {
+    [source] = await db
+      .select({ embedding: traces.embedding, modelName: traces.modelName })
+      .from(traces)
+      .where(eq(traces.id, id))
+      .limit(1);
+  } catch {
+    return null;
+  }
+  if (!source) return null;
+  const literal = source.embedding as unknown; // string[] | string | null by driver
+  const text =
+    literal === null
+      ? null
+      : Array.isArray(literal)
+        ? `[${literal.join(",")}]`
+        : String(literal);
+  if (text === null) return []; // recorded before search existed — honestly empty
+
+  try {
+    const result = await db.execute(sql`
+      SELECT id, display_id, input, model_name, trace_mode, token_count,
+             1 - (embedding <=> ${text}::vector) AS similarity
+      FROM traces
+      WHERE embedding IS NOT NULL AND model_name = ${source.modelName}
+        AND id != ${id}
+      ORDER BY embedding <=> ${text}::vector
+      LIMIT ${limit}
+    `);
+    const rows = (result as unknown as { rows: Record<string, unknown>[] }).rows;
+    return rows.map((r) => ({
+      traceId: String(r.id),
+      displayId: Number(r.display_id),
+      input: String(r.input),
+      similarity: Math.round(Number(r.similarity) * 10000) / 10000,
+      modelName: String(r.model_name),
+      traceMode: String(r.trace_mode),
+      tokenCount: r.token_count === null ? null : Number(r.token_count),
+    }));
+  } catch {
+    return null;
+  }
 }
 
 export async function loadTraceById(id: string): Promise<LoadResult> {

@@ -12,6 +12,7 @@ import { TokenStream } from "./TokenStream";
 import { EntropyMeter } from "@/components/data-viz/EntropyMeter";
 import { ConceptPanel } from "@/components/data-viz/ConceptPanel";
 import { UncertaintyPanel } from "@/components/data-viz/UncertaintyPanel";
+import { CounterfactualPanel } from "@/components/data-viz/CounterfactualPanel";
 import { uncertaintyQuantities } from "@/lib/trace/uncertainty";
 
 const TraceCanvas = dynamic(
@@ -165,6 +166,14 @@ export function LiveExploreClient({ prompt }: { prompt: string }) {
               quantities={uncertainty}
               traceMode={envelope?.traceMode ?? traceMode}
               complete={status === "complete"}
+            />
+          </div>
+          <div className="border-t border-line pt-6">
+            {/* counterfactuals compare against the completed answer */}
+            <CounterfactualPanel
+              traceId={status === "complete" && envelope ? envelope.id : null}
+              prompt={prompt}
+              pending={status !== "error"}
             />
           </div>
           <div className="border-t border-line pt-6">

@@ -155,6 +155,28 @@ class TransformerLensBackend:
             rank=0,
         )
 
+    def embed_prompt(self, text: str) -> list[float]:
+        """The model's own representation of a prompt (spec §28): mean of
+        the FINAL layer's resid_post over the prompt's tokens (BOS
+        included, matching encode()), L2-normalized — the vector search
+        ranks by cosine. One forward pass, cache filtered to a single
+        hook, dropped before return: 768 floats leave, no tensors."""
+        import torch
+
+        final_hook = f"blocks.{self.spec.layer_count - 1}.hook_resid_post"
+        ids = self.model.to_tokens(text, prepend_bos=True)
+        with torch.no_grad():
+            _, cache = self.model.run_with_cache(
+                ids,
+                names_filter=lambda name: name == final_hook,
+                prepend_bos=False,  # BOS already prepended above
+            )
+            resid = cache[final_hook][0].float()  # [seq, d_model]
+            mean = resid.mean(dim=0)
+            del cache
+        vec = mean / mean.norm()
+        return [round(v, 6) for v in vec.cpu().tolist()]
+
     def step(
         self, ctx: list[int], collect_layers: bool, collect_attention: bool = False
     ) -> StepResult:

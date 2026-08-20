@@ -81,6 +81,31 @@ export const SIGNAL_TAXONOMY: Record<string, SignalDefinition> = {
     definition:
       "Not measured. Evidence quality scores retrieval sources; this instrument has no retrieval and nothing to score — the null ships instead of an invented number.",
   },
+  "counterfactual.variable": {
+    level: "INTERPRETED",
+    definition:
+      "Human-authored label for the word substitution a counterfactual reruns (e.g. 'experience' for beginner→veteran). The label names the edit; the impact under it is measured. Not causal attribution — activation patching is the causal version, and it is future work.",
+  },
+  "counterfactual.impact": {
+    level: "DERIVED",
+    definition:
+      "1 − token agreement between the original answer and the greedy rerun under one prompt edit, compared over the original's token count. 0 = the answer survived the edit unchanged; high = the edit flipped the answer early.",
+  },
+  "counterfactual.entropyDelta": {
+    level: "DERIVED",
+    definition:
+      "Signed shift in mean per-token entropy between the original answer and the counterfactual rerun — did the edit make the model more or less uncertain while answering?",
+  },
+  "search.embedding": {
+    level: "MEASURED",
+    definition:
+      "The model's own representation of a prompt: the mean of the final-layer residual stream over the prompt's tokens, L2-normalized (768 floats for GPT-2 small). Read inside the backend; the vector never leaves as a tensor. NULL rows are unsearchable, never approximated.",
+  },
+  "search.similarity": {
+    level: "DERIVED",
+    definition:
+      "Cosine similarity between two measured prompt embeddings, computed in Postgres via pgvector. The RANK says how closely the model represents two prompts in its final layer — it is not semantic meaning, and absolute values are compressed by GPT-2's anisotropic hidden space.",
+  },
   "decision.reason": {
     level: "DERIVED",
     definition: "Why generation ended or how the token was chosen (greedy/sampled/stop).",

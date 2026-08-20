@@ -256,3 +256,82 @@ class Trace(StrictModel):
     createdAt: str
     output: Optional[TraceOutput] = None
     events: list[TraceEvent] = []
+
+
+# ----------------------------------------------------- counterfactuals (V2)
+
+# API artifacts, not TraceEvents: the original trace stays immutable; a
+# counterfactual comparison persists in its own `counterfactuals` table.
+# Mirrors counterfactualResultSchema / counterfactualRequestSchema in
+# packages/trace-schema/src/counterfactuals.ts.
+
+
+class CounterfactualResult(StrictModel):
+    id: str = Field(pattern=r"^cf_[0-9a-z]{6,12}$")
+    traceId: str = Field(pattern=r"^tr_")
+    # INTERPRETED variable label, or CUSTOM_VARIABLE ("your edit")
+    variable: str = Field(min_length=1)
+    # null for free-form edits (no single word was manipulated)
+    originalWord: Optional[str] = Field(default=None, min_length=1)
+    replacementWord: Optional[str] = Field(default=None, min_length=1)
+    promptText: str = Field(min_length=1)
+    outputText: str
+    # compared length = the ORIGINAL trace's emitted token count
+    tokenCount: int = Field(gt=0)
+    agreedTokens: int = Field(ge=0)
+    # 1 − agreed/tokenCount; 0 = the answer survived the edit byte-identical
+    impact: float = Field(ge=0, le=1)
+    # first step where the answers differ; None when identical
+    firstDivergence: Optional[int] = Field(default=None, ge=0)
+    # signed mean entropy shift vs. the original answer (bits/token)
+    entropyDelta: float
+    basis: str = Field(min_length=1)
+    createdAt: str = Field(min_length=1)
+
+
+class CounterfactualRequest(StrictModel):
+    # all — run every applicable dictionary substitution (capped);
+    # one — rerun a specific resolved variable; prompt — free-form edit
+    scope: Literal["all", "one", "prompt"]
+    variable: Optional[str] = None
+    originalWord: Optional[str] = None
+    prompt: Optional[str] = Field(default=None, min_length=1, max_length=2000)
+
+
+# ------------------------------------------------------------- search (V2)
+
+# Spec §28: "find traces similar to this one." The embedding is the
+# model's own final-layer prompt representation; similarity is cosine in
+# Postgres via pgvector. Mirrors searchHitSchema / searchResponseSchema
+# in packages/trace-schema/src/search.ts (SEARCH_BASIS lives in
+# app/aggregation/search.py and is echoed verbatim into responses).
+
+
+class SearchHit(StrictModel):
+    traceId: str = Field(pattern=r"^tr_")
+    displayId: int = Field(gt=0)
+    input: str = Field(min_length=1)
+    # cosine ∈ [-1, 1]; the RANK is the signal, not the absolute value
+    similarity: float = Field(ge=-1, le=1)
+    modelName: str = Field(min_length=1)
+    traceMode: TraceMode
+    tokenCount: Optional[int] = Field(default=None, ge=0)
+    createdAt: str = Field(min_length=1)
+
+
+class SearchResponse(StrictModel):
+    # the free-text query, or the source trace's prompt for /similar
+    query: str
+    basis: str = Field(min_length=1)
+    # already ranked (similarity desc); empty is a valid answer
+    results: list[SearchHit] = []
+    # how many stored traces carry an embedding and were compared
+    searchable: int = Field(ge=0)
+
+
+class BackfillReport(StrictModel):
+    """POST /search/backfill — re-embed traces recorded before the
+    embedding column existed (embedding depends only on prompt text and
+    model, both stored, so this is a re-derivation, not a guess)."""
+    filled: int = Field(ge=0)
+    remaining: int = Field(ge=0)

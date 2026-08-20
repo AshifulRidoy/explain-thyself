@@ -15,6 +15,20 @@
       "when": 1786997936642,
       "tag": "0001_nosy_old_lace",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1787160382319,
+      "tag": "0002_sad_lizard",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1787165673691,
+      "tag": "0003_flashy_quicksilver",
+      "breakpoints": true
     }
   ]
 }

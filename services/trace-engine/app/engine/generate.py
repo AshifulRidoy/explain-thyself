@@ -136,6 +136,14 @@ async def trace_stream(
 
     display_id: int
     if writer is not None:
+        # the prompt's embedding (spec §28 search) rides the same insert —
+        # one extra forward pass before the row opens. A failure degrades
+        # to NULL: the trace streams normally, it is simply unsearchable.
+        embedding: list[float] | None = None
+        try:
+            embedding = await asyncio.to_thread(backend.embed_prompt, prompt)  # type: ignore[attr-defined]
+        except Exception:  # noqa: BLE001 — search is never worth a trace
+            pass
         display_id = await writer.open_trace(
             trace_id=trace_id,
             model_name=spec.key,
@@ -145,6 +153,7 @@ async def trace_stream(
             input_text=prompt,
             max_tokens=max_tokens,
             temperature=temperature,
+            embedding=embedding,
         )
     else:
         display_id = int(time.time() * 1000) % 999_999 + 1

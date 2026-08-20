@@ -13,6 +13,7 @@ import { TokenStream } from "./TokenStream";
 import { EntropyMeter } from "@/components/data-viz/EntropyMeter";
 import { ConceptPanel } from "@/components/data-viz/ConceptPanel";
 import { UncertaintyPanel } from "@/components/data-viz/UncertaintyPanel";
+import { CounterfactualPanel } from "@/components/data-viz/CounterfactualPanel";
 import { uncertaintyQuantities } from "@/lib/trace/uncertainty";
 
 const TraceCanvas = dynamic(
@@ -101,6 +102,13 @@ export function ExploreClient({
               quantities={uncertainty}
               traceMode={(envelope ?? trace).traceMode}
               complete={status === "complete"}
+            />
+          </div>
+          <div className="border-t border-line pt-6">
+            {/* replay = engine-backed (results restore); a fixture cannot rerun */}
+            <CounterfactualPanel
+              traceId={mode === "replay" ? trace.id : null}
+              prompt={trace.input.text}
             />
           </div>
           <div className="border-t border-line pt-6">

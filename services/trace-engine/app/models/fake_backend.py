@@ -150,6 +150,15 @@ def _perturb_response(response: str, seed: int) -> str:
     return "".join(parts)
 
 
+def _word_edits(a: str, b: str) -> int:
+    """Differing word positions between two same-length word lists. Prompts
+    of different word counts are infinitely far apart."""
+    wa, wb = a.split(), b.split()
+    if len(wa) != len(wb):
+        return 1 << 30
+    return sum(1 for x, y in zip(wa, wb) if x != y)
+
+
 class FakeBackend:
     """Deterministic backend; a fixed seed reproduces a trace exactly."""
 
@@ -183,14 +192,24 @@ class FakeBackend:
     def _choose_continuation(self, prompt: str) -> str:
         # Canonical matching (case/punct-insensitive): the authored prompt
         # verbatim reproduces the authored response EXACTLY (existing traces
-        # stay byte-identical); a perturbed variant models a real model's
-        # sensitivity — same response, seeded word swaps at deterministic
-        # positions. Mirrored by perturbResponse() in generate.ts.
+        # stay byte-identical); a surface perturbation of it models a real
+        # model's sensitivity — same response, seeded word swaps at
+        # deterministic positions. Mirrored by perturbResponse() in
+        # generate.ts.
         canon = prompt.strip().lower().rstrip("?.!").rstrip()
         for known_prompt, response in _RESPONSES:
             if canon == known_prompt.strip().lower().rstrip("?.!").rstrip():
                 if prompt == known_prompt:
                     return response
+                return _perturb_response(response, text_seed(prompt))
+        # A WORD-level edit of an authored prompt (a counterfactual variable,
+        # e.g. "How is the sky blue?") is near-miss, not unknown: model it as
+        # the seeded-swap variant too — a small edit shifts some tokens, not
+        # the whole register. Truly unrelated prompts get the generic
+        # response.
+        for known_prompt, response in _RESPONSES:
+            known = known_prompt.strip().lower().rstrip("?.!").rstrip()
+            if _word_edits(canon, known) <= 2:
                 return _perturb_response(response, text_seed(prompt))
         return _GENERIC_RESPONSE
 
@@ -228,6 +247,26 @@ class FakeBackend:
 
     def token_text(self, token_id: int) -> str:
         return self._id_words.get(token_id, f"[{token_id}]")
+
+    def embed_prompt(self, text: str) -> list[float]:
+        """Deterministic stand-in: the fake has no residual stream to
+        represent a prompt with, so search gets a stable seeded unit
+        vector — same text always maps to the same vector, which is the
+        property the pipeline (storage, SQL, ranking) actually needs
+        offline. Never presented as a representation of anything.
+
+        Mean-centered before normalizing: mulberry32 streams from nearby
+        seeds share a constant-direction bias (uncentered cosines sit at
+        ~0.76 between ANY two texts), which would make the fake rank
+        everything equally "similar". Centering leaves unrelated texts
+        near 0 and identical texts at exactly 1.0."""
+        from ..aggregation.search import EMBEDDING_DIM
+
+        rng = mulberry32(text_seed(text))
+        vec = np.array([rng() for _ in range(EMBEDDING_DIM)], dtype=np.float64)
+        vec -= vec.mean()
+        vec /= np.linalg.norm(vec)
+        return [round(float(v), 6) for v in vec]
 
     def _concept_bump(self, step: int, occupied: np.ndarray) -> dict[int, float]:
         """Deterministic concept mass for this step's fake distribution.

@@ -83,18 +83,26 @@ class TraceWriter:
         input_text: str,
         max_tokens: int,
         temperature: float,
+        embedding: list[float] | None = None,
     ) -> int:
+        from ..aggregation.search import vector_literal
+
+        # asyncpg has no vector codec: send the pgvector text literal,
+        # cast server-side. None stores NULL (row = unsearchable, honestly).
+        embedding_sql = (
+            vector_literal(embedding) if embedding is not None else None
+        )
         async with pooled_conn(self.pool) as conn:
             display_id = await conn.fetchval(
                 """
                 INSERT INTO traces
                     (id, model_name, model_revision, device, trace_mode,
-                     input, status, max_tokens, temperature)
-                VALUES ($1, $2, $3, $4, $5, $6, 'streaming', $7, $8)
+                     input, status, max_tokens, temperature, embedding)
+                VALUES ($1, $2, $3, $4, $5, $6, 'streaming', $7, $8, $9::vector)
                 RETURNING display_id
                 """,
                 trace_id, model_name, model_revision, device, trace_mode,
-                input_text, max_tokens, temperature,
+                input_text, max_tokens, temperature, embedding_sql,
             )
         # writer state flips only once the row exists: a client abort can
         # cancel this insert (a trace-dial flip does exactly that), and

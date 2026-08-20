@@ -64,6 +64,12 @@ class ModelBackend(Protocol):
     # Human-readable text for one of those ids (concept evidence rows)
     def token_text(self, token_id: int) -> str: ...
 
+    # Trace search seam (spec §28): the model's own representation of a
+    # prompt as one normalized float vector (mean final-layer resid_post
+    # over prompt tokens for the real model; a deterministic stand-in for
+    # the fake). No tensor leaves the backend.
+    def embed_prompt(self, text: str) -> list[float]: ...
+
     def step(
         self, ctx: list[int], collect_layers: bool, collect_attention: bool = False
     ) -> StepResult: ...

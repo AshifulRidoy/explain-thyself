@@ -107,4 +107,50 @@ test.describe("live inference", () => {
       rows.nth(3).getByText("measured", { exact: true }),
     ).toBeVisible();
   });
+
+  test("counterfactuals: what would change the answer? (spec §23)", async ({
+    page,
+  }) => {
+    test.setTimeout(240_000); // the panel reruns the model per variable
+    await page.goto("/explore?prompt=Why%20is%20the%20sky%20blue%3F");
+    await expect(page.getByText("Complete", { exact: true })).toBeVisible({
+      timeout: 120_000,
+    });
+
+    const panel = page.getByTestId("counterfactual-panel");
+    await expect(panel).toBeVisible();
+
+    // the investigation: every dictionary variable in this prompt reruns
+    // (why→how, sky→ocean, blue→green), one SSE result per rerun
+    await panel.getByTestId("counterfactual-run").click();
+    const rows = panel.getByTestId("counterfactual-row");
+    await expect(rows).toHaveCount(3, { timeout: 120_000 });
+
+    // the first result auto-inspects: ORIGINAL vs COUNTERFACTUAL + basis
+    const detail = panel.getByTestId("counterfactual-detail");
+    await expect(detail).toBeVisible();
+    await expect(detail.getByText("Original", { exact: true })).toBeVisible();
+    await expect(detail.getByText("Counterfactual", { exact: true })).toBeVisible();
+    await expect(detail.getByText(/greedy rerun/)).toBeVisible();
+    await expect(detail.getByText(/first change at token|survived this edit unchanged/)).toBeVisible();
+
+    // every row carries its measured numbers: agreement + impact + Δ entropy
+    // (the N/M pattern avoids the basis paragraph, which says "agreement")
+    for (let i = 0; i < 3; i++) {
+      await expect(rows.nth(i).getByText(/\d+\/\d+ agree/)).toBeVisible();
+      await expect(rows.nth(i).getByText(/Δ entropy [+-]/)).toBeVisible();
+    }
+
+    // the footnote keeps the label honest (anchored: the detail's basis
+    // paragraph also ends with "not causal attribution")
+    await expect(
+      panel.getByText(/^word-substitution sensitivity, measured/),
+    ).toBeVisible();
+
+    // the free-form edit — manipulate the prompt directly (the slider's spirit)
+    await panel.getByTestId("counterfactual-edit").fill("Why is the grass green?");
+    await panel.getByTestId("counterfactual-edit-run").click();
+    await expect(rows).toHaveCount(4, { timeout: 120_000 });
+    await expect(panel.getByText("your edit", { exact: true })).toBeVisible();
+  });
 });

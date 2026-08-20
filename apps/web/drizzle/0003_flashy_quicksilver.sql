@@ -1,0 +1,2 @@
+CREATE EXTENSION IF NOT EXISTS vector;
+ALTER TABLE "traces" ADD COLUMN "embedding" vector(768);

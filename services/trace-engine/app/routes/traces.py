@@ -1,8 +1,10 @@
-"""Trace routes: POST /trace (SSE stream), GET /trace/{id}, GET /trace/{id}/events."""
+"""Trace routes: POST /trace (SSE stream), GET /trace/{id}, GET /trace/{id}/events,
+POST /trace/{id}/counterfactual (spec §23), GET /trace/{id}/counterfactuals."""
 
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 from typing import Literal, Optional
 
@@ -12,7 +14,7 @@ from pydantic import Field
 
 from ..config import settings
 from ..engine.generate import trace_stream
-from ..schemas.trace import StrictModel
+from ..schemas.trace import CounterfactualRequest, StrictModel
 
 log = logging.getLogger("ets.routes")
 
@@ -166,3 +168,146 @@ async def get_trace_events(trace_id: str) -> dict:
     if trace is None:
         raise HTTPException(status_code=404, detail="trace not found")
     return {"events": trace["events"]}
+
+
+# ——— counterfactuals (spec §23: WHAT WOULD CHANGE THE ANSWER?) ———————————
+
+
+async def _load_complete_trace(trace_id: str) -> dict:
+    """A counterfactual compares against a finished answer — load it or say why not."""
+    from ..storage.db import PoolHolder, get_pool
+    from ..storage.trace_reader import load_trace
+
+    pool = get_pool()
+    if pool is None:
+        raise HTTPException(status_code=503, detail="postgres-unavailable")
+    async with PoolHolder(pool) as conn:
+        trace = await load_trace(conn, trace_id)
+    if trace is None:
+        raise HTTPException(status_code=404, detail="trace not found")
+    if trace.get("status") != "complete":
+        raise HTTPException(
+            status_code=400,
+            detail="trace has no completed answer to compare against",
+        )
+    if not any(e.get("type") == "TOKEN" for e in trace["events"]):
+        raise HTTPException(
+            status_code=400, detail="trace emitted no tokens — nothing to compare"
+        )
+    return trace
+
+
+def _resolve_variables(req: CounterfactualRequest, prompt: str) -> list[dict]:
+    """The edited prompts this request reruns — one variable per run."""
+    from ..aggregation.counterfactuals import CUSTOM_VARIABLE, applicable_substitutions
+
+    if req.scope == "all":
+        variables = applicable_substitutions(prompt)
+        if not variables:
+            raise HTTPException(
+                status_code=400,
+                detail="no dictionary words in this prompt — edit it freely "
+                "(scope=prompt) instead",
+            )
+        return variables
+
+    if req.scope == "one":
+        applicable = applicable_substitutions(prompt)
+        matches = [
+            v
+            for v in applicable
+            if v["variable"] == req.variable and v["originalWord"] == req.originalWord
+        ]
+        if not matches:
+            raise HTTPException(
+                status_code=400, detail="variable not applicable to this prompt"
+            )
+        return matches
+
+    # scope == "prompt": the free-form edit (the CounterfactualSlider spirit)
+    if req.prompt is None or req.prompt.strip() == prompt.strip():
+        raise HTTPException(
+            status_code=400, detail="edited prompt is identical to the original"
+        )
+    return [
+        {
+            "variable": CUSTOM_VARIABLE,
+            "originalWord": None,
+            "replacementWord": None,
+            "promptText": req.prompt,
+        }
+    ]
+
+
+@router.post("/trace/{trace_id}/counterfactual")
+async def post_counterfactual(
+    trace_id: str, req: CounterfactualRequest, request: Request
+) -> StreamingResponse:
+    """Run counterfactuals, streaming each comparison as it completes.
+
+    SSE, like /trace: a rerun of a 30-token answer takes seconds on the
+    real model, and the browser should see each variable land when it does
+    (`event: counterfactual`), then one terminal `event: done`.
+    """
+    from ..engine.counterfactual import run_counterfactual
+    from ..engine.sse import format_sse
+    from ..storage.counterfactual_store import save_counterfactual
+    from ..storage.db import get_pool
+
+    trace = await _load_complete_trace(trace_id)
+    variables = _resolve_variables(req, trace["input"]["text"])
+    pool = get_pool()
+    if pool is None:  # _load_complete_trace already 503s; keep the guard local
+        raise HTTPException(status_code=503, detail="postgres-unavailable")
+
+    # the trace's own model answers the counterfactuals. A fresh FakeBackend
+    # per request keeps fake reruns deterministic regardless of what ran
+    # before (its rng is shared state); the real model is stateless greedy.
+    backend = await get_backend(trace["model"]["name"])
+    if backend.spec.key == "fake":
+        from ..models.fake_backend import FakeBackend
+
+        backend = FakeBackend(backend.spec)
+
+    async def generator():
+        count = 0
+        for v in variables:
+            result = await run_counterfactual(
+                trace,
+                prompt_text=v["promptText"],
+                variable=v["variable"],
+                original_word=v["originalWord"],
+                replacement_word=v["replacementWord"],
+                backend=backend,
+            )
+            await save_counterfactual(pool, result)
+            count += 1
+            yield format_sse("counterfactual", result.model_dump_json())
+        yield format_sse("done", json.dumps({"traceId": trace_id, "count": count}))
+
+    return StreamingResponse(
+        generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-store",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive",
+        },
+    )
+
+
+@router.get("/trace/{trace_id}/counterfactuals")
+async def get_counterfactuals(trace_id: str) -> dict:
+    """A trace's stored counterfactuals — replay/restore for the panel."""
+    from ..storage.counterfactual_store import list_counterfactuals
+    from ..storage.db import PoolHolder, get_pool
+
+    pool = get_pool()
+    if pool is None:
+        raise HTTPException(status_code=503, detail="postgres-unavailable")
+    async with PoolHolder(pool) as conn:
+        exists = await conn.fetchval("SELECT 1 FROM traces WHERE id = $1", trace_id)
+        if exists is None:
+            raise HTTPException(status_code=404, detail="trace not found")
+        results = await list_counterfactuals(conn, trace_id)
+    return {"results": results}

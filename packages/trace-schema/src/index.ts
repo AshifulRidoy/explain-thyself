@@ -6,6 +6,29 @@ export {
   type PromptPerturbation,
 } from "./uncertainty";
 export {
+  COUNTERFACTUAL_DICTIONARY,
+  MAX_COUNTERFACTUALS,
+  CUSTOM_VARIABLE,
+  applicableSubstitutions,
+  counterfactualResultSchema,
+  counterfactualRequestSchema,
+  type CounterfactualEntry,
+  type CounterfactualVariable,
+  type CounterfactualResult,
+  type CounterfactualRequest,
+} from "./counterfactuals";
+export {
+  EMBEDDING_DIM,
+  SEARCH_BASIS,
+  searchHitSchema,
+  searchResponseSchema,
+  searchRequestSchema,
+  type SearchHit,
+  type SearchHitParsed,
+  type SearchResponse,
+  type SearchRequest,
+} from "./search";
+export {
   traceSchema,
   traceEventSchema,
   traceEventTypeSchema,

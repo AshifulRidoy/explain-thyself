@@ -388,3 +388,113 @@ async def test_research_path_logits_match_anchor(backend: TransformerLensBackend
     hooked = backend.step(ctx, collect_layers=True, collect_attention=True)
     assert hooked.top_k[0].raw_text == "Ġnow"
     assert hooked.top_k[0].probability == pytest.approx(0.0475, abs=1e-3)
+
+
+async def _real_trace_dict(backend, prompt: str, max_tokens: int) -> dict:
+    """A complete trace dict from the real pipeline (envelope + events)."""
+    raw = ""
+    async for frame in trace_stream(
+        prompt=prompt,
+        trace_mode="STANDARD",
+        max_tokens=max_tokens,
+        temperature=0.0,
+        top_k=None,
+        seed=None,
+        backend=backend,
+        writer=None,
+    ):
+        raw += frame
+    frames = [json.loads(l[6:]) for l in raw.split("\n") if l.startswith("data: ")]
+    envelope = frames[0]
+    envelope["events"] = frames[1:-1]
+    envelope["status"] = "complete"
+    return envelope
+
+
+async def test_counterfactuals_measured_on_real_model(backend: TransformerLensBackend):
+    """Counterfactuals (spec §23) on real GPT-2: dictionary variables resolve,
+    the unedited CONTROL reproduces the answer exactly (greedy determinism —
+    what makes impact a measurement of the edit, not of noise), the math is
+    exact, and at least one surface edit changes the real answer."""
+    from app.aggregation.counterfactuals import applicable_substitutions
+    from app.engine.counterfactual import run_counterfactual
+
+    prompt = "Why is the sky blue?"
+    trace = await _real_trace_dict(backend, prompt, max_tokens=10)
+    tokens = [e for e in trace["events"] if e.get("type") == "TOKEN"]
+    assert len(tokens) == 10
+
+    variables = applicable_substitutions(prompt)
+    assert [v["originalWord"] for v in variables] == ["Why", "sky", "blue"]
+
+    # the control: rerunning the UNEDITED prompt agrees on every token
+    control = await run_counterfactual(
+        trace, prompt_text=prompt, variable="control",
+        original_word=None, replacement_word=None, backend=backend,
+    )
+    assert control.agreedTokens == control.tokenCount == 10
+    assert control.impact == 0.0 and control.firstDivergence is None
+    # the control re-derives the SAME distributions, so the mean entropy
+    # shift is zero to shipped precision (4dp)
+    assert control.entropyDelta == 0.0
+
+    results = []
+    for v in variables:
+        r = await run_counterfactual(
+            trace, prompt_text=v["promptText"], variable=v["variable"],
+            original_word=v["originalWord"], replacement_word=v["replacementWord"],
+            backend=backend,
+        )
+        assert r.tokenCount == 10
+        assert r.impact == pytest.approx(round(1 - r.agreedTokens / 10, 4))
+        results.append(r)
+
+    assert any(r.firstDivergence is not None for r in results), (
+        "expected at least one edit to change the real answer: "
+        + ", ".join(f"{r.originalWord}→{r.replacementWord}={r.impact}" for r in results)
+    )
+
+    # determinism: the same edit, run twice, measures identically
+    v0 = variables[0]
+    again = await run_counterfactual(
+        trace, prompt_text=v0["promptText"], variable=v0["variable"],
+        original_word=v0["originalWord"], replacement_word=v0["replacementWord"],
+        backend=backend,
+    )
+    assert (again.impact, again.agreedTokens, again.firstDivergence, again.outputText) == (
+        results[0].impact, results[0].agreedTokens, results[0].firstDivergence, results[0].outputText
+    )
+
+
+def test_prompt_embedding_is_a_real_representation(backend: TransformerLensBackend):
+    """Spec §28 search runs on these vectors — pin what makes ranking
+    honest on the real model: deterministic, unit-norm, d_model wide, and
+    paraphrase ranks above unrelated for the instrument's canonical
+    prompt families.
+
+    Honest counterexample (measured, deliberately NOT asserted): the spec's
+    own 'Why do people become successful?' vs 'What causes achievement?'
+    scores BELOW an unrelated sky-blue prompt on GPT-2-small's final-layer
+    mean — mean-pooled resid_post is a crude representation, which is
+    exactly why SEARCH_BASIS disclaims semantic meaning."""
+    from app.aggregation.search import EMBEDDING_DIM
+
+    def cos(a: str, b: str) -> float:
+        va, vb = backend.embed_prompt(a), backend.embed_prompt(b)
+        return sum(x * y for x, y in zip(va, vb))
+
+    v1 = backend.embed_prompt("Why is the sky blue?")
+    v2 = backend.embed_prompt("Why is the sky blue?")
+    assert v1 == v2  # deterministic: same prompt, same vector, always
+    assert len(v1) == EMBEDDING_DIM == backend.spec.d_model
+    assert sum(x * x for x in v1) == pytest.approx(1.0, abs=1e-4)
+
+    families = [
+        ("Why is the sky blue?", "Why does the sky look blue?", "Should I learn Python or Rust?"),
+        ("The capital of France is", "France's capital city is", "Why is the sky blue?"),
+        ("Should I learn Python or Rust?", "Is Python or Rust better to learn?", "The capital of France is"),
+    ]
+    for original, paraphrase, unrelated in families:
+        para = cos(original, paraphrase)
+        other = cos(original, unrelated)
+        assert para > other, (original, paraphrase, para, other)

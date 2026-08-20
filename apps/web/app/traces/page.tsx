@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { TraceSearch } from "@/components/trace/TraceSearch";
 import type { TraceSummary } from "@/lib/trace/repo";
 import { listRecentTraces } from "@/lib/trace/repo";
 
@@ -37,7 +38,7 @@ export default async function TracesPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-12">
-      <header className="mb-10">
+      <header className="mb-8">
         <h1 className="font-serif text-4xl leading-tight">Recorded traces</h1>
         <p className="mt-2 max-w-prose text-muted">
           Every live generation is persisted with its events and replays
@@ -45,6 +46,8 @@ export default async function TracesPage() {
           timing.
         </p>
       </header>
+
+      <TraceSearch />
 
       {dbDown && (
         <p className="machine-label text-signal">

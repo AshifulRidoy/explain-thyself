@@ -16,6 +16,7 @@ import {
   serial,
   text,
   timestamp,
+  vector,
 } from "drizzle-orm/pg-core";
 
 export const traces = pgTable("traces", {
@@ -42,6 +43,16 @@ export const traces = pgTable("traces", {
    * trip byte-faithfully. Nullable: pre-envelope rows derive what they can.
    */
   envelope: jsonb("envelope"),
+  /**
+   * The model's own final-layer prompt representation (spec §28 trace
+   * search): mean of resid_post over prompt tokens, L2-normalized, 768
+   * floats for GPT-2 small. NULL on rows recorded before this column or
+   * when the embedding pass failed — such rows are simply unsearchable,
+   * never silently approximated. Similarity is cosine, computed in
+   * Postgres via pgvector (`<=>`); no ANN index yet (exact scan is
+   * honest and fast at this scale).
+   */
+  embedding: vector("embedding", { dimensions: 768 }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -76,5 +87,36 @@ export const concepts = pgTable("concepts", {
   payload: jsonb("payload"),
 });
 
+/**
+ * One counterfactual comparison per row (spec §23): an edited prompt rerun
+ * greedy, compared token-by-token against the original trace's answer.
+ * The original trace stays immutable — these are attached artifacts, not
+ * events. `payload` is the exact validated CounterfactualResult JSON.
+ */
+export const counterfactuals = pgTable(
+  "counterfactuals",
+  {
+    /** "cf_…" issued by the engine. */
+    id: text("id").primaryKey(),
+    traceId: text("trace_id")
+      .notNull()
+      .references(() => traces.id, { onDelete: "cascade" }),
+    /** INTERPRETED variable label ("experience") or "your edit". */
+    variable: text("variable").notNull(),
+    originalWord: text("original_word"),
+    replacementWord: text("replacement_word"),
+    /** the edited prompt that was rerun. */
+    promptText: text("prompt_text").notNull(),
+    /** 1 − token agreement; indexed column for ranking, payload is truth. */
+    impact: real("impact").notNull(),
+    payload: jsonb("payload").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [index("counterfactuals_trace_idx").on(table.traceId)],
+);
+
 export type TraceRow = typeof traces.$inferSelect;
 export type TraceEventRow = typeof traceEvents.$inferSelect;
+export type CounterfactualRow = typeof counterfactuals.$inferSelect;

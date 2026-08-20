@@ -92,7 +92,11 @@ test.describe("fixture explorer", () => {
     await expect(page.getByText("Complete", { exact: true })).toBeVisible({
       timeout: 60_000,
     });
-    await page.locator(".react-flow__node-CONCEPT").first().click({ force: true });
+    // at 390px the CONCEPT column can sit beyond the canvas pane — bring
+    // the node into the viewport before clicking (force alone cannot)
+    const conceptNode = page.locator(".react-flow__node-CONCEPT").first();
+    await conceptNode.scrollIntoViewIfNeeded();
+    await conceptNode.click({ force: true });
     const inspector = page.getByTestId("inspector");
     await expect(inspector.getByText("CONCEPT", { exact: true })).toBeVisible();
     await expect(inspector.getByText("INTERPRETED", { exact: true })).toBeVisible();
@@ -149,6 +153,19 @@ test.describe("fixture explorer", () => {
     const inspector = page.getByTestId("inspector");
     await expect(inspector.getByText("UNCERTAINTY", { exact: true })).toBeVisible();
     await expect(inspector.getByText("Basis", { exact: true })).toBeVisible();
+  });
+
+  test("counterfactual panel is honest about what a fixture cannot do", async ({
+    page,
+  }) => {
+    await page.goto("/explore?fixture=sky-blue");
+    // a committed fixture cannot re-run the model — the panel says so
+    // instead of pretending (spec §23's tool needs a live engine)
+    const panel = page.getByTestId("counterfactual-panel");
+    await expect(panel).toBeVisible({ timeout: 20_000 });
+    await expect(panel.getByTestId("counterfactual-empty")).toHaveText(
+      /Needs the trace engine/,
+    );
   });
 });
 
