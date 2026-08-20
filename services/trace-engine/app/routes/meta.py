@@ -14,7 +14,7 @@ async def health() -> dict:
     from ..models.registry import MODEL_REGISTRY, backend_status
 
     spec = MODEL_REGISTRY.get(settings.model)
-    status = backend_status()
+    status = backend_status(settings.model)
     return {
         "status": "ok",
         "model": settings.model,
@@ -29,7 +29,7 @@ async def health() -> dict:
 async def models() -> dict:
     from ..models.registry import MODEL_REGISTRY, backend_status
 
-    status = backend_status()
+    status = backend_status(settings.model)
     return {
         "active": settings.model,
         "device": status.device,
@@ -43,6 +43,9 @@ async def models() -> dict:
                 "dModel": spec.d_model,
                 "paramCount": spec.param_count,
                 "dtype": spec.dtype,
+                # tokenizer identity — two models can only be compared
+                # token-by-token when this matches (spec Phase 7)
+                "tokenizer": spec.tokenizer,
             }
             for spec in MODEL_REGISTRY.values()
         ],

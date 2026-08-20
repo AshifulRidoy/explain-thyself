@@ -106,6 +106,16 @@ export const SIGNAL_TAXONOMY: Record<string, SignalDefinition> = {
     definition:
       "Cosine similarity between two measured prompt embeddings, computed in Postgres via pgvector. The RANK says how closely the model represents two prompts in its final layer — it is not semantic meaning, and absolute values are compressed by GPT-2's anisotropic hidden space.",
   },
+  "comparison.agreement": {
+    level: "DERIVED",
+    definition:
+      "Fraction of matching token ids over the first min(lenA, lenB) positions when the same prompt runs greedy through two models that share a tokenizer. Surface token overlap — not internal similarity; the models' internals are compared only through their own traces. Rejected outright when the tokenizers differ: agreement across incomparable ids would be a number about nothing.",
+  },
+  "comparison.entropyDelta": {
+    level: "DERIVED",
+    definition:
+      "Signed shift in mean per-token entropy between the two models' answers to the same prompt — computed from the entropyBits each trace already shipped, so it is recomputable from the trace JSON. Different vocab-spread baselines make this a within-pair contrast, not a model-quality score.",
+  },
   "decision.reason": {
     level: "DERIVED",
     definition: "Why generation ended or how the token was chosen (greedy/sampled/stop).",

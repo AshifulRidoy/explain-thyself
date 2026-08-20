@@ -117,6 +117,40 @@ export const counterfactuals = pgTable(
   (table) => [index("counterfactuals_trace_idx").on(table.traceId)],
 );
 
+/**
+ * One cross-model comparison per row (spec Phase 7): the same prompt run
+ * through two registered models that share a tokenizer. Both sides are
+ * full persisted traces (traceIdA = anchor, traceIdB = fresh run); the
+ * comparison itself is a separate artifact — the same immutability rule
+ * as counterfactuals. `payload` is the exact validated ComparisonResult
+ * JSON; agreement is denormalized for ranking.
+ */
+export const comparisons = pgTable(
+  "comparisons",
+  {
+    /** "cmp_…" issued by the engine. */
+    id: text("id").primaryKey(),
+    /** the anchor trace the comparison hangs off. */
+    traceIdA: text("trace_id_a")
+      .notNull()
+      .references(() => traces.id, { onDelete: "cascade" }),
+    /** the freshly recorded run through model B. */
+    traceIdB: text("trace_id_b")
+      .notNull()
+      .references(() => traces.id, { onDelete: "cascade" }),
+    modelA: text("model_a").notNull(),
+    modelB: text("model_b").notNull(),
+    /** agreed/comparedLength; indexed column for ranking, payload is truth. */
+    agreement: real("agreement").notNull(),
+    payload: jsonb("payload").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [index("comparisons_trace_a_idx").on(table.traceIdA)],
+);
+
 export type TraceRow = typeof traces.$inferSelect;
 export type TraceEventRow = typeof traceEvents.$inferSelect;
 export type CounterfactualRow = typeof counterfactuals.$inferSelect;
+export type ComparisonRow = typeof comparisons.$inferSelect;

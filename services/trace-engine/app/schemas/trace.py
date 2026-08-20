@@ -335,3 +335,51 @@ class BackfillReport(StrictModel):
     model, both stored, so this is a re-derivation, not a guess)."""
     filled: int = Field(ge=0)
     remaining: int = Field(ge=0)
+
+
+# ------------------------------------------------------ comparison (V2)
+#
+# Spec Phase 7, pulled into V2 by the Roadmap: the same prompt through
+# two REGISTERED models, compared. Model B's run is a full persisted
+# trace; the comparison is a separate artifact attached to trace A (the
+# counterfactuals immutability rule). Token agreement is only defined
+# when the two models share a tokenizer — the route rejects the request
+# otherwise rather than compute a number about nothing.
+# Mirrors comparisonResultSchema / comparisonRequestSchema in
+# packages/trace-schema/src/comparison.ts.
+
+
+class ComparisonResult(StrictModel):
+    id: str = Field(pattern=r"^cmp_[0-9a-z]{6,12}$")
+    # the anchor trace — the one this comparison hangs off
+    traceIdA: str = Field(pattern=r"^tr_")
+    # the freshly recorded run through model B
+    traceIdB: str = Field(pattern=r"^tr_")
+    modelA: str = Field(min_length=1)
+    modelB: str = Field(min_length=1)
+    # the prompt both models answered
+    prompt: str = Field(min_length=1)
+    # each answer's own emitted token count
+    tokenCountA: int = Field(gt=0)
+    tokenCountB: int = Field(gt=0)
+    # min(tokenCountA, tokenCountB) — the positions compared
+    comparedLength: int = Field(gt=0)
+    agreedTokens: int = Field(ge=0)
+    # agreed/comparedLength; 1 = identical over the compared range
+    agreement: float = Field(ge=0, le=1)
+    # first compared position where the token ids differ; None when identical
+    firstDivergence: Optional[int] = Field(default=None, ge=0)
+    outputTextA: str
+    outputTextB: str
+    # mean shipped entropyBits of each answer (bits/token)
+    meanEntropyA: float = Field(ge=0)
+    meanEntropyB: float = Field(ge=0)
+    # meanB − meanA, signed
+    entropyDelta: float
+    basis: str = Field(min_length=1)
+    createdAt: str = Field(min_length=1)
+
+
+class ComparisonRequest(StrictModel):
+    # registry key of the model to run the prompt through (model B)
+    model: str = Field(min_length=1)

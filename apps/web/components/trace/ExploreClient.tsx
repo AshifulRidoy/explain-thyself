@@ -14,6 +14,7 @@ import { EntropyMeter } from "@/components/data-viz/EntropyMeter";
 import { ConceptPanel } from "@/components/data-viz/ConceptPanel";
 import { UncertaintyPanel } from "@/components/data-viz/UncertaintyPanel";
 import { CounterfactualPanel } from "@/components/data-viz/CounterfactualPanel";
+import { ComparePanel } from "@/components/data-viz/ComparePanel";
 import { uncertaintyQuantities } from "@/lib/trace/uncertainty";
 
 const TraceCanvas = dynamic(
@@ -109,6 +110,12 @@ export function ExploreClient({
             <CounterfactualPanel
               traceId={mode === "replay" ? trace.id : null}
               prompt={trace.input.text}
+            />
+          </div>
+          <div className="border-t border-line pt-6">
+            <ComparePanel
+              traceId={mode === "replay" ? trace.id : null}
+              modelName={mode === "replay" ? trace.model.name : null}
             />
           </div>
           <div className="border-t border-line pt-6">

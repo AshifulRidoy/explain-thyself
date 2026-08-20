@@ -498,3 +498,108 @@ def test_prompt_embedding_is_a_real_representation(backend: TransformerLensBacke
         para = cos(original, paraphrase)
         other = cos(original, unrelated)
         assert para > other, (original, paraphrase, para, other)
+
+
+@pytest.fixture(scope="module")
+def distil() -> TransformerLensBackend:
+    """The second registered model — the distilled 82M GPT-2. Same
+    tokenizer and d_model as gpt2-small: the two properties that make
+    cross-model token agreement measurable and the embedding column
+    valid."""
+    spec = MODEL_REGISTRY["distilgpt2"]
+    b = TransformerLensBackend(spec)
+    b.load("cpu")
+    return b
+
+
+async def test_cross_model_comparison_measured(backend, distil):
+    """Spec Phase 7 (V2 cut) on real weights: the same prompt through
+    gpt2-small and distilgpt2.
+
+    Pinned:
+    * the two models really share token ids (same prompt → same INPUT
+      encoding) — the precondition the whole artifact rests on
+    * the CONTROL (gpt2-small vs itself) agrees exactly: greedy
+      determinism, so any disagreement in the real pair is the models
+      differing, not noise
+    * the real pair's numbers are well-formed and deterministic on rerun
+    * distilgpt2's traces embed (d_model 768), so search keeps working
+      per-model with no special casing
+    """
+    from app.engine.comparison import _split_frame, derive_comparison
+
+    prompt = "Why is the sky blue?"
+    trace_a = await _real_trace_dict(backend, prompt, max_tokens=10)
+
+    async def collect(b, max_tokens: int = 10) -> dict:
+        run = {"id": "", "ids": [], "entropies": [], "output": ""}
+        async for frame in trace_stream(
+            prompt=prompt, trace_mode="STANDARD", max_tokens=max_tokens,
+            temperature=0.0, top_k=None, seed=None, backend=b, writer=None,
+        ):
+            event, data = _split_frame(frame)
+            if event == "trace":
+                run["id"] = json.loads(data)["id"]
+            elif event == "trace_event":
+                payload = json.loads(data)
+                if payload.get("type") == "TOKEN":
+                    run["ids"].append(payload["tokenId"])
+                    run["entropies"].append(float(payload["entropyBits"]))
+                elif payload.get("type") == "OUTPUT":
+                    run["output"] = payload.get("text", "")
+        return run
+
+    # the precondition, measured not assumed
+    assert backend.encode(prompt) == distil.encode(prompt)
+    assert backend.spec.d_model == distil.spec.d_model == 768
+
+    # the control: same model twice agrees everywhere
+    control_run = await collect(backend)
+    control = derive_comparison(
+        trace_a, model_b="gpt2-small", trace_b_id=control_run["id"],
+        ids_b=control_run["ids"], entropy_b=control_run["entropies"],
+        output_b=control_run["output"],
+    )
+    assert control.agreement == 1.0 and control.firstDivergence is None
+    assert control.entropyDelta == 0.0
+
+    # the real pair: two different models, one prompt
+    run_b = await collect(distil)
+    result = derive_comparison(
+        trace_a, model_b="distilgpt2", trace_b_id=run_b["id"],
+        ids_b=run_b["ids"], entropy_b=run_b["entropies"],
+        output_b=run_b["output"],
+    )
+    assert result.modelA == "gpt2-small" and result.modelB == "distilgpt2"
+    assert 0.0 <= result.agreement <= 1.0
+    assert result.comparedLength == min(result.tokenCountA, result.tokenCountB)
+    assert result.agreement == pytest.approx(
+        round(result.agreedTokens / result.comparedLength, 4)
+    )
+    if result.firstDivergence is not None:
+        assert 0 <= result.firstDivergence < result.comparedLength
+        # divergence means at least one disagreeing position
+        assert result.agreedTokens < result.comparedLength
+    assert result.meanEntropyA >= 0 and result.meanEntropyB >= 0
+    assert result.entropyDelta == pytest.approx(
+        round(result.meanEntropyB - result.meanEntropyA, 4), abs=1e-4
+    )
+
+    # determinism: the pair measures identically on rerun
+    again = await collect(distil)
+    rerun = derive_comparison(
+        trace_a, model_b="distilgpt2", trace_b_id=again["id"],
+        ids_b=again["ids"], entropy_b=again["entropies"],
+        output_b=again["output"],
+    )
+    assert (rerun.agreement, rerun.agreedTokens, rerun.firstDivergence,
+            rerun.outputTextB, rerun.entropyDelta) == (
+        result.agreement, result.agreedTokens, result.firstDivergence,
+        result.outputTextB, result.entropyDelta)
+
+    # search stays per-model: distilgpt2 embeds into the same 768-dim
+    # column and its vectors live in their own representation space
+    from app.aggregation.search import EMBEDDING_DIM
+
+    v = distil.embed_prompt(prompt)
+    assert len(v) == EMBEDDING_DIM == 768

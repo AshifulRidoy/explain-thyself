@@ -24,6 +24,10 @@ EXPECTED = {
         "id", "trace_id", "variable", "original_word", "replacement_word",
         "prompt_text", "impact", "payload", "created_at",
     },
+    "comparisons": {
+        "id", "trace_id_a", "trace_id_b", "model_a", "model_b",
+        "agreement", "payload", "created_at",
+    },
 }
 
 

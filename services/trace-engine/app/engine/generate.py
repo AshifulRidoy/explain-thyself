@@ -21,6 +21,7 @@ import numpy as np
 from nanoid import generate as nanoid
 
 from ..aggregation.concepts import CONCEPT_ACTIVE_MASS, ConceptScorer
+from ..aggregation.search import EMBEDDING_DIM
 from ..aggregation.stability import prompt_perturbations
 from ..aggregation.stats import (
     RunningNormalizer,
@@ -139,11 +140,15 @@ async def trace_stream(
         # the prompt's embedding (spec §28 search) rides the same insert —
         # one extra forward pass before the row opens. A failure degrades
         # to NULL: the trace streams normally, it is simply unsearchable.
+        # A model whose d_model ≠ EMBEDDING_DIM would fail the vector(768)
+        # column and kill the whole insert — its traces degrade to NULL
+        # too (it needs its own column; search is per-representation).
         embedding: list[float] | None = None
-        try:
-            embedding = await asyncio.to_thread(backend.embed_prompt, prompt)  # type: ignore[attr-defined]
-        except Exception:  # noqa: BLE001 — search is never worth a trace
-            pass
+        if spec.d_model == EMBEDDING_DIM:
+            try:
+                embedding = await asyncio.to_thread(backend.embed_prompt, prompt)  # type: ignore[attr-defined]
+            except Exception:  # noqa: BLE001 — search is never worth a trace
+                pass
         display_id = await writer.open_trace(
             trace_id=trace_id,
             model_name=spec.key,

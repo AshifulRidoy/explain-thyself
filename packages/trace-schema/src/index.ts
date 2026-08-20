@@ -29,6 +29,12 @@ export {
   type SearchRequest,
 } from "./search";
 export {
+  comparisonResultSchema,
+  comparisonRequestSchema,
+  type ComparisonResult,
+  type ComparisonRequest,
+} from "./comparison";
+export {
   traceSchema,
   traceEventSchema,
   traceEventTypeSchema,

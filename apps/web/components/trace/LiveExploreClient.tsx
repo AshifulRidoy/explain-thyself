@@ -13,6 +13,7 @@ import { EntropyMeter } from "@/components/data-viz/EntropyMeter";
 import { ConceptPanel } from "@/components/data-viz/ConceptPanel";
 import { UncertaintyPanel } from "@/components/data-viz/UncertaintyPanel";
 import { CounterfactualPanel } from "@/components/data-viz/CounterfactualPanel";
+import { ComparePanel } from "@/components/data-viz/ComparePanel";
 import { uncertaintyQuantities } from "@/lib/trace/uncertainty";
 
 const TraceCanvas = dynamic(
@@ -173,6 +174,14 @@ export function LiveExploreClient({ prompt }: { prompt: string }) {
             <CounterfactualPanel
               traceId={status === "complete" && envelope ? envelope.id : null}
               prompt={prompt}
+              pending={status !== "error"}
+            />
+          </div>
+          <div className="border-t border-line pt-6">
+            {/* the second microscope slide: same prompt, another model */}
+            <ComparePanel
+              traceId={status === "complete" && envelope ? envelope.id : null}
+              modelName={envelope?.model.name ?? null}
               pending={status !== "error"}
             />
           </div>
